@@ -1,0 +1,50 @@
+<!-- app/main/templates/orders.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Заказы</title>
+</head>
+<body>
+    <h1>Заказы</h1>
+    <table border="1">
+        <tr>
+            <th>Номер заказа</th>
+            <th>Номер отправления</th>
+            <th>Дата приема</th>
+            <th>Дата отправки</th>
+            <th>Статус</th>
+            <th>Дата доставки</th>
+            <th>Сумма отправки</th>
+            <th>Валюта отправки</th>
+            <th>Название продукта</th>
+        </tr>
+        {% for order in orders %}
+        <tr>
+            <td>{{ order.order_number }}</td>
+            <td>{{ order.ship_number }}</td>
+            <td>{{ order.date_accept }}</td>
+            <td>{{ order.date_ship }}</td>
+            <td>{{ order.status }}</td>
+            <td>{{ order.date_delivery }}</td>
+            <td>{{ order.summ_ship }}</td>
+            <td>{{ order.currency_ship }}</td>
+            <td>{{ order.product_name }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    
+    <div>
+        {% if page > 1 %}
+            <a href="{{ url_for('orders', page=page-1) }}">Предыдущая</a>
+        {% endif %}
+        <span>Страница {{ page }}</span>
+        <a href="{{ url_for('orders', page=page+1) }}">Следующая</a>
+    </div>
+
+    <br>
+    <a href="{{ url_for('index') }}">Вернуться на главную</a>
+</body>
+</html>

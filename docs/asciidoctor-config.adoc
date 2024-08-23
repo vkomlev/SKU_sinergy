@@ -1,0 +1,10 @@
+:source-highlighter: highlightjs
+:coderay-css: style
+:plantuml:
+:plantuml-server-url: http://www.plantuml.com/plantuml
+:stem: latexmath
+:toc:
+:toclevels: 2
+:sectnums:
+:sectnumlevels: 4
+:imagesdir: ./images

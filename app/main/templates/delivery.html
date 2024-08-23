@@ -1,0 +1,44 @@
+<!-- app/main/templates/delivery.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Доставка</title>
+</head>
+<body>
+    <h1>Доставка</h1>
+    <table border="1">
+        <tr>
+            <th>Маркетплейс</th>
+            <th>Партнер</th>
+            <th>Задача сборки</th>
+            <th>SKU</th>
+            <th>Название продукта</th>
+            <th>Планируемая дата доставки</th>
+        </tr>
+        {% for delivery in deliveries %}
+        <tr>
+            <td>{{ delivery.marketplace }}</td>
+            <td>{{ delivery.partner }}</td>
+            <td>{{ delivery.assembly_task }}</td>
+            <td>{{ delivery.sku }}</td>
+            <td>{{ delivery.product_name }}</td>
+            <td>{{ delivery.delivery_date_planned }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    
+    <div>
+        {% if page > 1 %}
+            <a href="{{ url_for('delivery', page=page-1) }}">Предыдущая</a>
+        {% endif %}
+        <span>Страница {{ page }}</span>
+        <a href="{{ url_for('delivery', page=page+1) }}">Следующая</a>
+    </div>
+
+    <br>
+    <a href="{{ url_for('index') }}">Вернуться на главную</a>
+</body>
+</html>

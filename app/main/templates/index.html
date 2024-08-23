@@ -1,0 +1,17 @@
+<!-- app/templates/index.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Портал компании ГК Синергия</title>
+</head>
+<body>
+    <h1>Портал компании ГК Синергия</h1>
+    <ul>
+        <li><a href="{{ url_for('orders') }}">Заказы</a></li>
+        <li><a href="{{ url_for('delivery') }}">Доставка</a></li>
+    </ul>
+</body>
+</html>
