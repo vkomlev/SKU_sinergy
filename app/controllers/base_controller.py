@@ -11,3 +11,8 @@ class BaseController:
     def get_by_id(self, entity_id):
         """Получить запись по ID"""
         return self.repo.get_by_id(entity_id)
+    
+    @classmethod
+    def to_dict(self, obj):
+        """Преобразует объект модели в словарь"""
+        return {column.name: getattr(obj, column.name) for column in obj.__table__.columns}
