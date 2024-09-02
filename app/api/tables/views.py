@@ -12,18 +12,28 @@ def get_import_DBS_delivery_view():
     delivery_service = ImportDBSDeliveryService(session)
     
     page = request.args.get('page', 1, type=int)
-    per_page = 20
+    per_page = request.args.get('per_page', 20, type=int)
+    sort_params = {key: value for key, value in request.args.items() if key.startswith('sort_by')}
     
-    deliveries = delivery_service.get_with_pagination(page, per_page)
+    if sort_params:
+        # Применяем сортировку, а затем пагинацию
+        deliveries = delivery_service.get_with_sorting(**sort_params)
+        # Пагинация вручную для отфильтрованных данных
+        start = (page - 1) * per_page
+        end = start + per_page
+        deliveries = deliveries[start:end]
+    else:
+        # Применяем только пагинацию
+        deliveries = delivery_service.get_with_pagination(page, per_page)
 
     serializer = UniversalSerializer(DBSDelivery, many = True)
     deliveries_data = serializer.dump(deliveries)
 
     json_data = {
         'page': page,
+        'size': per_page,
         'total': len(deliveries_data),
-        'deliveries': deliveries_data
-
+        'data': deliveries_data
     }
 
     return jsonify(json_data)
