@@ -8,3 +8,7 @@ class BaseService:
         """Получить данные с пагинацией"""
         offset = (page - 1) * per_page
         return self.controller.get_page(offset, per_page)
+
+    def get_with_sorting(self, **kwargs):
+        """Получить данные с сортировкой"""
+        return self.controller.sort(**kwargs)
