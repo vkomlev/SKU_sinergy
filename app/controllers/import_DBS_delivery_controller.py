@@ -8,5 +8,3 @@ class ImportDBSDeliveryController(BaseController):
         repo = ImportDBSDeliveryRepository(session)
         super().__init__(repo)
 
-    def get_page(self, offset, limit, sort_by, sort_order):
-        return super().get_page(offset, limit, sort_by, sort_order)
