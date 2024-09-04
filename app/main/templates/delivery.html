@@ -32,12 +32,13 @@
     
     <div>
         {% if page > 1 %}
-            <a href="{{ url_for('import_DBS_delivery', page=page-1) }}">Предыдущая</a>
+            <a href="{{ url_for('delivery', page=page-1) }}">Предыдущая</a>
         {% endif %}
         <span>Страница {{ page }}</span>
-        <a href="{{ url_for('import_DBS_delivery', page=page+1) }}">Следующая</a>
+        <a href="{{ url_for('delivery', page=page+1) }}">Следующая</a>
     </div>
 
     <br>
+    <a href="{{ url_for('index') }}">Вернуться на главную</a>
 </body>
 </html>

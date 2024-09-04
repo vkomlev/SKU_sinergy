@@ -28,7 +28,6 @@ class BaseRepository:
         """Получить все записи"""
         return self.session.query(self.model).all()
 
-
     def get_by_id(self, entity_id):
         """Получить запись по ID"""
         return self.session.query(self.model).get(entity_id)
@@ -41,9 +40,14 @@ class BaseRepository:
     
 
     def get_page(self, offset, limit):
+        return self.session.query(self.model).offset(offset).limit(limit).all()
+
+    def filter_by_fields(self, **filters):
         query = self.session.query(self.model)
-        query = query.limit(limit).offset(offset)
-        return query.all()
+        if filters:
+            for column_name, value in filters.items():
+                query = query.filter(getattr(self.model, column_name) == value) 
+        return query.all() 
 
     def sort_by_fields(self, **kwargs):
         query = self.session.query(self.model)
@@ -58,13 +62,9 @@ class BaseRepository:
                 raise ValueError(f"Invalid sort direction: {order}")
         return query.all()
 
-
     def get_by_fields(self, **kwargs):
         """Получить записи по значениям полей, переданным через kwargs"""
         query = self.session.query(self.model)
         for key, value in kwargs.items():
             query = query.filter(getattr(self.model, key) == value)
         return query.all()
-
-
-
