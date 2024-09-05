@@ -10,10 +10,10 @@ class BaseService:
         limit = size
         return self.controller.get_page(offset, limit)
 
-    def get_with_sorting(self, **kwargs):
+    def sort(self, **kwargs):
         """Получить данные с сортировкой"""
         return self.controller.sort(**kwargs)
     
-    def search_orders(self, **filters):
+    def filter(self, **filters):
         """Получить данные по фильтрам"""
         return self.controller.filter_orders(**filters)

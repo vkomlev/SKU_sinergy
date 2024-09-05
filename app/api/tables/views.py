@@ -17,18 +17,18 @@ def get_import_DBS_delivery_view():
 
     sort_params = {key: value for key, value in request.args.items() if key.startswith('sort_by')}
 
-    #filters = request.args.get('filters', default='{}', type=str)
-    #filters_dict = json.loads(filters)
+    filters = request.args.get('filters', default='{}', type=str)
+    filters_dict = json.loads(filters)
 #
-    #deliveries = delivery_service.search_orders(filters=filters_dict)
+    delivery_service.filter(filters=filters_dict)
     
     if sort_params:
         # Применяем сортировку, а затем пагинацию
-        deliveries = delivery_service.get_with_sorting(**sort_params)
+        delivery_service.sort(**sort_params)
         # Пагинация вручную для отфильтрованных данных
         start = (page - 1) * size
         end = start + size
-        deliveries = deliveries[start:end]
+        deliveries = delivery_service.get_with_pagination(page, size)
     else:
         # Применяем только пагинацию
         deliveries = delivery_service.get_with_pagination(page, size)
