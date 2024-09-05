@@ -4,11 +4,16 @@ class BaseService:
     def __init__(self, controller):
         self.controller = controller
 
-    def get_with_pagination(self, page, per_page):
+    def get_with_pagination(self, page, size):
         """Получить данные с пагинацией"""
-        offset = (page - 1) * per_page
-        return self.controller.get_page(offset, per_page)
+        offset = (page - 1) * size
+        limit = size
+        return self.controller.get_page(offset, limit)
 
-    def get_with_sorting(self, **kwargs):
+    def sort(self, **kwargs):
         """Получить данные с сортировкой"""
         return self.controller.sort(**kwargs)
+    
+    def filter(self, **filters):
+        """Получить данные по фильтрам"""
+        return self.controller.filter_orders(**filters)

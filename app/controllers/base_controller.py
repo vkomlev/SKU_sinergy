@@ -12,11 +12,13 @@ class BaseController:
         """Сортировка"""
         return self.repo.sort_by_fields(**kwargs)
 
-
     def get_by_id(self, entity_id):
         """Получить запись по ID"""
         return self.repo.get_by_id(entity_id)
     
+    def filter_orders(self, **filters):
+        return self.repo.filter_by_fields(**filters)
+
     @classmethod
     def to_dict(self, obj):
         """Преобразует объект модели в словарь"""
