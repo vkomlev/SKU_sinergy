@@ -1,8 +1,10 @@
 #app/api/tables/views.py
 
 import json
-from flask import render_template, request, jsonify
+from flask import request, jsonify
+
 from app.utils.helpers import get_session
+
 from app.services.import_DBS_delivery_service import ImportDBSDeliveryService
 from app.model_import import DBSDelivery
 from app.api.tables.serializers import UniversalSerializer
@@ -44,3 +46,11 @@ def get_import_DBS_delivery_view():
     }
 
     return jsonify(json_data)
+
+############################
+
+def get_metadata_view():
+    session = get_session()
+    service = ImportDBSDeliveryService(session)
+    metadata = service.get_table_metadata()
+    return jsonify(metadata)

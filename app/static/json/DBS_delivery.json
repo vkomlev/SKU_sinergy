@@ -1,0 +1,130 @@
+{
+  "columns": [
+    {
+      "name": "id_dbs",
+      "type": "integer",
+      "visible": false,
+      "label": "ID записи"
+    },
+    {
+      "name": "marketplace",
+      "type": "string",
+      "visible": true,
+      "label": "Маркетплейс"
+    },
+    {
+      "name": "partner",
+      "type": "string",
+      "visible": true,
+      "label": "Партнер"
+    },
+    {
+      "name": "assembly_task",
+      "type": "string",
+      "visible": true,
+      "label": "Задача сборки"
+    },
+    {
+      "name": "sku",
+      "type": "string",
+      "visible": true,
+      "label": "SKU"
+    },
+    {
+      "name": "product_name",
+      "type": "string",
+      "visible": true,
+      "label": "Название продукта"
+    },
+    {
+      "name": "delivery_date_planned",
+      "type": "string",
+      "visible": true,
+      "label": "Планируемая дата доставки"
+    },
+    {
+      "name": "delivery_date_actual",
+      "type": "string",
+      "visible": true,
+      "label": "Фактическая дата доставки"
+    },
+    {
+      "name": "delivery_time",
+      "type": "string",
+      "visible": true,
+      "label": "Время доставки"
+    },
+    {
+      "name": "delivery_address",
+      "type": "string",
+      "visible": true,
+      "label": "Адрес доставки"
+    },
+    {
+      "name": "client_name",
+      "type": "string",
+      "visible": true,
+      "label": "Имя клиента"
+    },
+    {
+      "name": "climb",
+      "type": "string",
+      "visible": true,
+      "label": "Подъем"
+    },
+    {
+      "name": "status",
+      "type": "string",
+      "visible": true,
+      "label": "Статус"
+    },
+    {
+      "name": "delivery_man",
+      "type": "string",
+      "visible": true,
+      "label": "Доставщик"
+    },
+    {
+      "name": "distance",
+      "type": "string",
+      "visible": true,
+      "label": "Дистанция"
+    },
+    {
+      "name": "cost",
+      "type": "integer",
+      "visible": true,
+      "label": "Стоимость"
+    },
+    {
+      "name": "payment_status",
+      "type": "string",
+      "visible": true,
+      "label": "Статус оплаты"
+    },
+    {
+      "name": "compensation",
+      "type": "string",
+      "visible": true,
+      "label": "Компенсация"
+    },
+    {
+      "name": "note",
+      "type": "string",
+      "visible": true,
+      "label": "Примечание"
+    },
+    {
+      "name": "delivery_date_actual_finished",
+      "type": "date",
+      "visible": true,
+      "label": "Фактическая дата завершения"
+    },
+    {
+      "name": "delivery_date_plan_finished",
+      "type": "date",
+      "visible": true,
+      "label": "Планируемая дата завершения"
+    }
+  ]
+}
