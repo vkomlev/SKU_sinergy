@@ -4,6 +4,10 @@ class BaseController:
     def __init__(self, repository):
         self.repo = repository
 
+    def get_combined_metadata(self):
+        """Получить комбинированные метаданные"""
+        return self.repo.get_table_metadata()
+
     def get_page(self, offset, limit):
         """Получить страницу записей"""
         return self.repo.get_page(offset, limit)
@@ -17,6 +21,7 @@ class BaseController:
         return self.repo.get_by_id(entity_id)
     
     def filter_orders(self, **filters):
+        """Получить отфильтрованные заказы"""
         return self.repo.filter_by_fields(**filters)
 
     @classmethod

@@ -2,6 +2,9 @@
 
 from sqlalchemy.orm import Session
 from app.model_import import DBSDelivery
+from sqlalchemy.inspection import inspect
+from app.utils.metadata import MetadataManager
+
 
 class BaseRepository:
     def __init__(self, model, session: Session):
@@ -9,6 +12,7 @@ class BaseRepository:
         self.model = model
         self.session = session
         self.__temp_query = None
+        self.metadata_manager = MetadataManager()
 
     def add(self, entity):
         """Добавить запись"""
@@ -88,3 +92,48 @@ class BaseRepository:
         for key, value in kwargs.items():
             query = query.filter(getattr(self.model, key) == value)
         return query.all()
+    
+    def get_table_metadata(self):
+        """Получить комбинированные метаданные таблицы"""
+        inspector = inspect(self.model)
+        table_name = self.model.__tablename__
+
+        columns_info = []
+
+        for column in inspector.columns: #cтолбцы таблицы из бд
+            column_info = {
+                'name':column.name,
+                'type':str(column.type),
+                'primary_key':column.primary_key,
+                'foreign_key': None
+            }
+
+            if column.foreign_keys: #внешние ключи
+                for fk in column.foreing_keys:
+                    column_info['foreign_key'] = {
+                        'target_table': fk.column.table.name,
+                        'target_column': fk.column.name
+                    }
+            
+            columns_info.append(column_info) #добавление столбцов из бд
+
+        db_metadata = {"table_name":self.model.__tablename__,
+                       "columns": columns_info}
+
+        table_name = db_metadata['table_name']
+        json_metadata = self.metadata_manager.get_metadata(table_name)
+        json_columns_map = {column['name']:column for column in json_metadata.get('columns', [])}
+
+        combined_columns = [] #объединение метаданных из бд и json
+
+        for db_column in db_metadata['columns']:
+            json_column = json_columns_map.get(db_column['name'], {})
+            combined_column = db_column | json_column #объединение
+            combined_columns.append(combined_column)
+
+        combined_metadata = {
+            "table_name": table_name,
+            "columns": combined_columns
+        }
+        
+        return combined_metadata
