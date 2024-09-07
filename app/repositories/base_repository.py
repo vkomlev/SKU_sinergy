@@ -1,6 +1,7 @@
 # app/repositories/base_repository.py
 
 from sqlalchemy.orm import Session
+from sqlalchemy import or_
 from app.model_import import DBSDelivery
 from sqlalchemy.inspection import inspect
 from app.utils.metadata import MetadataManager
@@ -124,11 +125,11 @@ class BaseRepository:
         json_metadata = self.metadata_manager.get_metadata(table_name)
         json_columns_map = {column['name']:column for column in json_metadata.get('columns', [])}
 
-        combined_columns = [] #объединение метаданных из бд и json
+        combined_columns = [] 
 
-        for db_column in db_metadata['columns']:
+        for db_column in db_metadata['columns']: #объединение метаданных из бд и json
             json_column = json_columns_map.get(db_column['name'], {})
-            combined_column = db_column | json_column #объединение
+            combined_column = db_column | json_column
             combined_columns.append(combined_column)
 
         combined_metadata = {
@@ -137,3 +138,15 @@ class BaseRepository:
         }
         
         return combined_metadata
+    
+    def search(self, query):
+        """Поиск по строке query"""
+        if not query: #Если параметр не задан, возвращается пустой список
+            return []
+        
+        columns = self.model.__table__.columns
+        
+        param_check = [column.ilike(f"%{query}%") for column in columns if column.type.python_type == str] #поиск по параметру
+        results = self.session.query(self.model).filter(or_(*param_check)).all() #фильтрует заказы по условию
+        return results
+    
