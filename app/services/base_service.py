@@ -26,3 +26,7 @@ class BaseService:
     def get_table_metadata(self):
         """Получить метаданные таблицы"""
         return self.controller.get_combined_metadata()
+    
+    def search(self, query):
+        """Поиск по строке"""
+        return self.controller.search(query)

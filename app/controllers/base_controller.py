@@ -24,6 +24,10 @@ class BaseController:
         """Получить отфильтрованные заказы"""
         return self.repo.filter_by_fields(**filters)
 
+    def search(self, query):
+        """Поиск по строке"""
+        return self.repo.search(query)
+
     @classmethod
     def to_dict(self, obj):
         """Преобразует объект модели в словарь"""

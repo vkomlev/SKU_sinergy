@@ -47,10 +47,22 @@ def get_import_DBS_delivery_view():
 
     return jsonify(json_data)
 
-############################
-
 def get_metadata_view():
     session = get_session()
     service = ImportDBSDeliveryService(session)
     metadata = service.get_table_metadata()
     return jsonify(metadata)
+
+def search():
+    session = get_session()
+    service = ImportDBSDeliveryService(session)
+    query = request.args.get('query', default = '', type= str)
+
+    results = service.search(query)
+    total = len(results) #подсчет записей
+
+    serialized_results = UniversalSerializer(DBSDelivery,many=True).dump(results) # Сереализатор для преобразования результатов в JSON
+    query_results = {"total":total, 
+                     "results": serialized_results}
+
+    return jsonify(query_results)
