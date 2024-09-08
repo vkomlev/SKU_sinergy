@@ -97,11 +97,9 @@ class BaseRepository:
     def get_table_metadata(self):
         """Получить комбинированные метаданные таблицы"""
         inspector = inspect(self.model)
-        table_name = self.model.__tablename__
-
         columns_info = []
 
-        for column in inspector.columns: #cтолбцы таблицы из бд
+        for column in inspector.columns: # Столбцы таблицы из БД
             column_info = {
                 'name':column.name,
                 'type':str(column.type),
@@ -109,35 +107,19 @@ class BaseRepository:
                 'foreign_key': None
             }
 
-            if column.foreign_keys: #внешние ключи
+            if column.foreign_keys: # Внешние ключи
                 for fk in column.foreing_keys:
                     column_info['foreign_key'] = {
                         'target_table': fk.column.table.name,
                         'target_column': fk.column.name
                     }
             
-            columns_info.append(column_info) #добавление столбцов из бд
+            columns_info.append(column_info) # Добавление столбцов из БД
 
         db_metadata = {"table_name":self.model.__tablename__,
                        "columns": columns_info}
 
-        table_name = db_metadata['table_name']
-        json_metadata = self.metadata_manager.get_metadata(table_name)
-        json_columns_map = {column['name']:column for column in json_metadata.get('columns', [])}
-
-        combined_columns = [] 
-
-        for db_column in db_metadata['columns']: #объединение метаданных из бд и json
-            json_column = json_columns_map.get(db_column['name'], {})
-            combined_column = db_column | json_column
-            combined_columns.append(combined_column)
-
-        combined_metadata = {
-            "table_name": table_name,
-            "columns": combined_columns
-        }
-        
-        return combined_metadata
+        return db_metadata # Возвращаем метаданные только из БД
     
     def search(self, query):
         """Поиск по строке query"""
