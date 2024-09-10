@@ -4,13 +4,23 @@
       "name": "id_dbs",
       "type": "integer",
       "visible": false,
-      "label": "ID записи"
+      "label": "ID записи",
+      "mappings": {
+        "DBSDelivery" : "код",
+        "transformation" : "skip"
+
+      }
     },
     {
       "name": "marketplace",
       "type": "string",
       "visible": true,
-      "label": "Маркетплейс"
+      "label": "Маркетплейс",
+      "mappings": {
+        "DBSDelivery" : "Маркетплейс",
+        "transformation" : "direct"
+
+      }
     },
     {
       "name": "partner",
@@ -40,7 +50,12 @@
       "name": "delivery_date_planned",
       "type": "string",
       "visible": true,
-      "label": "Планируемая дата доставки"
+      "label": "Планируемая дата доставки",
+      "mappings": {
+        "DBSDelivery" : "Планируемая дата доставки",
+        "transformation" : "get_data_begin"
+
+      }
     },
     {
       "name": "delivery_date_actual",

@@ -26,8 +26,10 @@ class BaseRepository:
         self.session.delete(entity)
         self.session.commit()
 
-    def update(self):
+    def update(self, entity):
         """Обновить запись"""
+        if not self.session.object_session(entity):
+                self.session.merge(entity)
         self.session.commit()
 
     def get_all(self):
