@@ -165,3 +165,8 @@ settings.py
 SKU_sinergy-1.code-workspace
 gunicorn.service
 backups/sku.dump
+
+test_api.py
+run_debug.py
+run.py
+.vscode/settings.json

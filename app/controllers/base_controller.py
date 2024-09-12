@@ -1,6 +1,8 @@
 # app/controllers/base_controller.py
 
 from app.utils.metadata import MetadataManager
+from app.repositories.base_repository import BaseRepository
+from sqlalchemy.inspection import inspect
 
 class BaseController:
     def __init__(self, repository):
@@ -50,7 +52,48 @@ class BaseController:
         """Поиск по строке"""
         return self.repo.search(query)
 
-    @classmethod
+    def create_record(self, data, table):
+        """Создать новую запись"""
+        data = self.from_dict (table, data)
+        return self.repo.add(data)
+
+    def update_record(self, record_id, data):
+        """Обновить существующую запись"""
+        record = self.repo.get_by_id(record_id)
+        if record:
+            return self.repo.update(record, data)
+        return None
+
+    def delete_record(self, record_id):
+        """Удалить запись"""
+        record = self.repo.get_by_id(record_id)
+        if record:
+            self.repo.delete(record)
+            return True
+        return False
+    
+    @staticmethod
     def to_dict(self, obj):
         """Преобразует объект модели в словарь"""
         return {column.name: getattr(obj, column.name) for column in obj.__table__.columns}
+    
+    def from_dict(self, table_name: str, data: dict):
+        """
+        Универсальный метод для создания экземпляра модели на основе названия таблицы и данных.
+        """
+        # Получаем класс модели по имени таблицы
+        model_class = BaseRepository.get_model_by_table_name(table_name)
+
+        # Создаем пустой экземпляр модели
+        model_instance = model_class()
+
+        # Получаем список всех колонок модели
+        mapper = inspect(model_class)
+
+        # Заполняем поля модели значениями из словаря data
+        for column in mapper.attrs:
+            column_name = column.key
+            if column_name in data:
+                setattr(model_instance, column_name, data[column_name])
+
+        return model_instance

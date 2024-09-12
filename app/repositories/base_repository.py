@@ -2,7 +2,7 @@
 
 from sqlalchemy.orm import Session
 from sqlalchemy import or_
-from app.model_import import DBSDelivery
+from app.model_registry import get_model_by_table_name
 from sqlalchemy.inspection import inspect
 from app.utils.metadata import MetadataManager
 
@@ -14,22 +14,30 @@ class BaseRepository:
         self.session = session
         self.__temp_query = None
         self.metadata_manager = MetadataManager()
+    
+    @staticmethod
+    def get_model_by_table_name(table_name: str):
+        """
+        Универсальный метод для поиска класса модели по имени таблицы с использованием рефлексии.
+        """
+        return get_model_by_table_name(table_name)
 
     def add(self, entity):
         """Добавить запись"""
         self.session.add(entity)
         self.session.commit()
         return entity
-
+    
+    def update(self, entity, data):
+        """Обновить запись"""
+        for key, value in data.items():
+            setattr(entity, key, value)
+        self.session.commit()
+        return entity
+    
     def delete(self, entity):
         """Удалить запись"""
         self.session.delete(entity)
-        self.session.commit()
-
-    def update(self, entity):
-        """Обновить запись"""
-        if not self.session.object_session(entity):
-                self.session.merge(entity)
         self.session.commit()
 
     def get_all(self):
@@ -44,7 +52,6 @@ class BaseRepository:
         """Получить название первичного ключа для модели"""
         primary_key_column = self.model.__table__.primary_key.columns.keys()[0]
         return primary_key_column
-        #return self.model.__table__.primary_key.columns.keys()[0]
     
     def __get_query(self):
         if self.__temp_query:
@@ -58,7 +65,6 @@ class BaseRepository:
     def get_page_count(self, limit):
         """Получить количество страниц"""
         return (self.get_count() + limit - 1) // limit
-
 
     def get_page(self, offset, limit):
         query = self.__get_query()

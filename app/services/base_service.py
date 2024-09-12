@@ -30,3 +30,15 @@ class BaseService:
     def search(self, query):
         """Поиск по строке"""
         return self.controller.search(query)
+    
+    def create_data(self, data, table):
+        """Создать данные"""
+        return self.controller.create_record(data, table)
+
+    def update_data(self, record_id, data):
+        """Обновить данные"""
+        return self.controller.update_record(record_id, data)
+
+    def delete_data(self, record_id):
+        """Удалить данные"""
+        return self.controller.delete_record(record_id)
