@@ -10,13 +10,20 @@ const useTableData = (tableName, isMock = false) => {
   const [page, setPage] = useState(1);
   const [size, setSize] = useState(20);
   const [sortBy, setSortBy] = useState([]);  // Массив сортировок
-  const [filters, setFilters] = useState({}); // Фильтры
+  const [filters, setFilters] = useState([]); // Инициализируем как массив
 
+  // Функция для получения данных
   const fetchData = async () => {
     setLoading(true);  // Начинаем загрузку
     try {
+      // Преобразование фильтров в формат для API
+      const formattedFilters = filters.reduce((acc, filter) => {
+        acc[filter.column] = filter.value;
+        return acc;
+      }, {});
+
       // Загружаем данные из API
-      const tableData = await fetchTableData(tableName, page, size, sortBy, filters);
+      const tableData = await fetchTableData(tableName, page, size, sortBy, formattedFilters);
       
       // Загружаем метаданные из mock
       const mockMetadata = await fetchMockMetadata();
@@ -32,6 +39,7 @@ const useTableData = (tableName, isMock = false) => {
     }
   };
 
+  // Вызываем fetchData при изменении страницы, размера, сортировки или фильтров
   useEffect(() => {
     fetchData();
   }, [page, size, sortBy, filters]);

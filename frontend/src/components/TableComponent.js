@@ -1,10 +1,11 @@
 import React from 'react';
-import FilterComponent from './FilterComponent';
+import DropFilterMenuComponent from './DropFilterMenuComponent';
 import PaginationComponent from './PaginationComponent';
 import SearchComponent from './SearchComponent';
-import SortComponent from './SortComponent';
+import './styles/TableComponent.css';
 
 const TableComponent = ({ data, metadata, page, setPage, size, setSize, total, sortBy, setSortBy, filters, setFilters }) => {
+
   // Проверка на наличие метаданных и данных
   if (!metadata || !metadata.columns) {
     return <div>Загрузка данных...</div>;
@@ -16,34 +17,46 @@ const TableComponent = ({ data, metadata, page, setPage, size, setSize, total, s
 
   return (
     <div>
-      {/* Компонент поиска */}
-      <SearchComponent setFilters={setFilters} />
+      <header>
+        <div className="wrap-logo">
+          <a>ГК Синергия</a>
+        </div>
+        <div>
+          <SearchComponent setFilters={setFilters} />
+        </div>
+        <nav>
+          <a>Добавить</a>
+        </nav>
+      </header>
 
-      {/* Компонент фильтрации */}
-      <FilterComponent filters={filters} setFilters={setFilters} columns={metadata.columns} />
-
-      {/* Компонент сортировки */}
-      <SortComponent sortBy={sortBy} setSortBy={setSortBy} columns={metadata.columns} />
+      {/* Компонент меню фильтрации */}
+      <DropFilterMenuComponent
+        columns={metadata.columns}
+        filters={filters}
+        setFilters={setFilters}
+      />
 
       {/* Таблица с данными */}
-      <table>
-        <thead>
-          <tr>
-            {metadata.columns.map(column => (
-              column.visible && <th key={column.name}>{column.label}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {data.map(row => (
-            <tr key={row.id_dbs}>
+      <div className='big-table'>
+        <table className='table'>
+          <thead>
+            <tr>
               {metadata.columns.map(column => (
-                column.visible && <td key={column.name}>{row[column.name]}</td>
+                column.visible && <th key={column.name}>{column.label}</th>
               ))}
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {data.map(row => (
+              <tr key={row.id_dbs}>
+                {metadata.columns.map(column => (
+                  column.visible && <td key={column.name}>{row[column.name]}</td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
       {/* Компонент пагинации */}
       <PaginationComponent
