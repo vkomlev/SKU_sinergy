@@ -1,37 +1,38 @@
 import React from 'react';
 
 const SortComponent = ({ sortBy, setSortBy, columns }) => {
+
+  // Функция для обработки кликов по заголовкам столбцов
   const handleSortChange = (column) => {
     const existingSort = sortBy.find(sort => sort.field === column.name);
-    if (existingSort) {
-      const newOrder = existingSort.order === 'asc' ? 'desc' : 'asc';
-      setSortBy(
-        sortBy.map(sort =>
-          sort.field === column.name ? { ...sort, order: newOrder } : sort
-        )
-      );
+
+    if (!existingSort) {
+      // Если сортировки по этому столбцу нет — сортируем по возрастанию
+      setSortBy([{ field: column.name, order: 'asc' }]);
+    } else if (existingSort.order === 'asc') {
+      // Если сортировка по возрастанию — переключаем на убывание
+      setSortBy([{ field: column.name, order: 'desc' }]);
     } else {
-      setSortBy([...sortBy, { field: column.name, order: 'asc' }]);
+      // Если сортировка по убыванию — удаляем сортировку
+      setSortBy([]);
     }
   };
 
-  const resetSort = () => {
-    setSortBy([]);  // Сбрасываем сортировку
+  // Функция для получения иконки сортировки
+  const getSortIcon = (column) => {
+    const existingSort = sortBy.find(sort => sort.field === column.name);
+    if (!existingSort) return null;
+    return existingSort.order === 'asc' ? '▲' : '▼'; // Иконки для сортировки
   };
 
   return (
-    <div>
+    <>
       {columns.map(column => (
-        <button key={column.name} onClick={() => handleSortChange(column)}>
-          {column.label} ({sortBy.find(sort => sort.field === column.name)?.order || 'none'})
-        </button>
+        <th key={column.name} onClick={() => handleSortChange(column)}>
+          {column.label} {getSortIcon(column)} {/* Отображаем значок сортировки */}
+        </th>
       ))}
-
-      {/* Кнопка сброса сортировки */}
-      <button onClick={resetSort} style={{ marginLeft: '10px' }}>
-        Сбросить сортировку
-      </button>
-    </div>
+    </>
   );
 };
 

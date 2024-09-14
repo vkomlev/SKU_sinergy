@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { fetchTableData } from '../services/api';
-import { fetchMockMetadata } from '../services/mockService';
+import { fetchTableData, fetchTableMetadata } from '../services/api';  // Обновим импорт
+// Удаляем mockService, так как mock данные больше не нужны
 
-const useTableData = (tableName, isMock = false) => {
+const useTableData = (tableName) => {
   const [data, setData] = useState([]);
   const [metadata, setMetadata] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -16,21 +16,21 @@ const useTableData = (tableName, isMock = false) => {
   const fetchData = async () => {
     setLoading(true);  // Начинаем загрузку
     try {
-      // Преобразование фильтров в формат для API
+      // Преобразуем фильтры в нужный формат для API
       const formattedFilters = filters.reduce((acc, filter) => {
         acc[filter.column] = filter.value;
         return acc;
       }, {});
 
-      // Загружаем данные из API
-      const tableData = await fetchTableData(tableName, page, size, sortBy, formattedFilters);
+      // Загружаем данные и метаданные из API
+      const [tableData, tableMetadata] = await Promise.all([
+        fetchTableData(tableName, page, size, sortBy, formattedFilters),
+        fetchTableMetadata(tableName)  // Получаем метаданные
+      ]);
       
-      // Загружаем метаданные из mock
-      const mockMetadata = await fetchMockMetadata();
-      
-      // Устанавливаем полученные данные
+      // Устанавливаем полученные данные и метаданные
       setData(tableData.data || []);
-      setMetadata(mockMetadata || null);  // Метаданные из mock файла
+      setMetadata(tableMetadata || null);  // Метаданные из API
       setLoading(false);  // Завершаем загрузку
     } catch (err) {
       setError(err);

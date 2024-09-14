@@ -2,6 +2,7 @@ import React from 'react';
 import DropFilterMenuComponent from './DropFilterMenuComponent';
 import PaginationComponent from './PaginationComponent';
 import SearchComponent from './SearchComponent';
+import SortComponent from './SortComponent';  // Импортируем компонент сортировки
 import './styles/TableComponent.css';
 
 const TableComponent = ({ data, metadata, page, setPage, size, setSize, total, sortBy, setSortBy, filters, setFilters }) => {
@@ -41,9 +42,11 @@ const TableComponent = ({ data, metadata, page, setPage, size, setSize, total, s
         <table className='table'>
           <thead>
             <tr>
-              {metadata.columns.map(column => (
-                column.visible && <th key={column.name}>{column.label}</th>
-              ))}
+              <SortComponent
+                sortBy={sortBy}
+                setSortBy={setSortBy}
+                columns={metadata.columns}
+              />
             </tr>
           </thead>
           <tbody>

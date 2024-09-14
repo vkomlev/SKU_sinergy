@@ -2,6 +2,7 @@ import axios from 'axios';
 
 const API_URL = 'http://localhost:5000/api/tables';  // Относительный путь
 
+// Функция для получения данных таблицы
 export const fetchTableData = async (tableName, page = 1, size = 20, sortBy = [], filters = {}) => {
   // Преобразование массива сортировок в параметры вида sort_by1, sort_by2 и т.д.
   const sortParams = sortBy.reduce((acc, sortField, index) => {
@@ -22,4 +23,10 @@ export const fetchTableData = async (tableName, page = 1, size = 20, sortBy = []
   });
 
   return response.data;  // Ожидаем, что сервер возвращает объект { data: [], total: ... }
+};
+
+// Функция для получения метаданных таблицы
+export const fetchTableMetadata = async (tableName) => {
+  const response = await axios.get(`${API_URL}/${tableName}/metadata`);
+  return response.data;  // Ожидаем объект с метаданными
 };
