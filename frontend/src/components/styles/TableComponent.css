@@ -24,7 +24,12 @@
 	background: #F2F8F8;
 	border: 5px solid #F2F8F8;
 	border-bottom: 5px solid #F2F8F8;
+  cursor: pointer;  /* Добавляем смену курсора */
 }
+.table th:hover {
+  background-color: #e0f7fa;  /* Легкое выделение при наведении */
+}
+
 .table td {
 	padding: 5px;
 	border: 5px solid #F2F8F8;

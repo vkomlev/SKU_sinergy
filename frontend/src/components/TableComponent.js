@@ -1,13 +1,11 @@
 import React from 'react';
 import DropFilterMenuComponent from './DropFilterMenuComponent';
 import PaginationComponent from './PaginationComponent';
-import SearchComponent from './SearchComponent';
+import SearchComponent from './SearchComponent';  // Импортируем компонент поиска
 import SortComponent from './SortComponent';  // Импортируем компонент сортировки
 import './styles/TableComponent.css';
 
-const TableComponent = ({ data, metadata, page, setPage, size, setSize, total, sortBy, setSortBy, filters, setFilters }) => {
-
-  // Проверка на наличие метаданных и данных
+const TableComponent = ({ data, metadata, page, setPage, size, setSize, total, sortBy, setSortBy, filters, setFilters, query, setQuery }) => {
   if (!metadata || !metadata.columns) {
     return <div>Загрузка данных...</div>;
   }
@@ -23,7 +21,7 @@ const TableComponent = ({ data, metadata, page, setPage, size, setSize, total, s
           <a>ГК Синергия</a>
         </div>
         <div>
-          <SearchComponent setFilters={setFilters} />
+          <SearchComponent setQuery={setQuery} />  {/* Передаем setQuery для управления поиском */}
         </div>
         <nav>
           <a>Добавить</a>

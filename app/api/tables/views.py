@@ -63,7 +63,7 @@ def search():
 
     serialized_results = UniversalSerializer(DBSDelivery, many=True).dump(results) # Сереализатор для преобразования результатов в JSON
     query_results = {"total":total, 
-                     "results": serialized_results}
+                     "data": serialized_results}
     return jsonify(query_results)
 
 def create_record(table_name):
