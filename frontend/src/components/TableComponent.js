@@ -1,11 +1,11 @@
 import React from 'react';
-import FilterComponent from './FilterComponent';
+import DropFilterMenuComponent from './DropFilterMenuComponent';
 import PaginationComponent from './PaginationComponent';
-import SearchComponent from './SearchComponent';
-import SortComponent from './SortComponent';
+import SearchComponent from './SearchComponent';  // Импортируем компонент поиска
+import SortComponent from './SortComponent';  // Импортируем компонент сортировки
+import './styles/TableComponent.css';
 
-const TableComponent = ({ data, metadata, page, setPage, size, setSize, total, sortBy, setSortBy, filters, setFilters }) => {
-  // Проверка на наличие метаданных и данных
+const TableComponent = ({ data, metadata, page, setPage, size, setSize, total, sortBy, setSortBy, filters, setFilters, query, setQuery }) => {
   if (!metadata || !metadata.columns) {
     return <div>Загрузка данных...</div>;
   }
@@ -14,36 +14,61 @@ const TableComponent = ({ data, metadata, page, setPage, size, setSize, total, s
     return <div>Нет данных для отображения</div>;
   }
 
+  // Фильтруем колонки по признаку visible
+  const visibleColumns = metadata.columns.filter(column => column.visible);
+  
   return (
     <div>
-      {/* Компонент поиска */}
-      <SearchComponent setFilters={setFilters} />
+      <header>
+        <div className="wrap-logo">
+          <a>ГК Синергия</a>
+        </div>
+        <div>
+          <SearchComponent setQuery={setQuery} />  {/* Передаем setQuery для управления поиском */}
+        </div>
+        <nav>
+          <a>Добавить</a>
+        </nav>
+      </header>
 
-      {/* Компонент фильтрации */}
-      <FilterComponent filters={filters} setFilters={setFilters} columns={metadata.columns} />
-
-      {/* Компонент сортировки */}
-      <SortComponent sortBy={sortBy} setSortBy={setSortBy} columns={metadata.columns} />
+      {/* Компонент меню фильтрации */}
+      <DropFilterMenuComponent
+        columns={metadata.columns}
+        filters={filters}
+        setFilters={setFilters}
+      />
 
       {/* Таблица с данными */}
-      <table>
+      <div className='big-table'>
+        <table className='table'>
         <thead>
-          <tr>
-            {metadata.columns.map(column => (
-              column.visible && <th key={column.name}>{column.label}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {data.map(row => (
-            <tr key={row.id_dbs}>
-              {metadata.columns.map(column => (
-                column.visible && <td key={column.name}>{row[column.name]}</td>
+            <tr>
+              {/* Рендерим заголовки для видимых столбцов */}
+              {visibleColumns.map(column => (
+                <th key={column.name}>
+                  <SortComponent
+                    sortBy={sortBy}
+                    setSortBy={setSortBy}
+                    columns={[column]}  // Передаем текущую колонку для сортировки
+                  />
+                </th>
               ))}
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {data.map((row, rowIndex) => (
+              <tr key={rowIndex}>
+                {/* Рендерим данные только для видимых столбцов */}
+                {visibleColumns.map(column => (
+                  <td key={column.name}>
+                    {row[column.name]}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
       {/* Компонент пагинации */}
       <PaginationComponent

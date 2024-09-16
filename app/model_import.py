@@ -2,6 +2,7 @@
 
 from sqlalchemy import Column, Integer, String, Float, DateTime, Date, Sequence
 from sqlalchemy.ext.declarative import declarative_base
+from app.model_registry import register_model
 
 Base = declarative_base()
 
@@ -9,7 +10,7 @@ class DBSDelivery(Base):
     __tablename__ = 'DBS_delivery'
     __table_args__ = {'schema': 'import'}  # Указание схемы
     
-    id_dbs = Column(Integer, Sequence('dbs_delivery_id_seq'), primary_key=True)
+    id_dbs = Column(Integer, autoincrement=True, primary_key=True)
     marketplace = Column(String)
     partner = Column(String)
     assembly_task = Column(String)
@@ -83,3 +84,6 @@ class OrdersOzon(Base):
     method_name = Column(String)
     weight = Column(Float)
     jewelry_barcode = Column(String)
+
+register_model(DBSDelivery)
+register_model(OrdersOzon)

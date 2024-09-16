@@ -1,24 +1,21 @@
 import React, { useState } from 'react';
 
-const SearchComponent = ({ setFilters }) => {
-  const [query, setQuery] = useState('');
+const SearchComponent = ({ setQuery }) => {  // Получаем setQuery из props
+  const [searchTerm, setSearchTerm] = useState('');
 
   const handleSearch = () => {
-    setFilters(prevFilters => ({
-      ...prevFilters,
-      globalSearch: query
-    }));
+    setQuery(searchTerm);  // Обновляем строку поиска
   };
 
   return (
-    <div>
+    <div className="search-container">
       <input
         type="text"
         placeholder="Поиск..."
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
       />
-      <button onClick={handleSearch}>Искать</button>
+      <button onClick={handleSearch}>Поиск</button>
     </div>
   );
 };

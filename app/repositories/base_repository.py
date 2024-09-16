@@ -1,7 +1,8 @@
 # app/repositories/base_repository.py
 
 from sqlalchemy.orm import Session
-from app.model_import import DBSDelivery
+from sqlalchemy import or_
+from app.model_registry import get_model_by_table_name
 from sqlalchemy.inspection import inspect
 from app.utils.metadata import MetadataManager
 
@@ -13,20 +14,30 @@ class BaseRepository:
         self.session = session
         self.__temp_query = None
         self.metadata_manager = MetadataManager()
+    
+    @staticmethod
+    def get_model_by_table_name(table_name: str):
+        """
+        Универсальный метод для поиска класса модели по имени таблицы с использованием рефлексии.
+        """
+        return get_model_by_table_name(table_name)
 
     def add(self, entity):
         """Добавить запись"""
         self.session.add(entity)
         self.session.commit()
         return entity
-
+    
+    def update(self, entity, data):
+        """Обновить запись"""
+        for key, value in data.items():
+            setattr(entity, key, value)
+        self.session.commit()
+        return entity
+    
     def delete(self, entity):
         """Удалить запись"""
         self.session.delete(entity)
-        self.session.commit()
-
-    def update(self):
-        """Обновить запись"""
         self.session.commit()
 
     def get_all(self):
@@ -41,7 +52,6 @@ class BaseRepository:
         """Получить название первичного ключа для модели"""
         primary_key_column = self.model.__table__.primary_key.columns.keys()[0]
         return primary_key_column
-        #return self.model.__table__.primary_key.columns.keys()[0]
     
     def __get_query(self):
         if self.__temp_query:
@@ -55,7 +65,6 @@ class BaseRepository:
     def get_page_count(self, limit):
         """Получить количество страниц"""
         return (self.get_count() + limit - 1) // limit
-
 
     def get_page(self, offset, limit):
         query = self.__get_query()
@@ -96,11 +105,9 @@ class BaseRepository:
     def get_table_metadata(self):
         """Получить комбинированные метаданные таблицы"""
         inspector = inspect(self.model)
-        table_name = self.model.__tablename__
-
         columns_info = []
 
-        for column in inspector.columns: #cтолбцы таблицы из бд
+        for column in inspector.columns: # Столбцы таблицы из БД
             column_info = {
                 'name':column.name,
                 'type':str(column.type),
@@ -108,32 +115,28 @@ class BaseRepository:
                 'foreign_key': None
             }
 
-            if column.foreign_keys: #внешние ключи
+            if column.foreign_keys: # Внешние ключи
                 for fk in column.foreing_keys:
                     column_info['foreign_key'] = {
                         'target_table': fk.column.table.name,
                         'target_column': fk.column.name
                     }
             
-            columns_info.append(column_info) #добавление столбцов из бд
+            columns_info.append(column_info) # Добавление столбцов из БД
 
         db_metadata = {"table_name":self.model.__tablename__,
                        "columns": columns_info}
 
-        table_name = db_metadata['table_name']
-        json_metadata = self.metadata_manager.get_metadata(table_name)
-        json_columns_map = {column['name']:column for column in json_metadata.get('columns', [])}
-
-        combined_columns = [] #объединение метаданных из бд и json
-
-        for db_column in db_metadata['columns']:
-            json_column = json_columns_map.get(db_column['name'], {})
-            combined_column = db_column | json_column #объединение
-            combined_columns.append(combined_column)
-
-        combined_metadata = {
-            "table_name": table_name,
-            "columns": combined_columns
-        }
+        return db_metadata # Возвращаем метаданные только из БД
+    
+    def search(self, query):
+        """Поиск по строке query"""
+        if not query: #Если параметр не задан, возвращается пустой список
+            return []
         
-        return combined_metadata
+        columns = self.model.__table__.columns
+        
+        param_check = [column.ilike(f"%{query}%") for column in columns if column.type.python_type == str] #поиск по параметру
+        results = self.session.query(self.model).filter(or_(*param_check)).all() #фильтрует заказы по условию
+        return results
+    

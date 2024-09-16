@@ -1,7 +1,7 @@
 #app/api/tables/views.py
 
 import json
-from flask import request, jsonify
+from flask import request, jsonify, abort
 
 from app.utils.helpers import get_session
 
@@ -47,10 +47,57 @@ def get_import_DBS_delivery_view():
 
     return jsonify(json_data)
 
-############################
-
 def get_metadata_view():
     session = get_session()
     service = ImportDBSDeliveryService(session)
     metadata = service.get_table_metadata()
     return jsonify(metadata)
+
+def search():
+    session = get_session()
+    service = ImportDBSDeliveryService(session)
+    query = request.args.get('query', default = '', type= str)
+
+    results = service.search(query)
+    total = len(results) #подсчет записей
+
+    serialized_results = UniversalSerializer(DBSDelivery, many=True).dump(results) # Сереализатор для преобразования результатов в JSON
+    query_results = {"total":total, 
+                     "data": serialized_results}
+    return jsonify(query_results)
+
+def create_record(table_name):
+    session = get_session()
+    service = ImportDBSDeliveryService(session)
+    data = request.get_json()
+    #short_table_name = table_name.replace(table_name[:table_name.find('_')+1],'')
+    short_table_name = table_name.replace('_', '.', 1)
+    new_record = service.create_data(data, short_table_name)
+    if new_record:
+        return jsonify(UniversalSerializer(DBSDelivery).dump(new_record)), 201
+    else:
+        abort(404, description="Record not created")
+
+
+def update_record(table_name, record_id):
+    session = get_session()
+    service = ImportDBSDeliveryService(session)
+    data = request.get_json()
+    updated_record = service.update_data(record_id, data)
+    if updated_record:
+        return jsonify(UniversalSerializer(DBSDelivery).dump(updated_record)), 200
+    else:
+        abort(404, description="Record not found")
+
+
+def delete_record(table_name, record_id):
+    session = get_session()
+    service = ImportDBSDeliveryService(session)
+    result = service.delete_data(record_id)
+    if result:
+        return jsonify({
+            "status": "success",
+            "message": "Record deleted successfully."
+            }), 200
+    else:
+        abort(404, description="Record not found")

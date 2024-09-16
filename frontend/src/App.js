@@ -6,7 +6,7 @@ import useTableData from './hooks/useTableData';  // Хук для работы 
 
 const App = () => {
   // Получаем данные для таблицы Import_DBS_Delivery
-  const { data, metadata, page, setPage, size, setSize, total, sortBy, setSortBy, filters, setFilters } = useTableData('import_DBS_delivery', false); // false, потому что работаем с API, а не mock данными
+  const { data, metadata, page, setPage, size, setSize, total, sortBy, setSortBy, filters, setFilters, query,  setQuery} = useTableData('import_DBS_delivery'); // Загружаем данные с API
 
   return (
     <Router>
@@ -27,6 +27,8 @@ const App = () => {
               setSortBy={setSortBy}
               filters={filters}
               setFilters={setFilters}
+              query={query}
+              setQuery={setQuery}
             />
           }
         />

@@ -4,127 +4,163 @@
       "name": "id_dbs",
       "type": "integer",
       "visible": false,
-      "label": "ID записи"
+      "label": "ID записи",
+      "input_type": "number" ,
+      "mappings": {
+        "DBSDelivery" : "код",
+        "transformation" : "skip"
+
+      }
     },
     {
       "name": "marketplace",
       "type": "string",
       "visible": true,
-      "label": "Маркетплейс"
+      "label": "Маркетплейс",
+      "input_type": "text",
+      "mappings": {
+        "DBSDelivery" : "Маркетплейс",
+        "transformation" : "direct"
+
+      }
     },
     {
       "name": "partner",
       "type": "string",
       "visible": true,
-      "label": "Партнер"
+      "label": "Партнер",
+      "input_type": "text"
     },
     {
       "name": "assembly_task",
       "type": "string",
       "visible": true,
-      "label": "Задача сборки"
+      "label": "Задача сборки",
+      "input_type": "text"
     },
     {
       "name": "sku",
       "type": "string",
       "visible": true,
-      "label": "SKU"
+      "label": "Артикул",
+      "input_type": "text"
     },
     {
       "name": "product_name",
       "type": "string",
       "visible": true,
-      "label": "Название продукта"
+      "label": "Название продукта",
+      "input_type": "text"
     },
     {
       "name": "delivery_date_planned",
       "type": "string",
       "visible": true,
-      "label": "Планируемая дата доставки"
+      "label": "Планируемая дата доставки",
+      "input_type": "date",
+      "mappings": {
+        "DBSDelivery" : "Планируемая дата доставки",
+        "transformation" : "get_data_begin"
+
+      }
     },
     {
       "name": "delivery_date_actual",
       "type": "string",
       "visible": true,
-      "label": "Фактическая дата доставки"
+      "label": "Фактическая дата доставки",
+      "input_type": "date"
     },
     {
       "name": "delivery_time",
       "type": "string",
       "visible": true,
-      "label": "Время доставки"
+      "label": "Время доставки",
+      "input_type": "text"
     },
     {
       "name": "delivery_address",
       "type": "string",
       "visible": true,
-      "label": "Адрес доставки"
+      "label": "Адрес доставки",
+      "input_type": "text"
     },
     {
       "name": "client_name",
       "type": "string",
       "visible": true,
-      "label": "Имя клиента"
+      "label": "Имя клиента",
+      "input_type": "text"
     },
     {
       "name": "climb",
       "type": "string",
       "visible": true,
-      "label": "Подъем"
+      "label": "Подъем",
+      "input_type": "text"
     },
     {
       "name": "status",
       "type": "string",
       "visible": true,
-      "label": "Статус"
+      "label": "Статус",
+      "input_type": "text"
     },
     {
       "name": "delivery_man",
       "type": "string",
       "visible": true,
-      "label": "Доставщик"
+      "label": "Доставщик",
+      "input_type": "text"
     },
     {
       "name": "distance",
       "type": "string",
       "visible": true,
-      "label": "Дистанция"
+      "label": "Дистанция",
+      "input_type": "text"
     },
     {
       "name": "cost",
       "type": "integer",
       "visible": true,
-      "label": "Стоимость"
+      "label": "Стоимость",
+      "input_type": "number"
     },
     {
       "name": "payment_status",
       "type": "string",
       "visible": true,
-      "label": "Статус оплаты"
+      "label": "Статус оплаты",
+      "input_type": "text"
     },
     {
       "name": "compensation",
       "type": "string",
       "visible": true,
-      "label": "Компенсация"
+      "label": "Компенсация",
+      "input_type": "text"
     },
     {
       "name": "note",
       "type": "string",
       "visible": true,
-      "label": "Примечание"
+      "label": "Примечание",
+      "input_type": "text"
     },
     {
       "name": "delivery_date_actual_finished",
       "type": "date",
       "visible": true,
-      "label": "Фактическая дата завершения"
+      "label": "Фактическая дата завершения",
+      "input_type": "date"
     },
     {
       "name": "delivery_date_plan_finished",
       "type": "date",
       "visible": true,
-      "label": "Планируемая дата завершения"
+      "label": "Планируемая дата завершения",
+      "input_type": "date"
     }
   ]
 }
