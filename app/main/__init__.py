@@ -11,7 +11,7 @@ def create_app():
     # Разрешаем запросы с вашего frontend (localhost:3000)
     CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}})
     # Регистрация маршрутов для главной страницы, заказов и доставки
-    setup_routes(app)
+    #setup_routes(app)
 
     # Регистрация маршрутов API через Blueprint
     setup_my_routes(app)

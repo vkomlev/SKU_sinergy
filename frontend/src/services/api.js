@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api/tables';  // Относительный путь
+const API_URL = '/api/tables';  // Относительный путь
 
 export const fetchTableData = async (tableName, page = 1, size = 20, sortBy = [], filters = {}) => {
   // Преобразование массива сортировок в параметры вида sort_by1, sort_by2 и т.д.
