@@ -14,6 +14,9 @@ const TableComponent = ({ data, metadata, page, setPage, size, setSize, total, s
     return <div>Нет данных для отображения</div>;
   }
 
+  // Фильтруем колонки по признаку visible
+  const visibleColumns = metadata.columns.filter(column => column.visible);
+  
   return (
     <div>
       <header>
@@ -38,20 +41,28 @@ const TableComponent = ({ data, metadata, page, setPage, size, setSize, total, s
       {/* Таблица с данными */}
       <div className='big-table'>
         <table className='table'>
-          <thead>
+        <thead>
             <tr>
-              <SortComponent
-                sortBy={sortBy}
-                setSortBy={setSortBy}
-                columns={metadata.columns}
-              />
+              {/* Рендерим заголовки для видимых столбцов */}
+              {visibleColumns.map(column => (
+                <th key={column.name}>
+                  <SortComponent
+                    sortBy={sortBy}
+                    setSortBy={setSortBy}
+                    columns={[column]}  // Передаем текущую колонку для сортировки
+                  />
+                </th>
+              ))}
             </tr>
           </thead>
           <tbody>
-            {data.map(row => (
-              <tr key={row.id_dbs}>
-                {metadata.columns.map(column => (
-                  column.visible && <td key={column.name}>{row[column.name]}</td>
+            {data.map((row, rowIndex) => (
+              <tr key={rowIndex}>
+                {/* Рендерим данные только для видимых столбцов */}
+                {visibleColumns.map(column => (
+                  <td key={column.name}>
+                    {row[column.name]}
+                  </td>
                 ))}
               </tr>
             ))}
