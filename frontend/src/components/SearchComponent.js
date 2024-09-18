@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const SearchComponent = ({ setQuery }) => {  // Получаем setQuery из props
+const SearchComponent = React.memo(({ setQuery }) => {  // Получаем setQuery из props
   const [searchTerm, setSearchTerm] = useState('');
 
   const handleSearch = () => {
@@ -18,6 +18,6 @@ const SearchComponent = ({ setQuery }) => {  // Получаем setQuery из p
       <button onClick={handleSearch}>Поиск</button>
     </div>
   );
-};
+});
 
 export default SearchComponent;

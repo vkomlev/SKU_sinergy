@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const FilterComponent = ({ filters, setFilters, columns }) => {
+const FilterComponent = React.memo(({ filters, setFilters, columns }) => {
   const [localFilters, setLocalFilters] = useState(filters);
 
   const handleFilterChange = (e, column) => {
@@ -36,6 +36,6 @@ const FilterComponent = ({ filters, setFilters, columns }) => {
       <button onClick={resetFilters}>Сбросить фильтры</button>
     </div>
   );
-};
+});
 
 export default FilterComponent;

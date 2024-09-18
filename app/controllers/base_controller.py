@@ -35,6 +35,11 @@ class BaseController:
     def get_page(self, offset, limit):
         """Получить страницу записей"""
         return self.repo.get_page(offset, limit)
+    
+    def get_count(self):
+        """Получить количество записей"""
+        return self.repo.get_count()
+
 
     def sort (self, **kwargs):
         """Сортировка"""

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const DropFilterMenuComponent = ({ columns, filters, setFilters }) => {
+const DropFilterMenuComponent = React.memo(({ columns, filters, setFilters }) => {
   const [selectedColumn, setSelectedColumn] = useState('');
   const [filterValue, setFilterValue] = useState('');
 
@@ -74,6 +74,6 @@ const DropFilterMenuComponent = ({ columns, filters, setFilters }) => {
       </div>
     </div>
   );
-};
+});
 
 export default DropFilterMenuComponent;

@@ -2,11 +2,10 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import HomePage from './components/HomePage';
 import TableComponent from './components/TableComponent';
-import useTableData from './hooks/useTableData';  // Хук для работы с таблицей
+import useTableData from './hooks/useTableData';
 
 const App = () => {
-  // Получаем данные для таблицы Import_DBS_Delivery
-  const { data, metadata, page, setPage, size, setSize, total, sortBy, setSortBy, filters, setFilters, query,  setQuery} = useTableData('import_DBS_delivery'); // Загружаем данные с API
+  const { data, metadata, page, updatePage, size, setSize, total, sortBy, setSortBy, filters, setFilters, query, setQuery, loading } = useTableData('import_DBS_delivery');
 
   return (
     <Router>
@@ -19,7 +18,7 @@ const App = () => {
               data={data}
               metadata={metadata}
               page={page}
-              setPage={setPage}
+              setPage={updatePage}  // Передаем updatePage как setPage
               size={size}
               setSize={setSize}
               total={total}
@@ -29,6 +28,7 @@ const App = () => {
               setFilters={setFilters}
               query={query}
               setQuery={setQuery}
+              loading={loading}
             />
           }
         />

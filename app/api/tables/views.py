@@ -41,7 +41,7 @@ def get_import_DBS_delivery_view():
     json_data = {
         'page': page,
         'size': size,
-        'total': len(deliveries_data),
+        'total': delivery_service.get_count(),
         'data': deliveries_data
     }
 

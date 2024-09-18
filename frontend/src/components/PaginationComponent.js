@@ -1,25 +1,42 @@
 import React from 'react';
-import ReactPaginate from 'react-paginate';
+import './styles/PaginationComponent.css';
 
 const PaginationComponent = ({ page, pageCount, onPageChange }) => {
-  const handlePageClick = (data) => {
-    onPageChange(data.selected + 1); // Нумерация страниц начинается с 0, добавляем +1
+  // Функция для обработки перехода на предыдущую страницу
+  const handlePrevious = () => {
+    if (page > 1) {
+      console.log('Переход на предыдущую страницу');
+      onPageChange(page - 1);
+    }
+  };
+
+  // Функция для обработки перехода на следующую страницу
+  const handleNext = () => {
+    if (page < pageCount) {
+      console.log('Переход на следующую страницу');
+      onPageChange(page + 1);
+    }
   };
 
   return (
-    <div>
-      <ReactPaginate
-        previousLabel={'<'}
-        nextLabel={'>'}
-        breakLabel={'...'}
-        pageCount={pageCount}
-        marginPagesDisplayed={2}
-        pageRangeDisplayed={5}
-        onPageChange={handlePageClick}
-        containerClassName={'pagination'}
-        activeClassName={'active'}
-        forcePage={page - 1}  // Для управления текущей страницей
-      />
+    <div className="pagination">
+      <button
+        className="pagination-button"
+        onClick={handlePrevious}
+        disabled={page === 1}
+      >
+        Назад
+      </button>
+      <span className="pagination-info">
+        Страница {page} из {pageCount}
+      </span>
+      <button
+        className="pagination-button"
+        onClick={handleNext}
+        disabled={page === pageCount}
+      >
+        Вперед
+      </button>
     </div>
   );
 };

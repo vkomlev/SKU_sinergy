@@ -14,6 +14,11 @@ class BaseService:
         offset = (page - 1) * size
         limit = size
         return self.controller.get_page(offset, limit)
+    
+    def get_count(self):
+        """Получить количество записей"""
+        return self.controller.get_count()
+
 
     def sort(self, **kwargs):
         """Получить данные с сортировкой"""

@@ -1,22 +1,32 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import DropFilterMenuComponent from './DropFilterMenuComponent';
 import PaginationComponent from './PaginationComponent';
-import SearchComponent from './SearchComponent';  // Импортируем компонент поиска
-import SortComponent from './SortComponent';  // Импортируем компонент сортировки
+import SearchComponent from './SearchComponent';
+import SortComponent from './SortComponent';
 import './styles/TableComponent.css';
 
-const TableComponent = ({ data, metadata, page, setPage, size, setSize, total, sortBy, setSortBy, filters, setFilters, query, setQuery }) => {
-  if (!metadata || !metadata.columns) {
+const TableComponent = ({ data, metadata, page, setPage, size, setSize, total, sortBy, setSortBy, filters, setFilters, query, setQuery, loading }) => {
+
+  useEffect(() => {
+    console.log('TableComponent rendered', { page, size, total, metadata });
+  }, [page, size, total, metadata]);
+
+  // Функция для изменения страницы
+  const handlePageChange = (newPage) => {
+    console.log('Page change triggered:', newPage);
+    setPage(newPage);  // Убедитесь, что setPage передан и работает корректно
+  };
+
+  if (!metadata) {
     return <div>Загрузка данных...</div>;
   }
 
-  if (data.length === 0) {
+  if (data.length === 0 && !loading) {
     return <div>Нет данных для отображения</div>;
   }
 
-  // Фильтруем колонки по признаку visible
   const visibleColumns = metadata.columns.filter(column => column.visible);
-  
+
   return (
     <div>
       <header>
@@ -24,7 +34,7 @@ const TableComponent = ({ data, metadata, page, setPage, size, setSize, total, s
           <a>ГК Синергия</a>
         </div>
         <div>
-          <SearchComponent setQuery={setQuery} />  {/* Передаем setQuery для управления поиском */}
+          <SearchComponent setQuery={setQuery} />
         </div>
         <nav>
           <a>Добавить</a>
@@ -41,15 +51,14 @@ const TableComponent = ({ data, metadata, page, setPage, size, setSize, total, s
       {/* Таблица с данными */}
       <div className='big-table'>
         <table className='table'>
-        <thead>
+          <thead>
             <tr>
-              {/* Рендерим заголовки для видимых столбцов */}
               {visibleColumns.map(column => (
                 <th key={column.name}>
                   <SortComponent
                     sortBy={sortBy}
                     setSortBy={setSortBy}
-                    columns={[column]}  // Передаем текущую колонку для сортировки
+                    columns={[column]}
                   />
                 </th>
               ))}
@@ -58,7 +67,6 @@ const TableComponent = ({ data, metadata, page, setPage, size, setSize, total, s
           <tbody>
             {data.map((row, rowIndex) => (
               <tr key={rowIndex}>
-                {/* Рендерим данные только для видимых столбцов */}
                 {visibleColumns.map(column => (
                   <td key={column.name}>
                     {row[column.name]}
@@ -74,10 +82,9 @@ const TableComponent = ({ data, metadata, page, setPage, size, setSize, total, s
       <PaginationComponent
         page={page}
         pageCount={Math.ceil(total / size)}
-        onPageChange={setPage}
+        onPageChange={handlePageChange}  // Убедитесь, что вызов передается корректно
       />
 
-      {/* Выбор размера страницы */}
       <select value={size} onChange={(e) => setSize(Number(e.target.value))}>
         <option value={10}>10</option>
         <option value={25}>25</option>
