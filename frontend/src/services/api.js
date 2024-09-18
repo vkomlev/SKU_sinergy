@@ -1,7 +1,7 @@
 // api.js
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api/tables';
+const API_URL = '/api/tables';  // Относительный путь
 
 // Функция для получения данных таблицы
 export const fetchTableData = async (tableName, page = 1, size = 20, sortBy = [], filters = {}) => {
