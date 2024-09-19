@@ -66,3 +66,31 @@ export const fetchTableSearchResults = async (tableName, query) => {
     throw error;
   }
 };
+
+export const saveRecord = async (tableName, data, isEditing) => {
+  const url = isEditing
+    ? `${API_URL}/${tableName}/records/${data.id}`
+    : `${API_URL}/${tableName}/records`
+  const method = isEditing ? 'PUT' : 'POST'
+  const response = await axios({
+    method,
+    url,
+    data,
+  })
+  return response.data
+}
+
+export const deleteRecord = async (tableName, recordId) => {
+  const response = await axios.delete(`/api/tables/${tableName}/records/${recordId}`)
+  return response.data
+}
+
+export const fetchLookupOptions = async (lookupTable) => {
+  const response = await axios.get(`/api/tables/${lookupTable}/lookup`)
+  return response.data
+}
+
+export const fetchRecord = async (tableName, recordId) => {
+  const response = await axios.get(`/api/tables/${tableName}/records/${recordId}`)
+  return response.data
+}

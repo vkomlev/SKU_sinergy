@@ -7,6 +7,7 @@ const TableHeader = ({ columns, sortBy, setSortBy }) => {
   return (
     <thead>
       <tr>
+        <th>Действия</th>
         {visibleColumns.map(column => (
           <th key={column.name}>
             <SortComponent

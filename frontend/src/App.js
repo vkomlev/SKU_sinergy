@@ -5,7 +5,8 @@ import TableComponent from './components/TableComponent';
 import useTableData from './hooks/useTableData';
 
 const App = () => {
-  const { data, metadata, page, updatePage, size, setSize, total, sortBy, setSortBy, filters, setFilters, query, setQuery, loading } = useTableData('import_DBS_delivery');
+  const tableName = 'import_DBS_delivery';  // Имя таблицы
+  const { data, metadata, page, updatePage, size, setSize, total, sortBy, setSortBy, filters, setFilters, query, setQuery, loading } = useTableData(tableName);
 
   return (
     <Router>
@@ -18,7 +19,7 @@ const App = () => {
               data={data}
               metadata={metadata}
               page={page}
-              setPage={updatePage}  // Передаем updatePage как setPage
+              setPage={updatePage}
               size={size}
               setSize={setSize}
               total={total}
@@ -29,6 +30,7 @@ const App = () => {
               query={query}
               setQuery={setQuery}
               loading={loading}
+              tableName={tableName}  /* Передача имени таблицы в компонент */
             />
           }
         />
