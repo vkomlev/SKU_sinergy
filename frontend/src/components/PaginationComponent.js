@@ -1,40 +1,34 @@
 import React from 'react';
-import './styles/PaginationComponent.css';
+import './styles/PaginationComponent.css';  // Подключаем стили
 
 const PaginationComponent = ({ page, pageCount, onPageChange }) => {
-  // Функция для обработки перехода на предыдущую страницу
-  const handlePrevious = () => {
-    if (page > 1) {
-      console.log('Переход на предыдущую страницу');
-      onPageChange(page - 1);
+  // Универсальная функция для изменения страницы
+  const changePage = (newPage) => {
+    if (newPage > 0 && newPage <= pageCount) {
+      console.log(`Changing to page: ${newPage}`);  // Логируем изменение страницы
+      onPageChange(newPage);
     }
   };
 
-  // Функция для обработки перехода на следующую страницу
+  const handlePrevious = () => {
+    console.log('Previous button clicked');  // Логируем нажатие на кнопку "Назад"
+    changePage(page - 1);
+  };
+
   const handleNext = () => {
-    if (page < pageCount) {
-      console.log('Переход на следующую страницу');
-      onPageChange(page + 1);
-    }
+    console.log('Next button clicked');  // Логируем нажатие на кнопку "Вперед"
+    changePage(page + 1);
   };
 
   return (
     <div className="pagination">
-      <button
-        className="pagination-button"
-        onClick={handlePrevious}
-        disabled={page === 1}
-      >
+      <button onClick={handlePrevious} disabled={page === 1} className="pagination-button">
         Назад
       </button>
       <span className="pagination-info">
-        Страница {page} из {pageCount}
+        {page} из {pageCount}
       </span>
-      <button
-        className="pagination-button"
-        onClick={handleNext}
-        disabled={page === pageCount}
-      >
+      <button onClick={handleNext} disabled={page === pageCount} className="pagination-button">
         Вперед
       </button>
     </div>

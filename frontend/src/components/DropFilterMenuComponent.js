@@ -1,36 +1,27 @@
 import React, { useState } from 'react';
+import { addFilter, removeFilter } from '../utils/filterUtils';  // Импортируем утилиты для фильтрации
 
-const DropFilterMenuComponent = React.memo(({ columns, filters, setFilters }) => {
+const DropFilterMenuComponent = ({ columns, filters, setFilters }) => {
   const [selectedColumn, setSelectedColumn] = useState('');
   const [filterValue, setFilterValue] = useState('');
 
-  // Добавление фильтра
-  const addFilter = () => {
-    if (!selectedColumn || !filterValue) {
-      alert('Выберите столбец и введите значение');
-      return;
-    }
-
+  const handleAddFilter = () => {
     const newFilter = {
       column: selectedColumn,
-      expression: '=', // Пока используем только '=', возможно расширение в будущем
+      expression: '=',  // Пока используем только '='
       value: filterValue,
     };
-
-    // Обновляем массив фильтров, что вызовет обновление данных
-    setFilters(prevFilters => [...prevFilters, newFilter]);
+    setFilters(addFilter(filters, newFilter));  // Используем утилиту для добавления фильтра
     resetFields();
   };
 
-  // Сброс полей
+  const handleRemoveFilter = (index) => {
+    setFilters(removeFilter(filters, index));  // Используем утилиту для удаления фильтра
+  };
+
   const resetFields = () => {
     setSelectedColumn('');
     setFilterValue('');
-  };
-
-  // Удаление фильтра
-  const removeFilter = (index) => {
-    setFilters(prevFilters => prevFilters.filter((_, i) => i !== index));
   };
 
   return (
@@ -38,7 +29,6 @@ const DropFilterMenuComponent = React.memo(({ columns, filters, setFilters }) =>
       <span className="title">Фильтры</span>
       <div className="filter-menu">
         <div className="filter-form">
-          {/* Выбор столбца */}
           <select value={selectedColumn} onChange={(e) => setSelectedColumn(e.target.value)}>
             <option value="">Выберите столбец</option>
             {columns.map(column => (
@@ -47,26 +37,21 @@ const DropFilterMenuComponent = React.memo(({ columns, filters, setFilters }) =>
               </option>
             ))}
           </select>
-
-          {/* Поле ввода для значения */}
           <input
             type="text"
             value={filterValue}
             onChange={(e) => setFilterValue(e.target.value)}
             placeholder="Введите значение"
           />
-
-          {/* Кнопка добавления фильтра */}
-          <button onClick={addFilter}>Добавить фильтр</button>
+          <button onClick={handleAddFilter}>Добавить фильтр</button>
         </div>
 
-        {/* Список активных фильтров */}
         {Array.isArray(filters) && filters.length > 0 && (
           <ul className="active-filters">
             {filters.map((filter, index) => (
               <li key={index}>
                 {columns.find(col => col.name === filter.column)?.label} {filter.expression} {filter.value}
-                <button onClick={() => removeFilter(index)}>Удалить</button>
+                <button onClick={() => handleRemoveFilter(index)}>Удалить</button>
               </li>
             ))}
           </ul>
@@ -74,6 +59,6 @@ const DropFilterMenuComponent = React.memo(({ columns, filters, setFilters }) =>
       </div>
     </div>
   );
-});
+};
 
 export default DropFilterMenuComponent;
