@@ -3,6 +3,7 @@ import DropFilterMenuComponent from './DropFilterMenuComponent';
 import PaginationComponent from './PaginationComponent';
 import SearchComponent from './SearchComponent';
 import SortComponent from './SortComponent';
+import { applySort, applyFilters } from '../utils/tableUtils';  // Импортируем утилиты
 import './styles/TableComponent.css';
 
 const TableComponent = ({ data, metadata, page, setPage, size, setSize, total, sortBy, setSortBy, filters, setFilters, query, setQuery, loading }) => {
@@ -11,17 +12,19 @@ const TableComponent = ({ data, metadata, page, setPage, size, setSize, total, s
     console.log('TableComponent rendered', { page, size, total, metadata });
   }, [page, size, total, metadata]);
 
-  // Функция для изменения страницы
+  // Применение сортировки и фильтров к данным
+  const processedData = applySort(applyFilters(data, filters), sortBy);
+
   const handlePageChange = (newPage) => {
     console.log('Page change triggered:', newPage);
-    setPage(newPage);  // Убедитесь, что setPage передан и работает корректно
+    setPage(newPage);  
   };
 
   if (!metadata) {
     return <div>Загрузка данных...</div>;
   }
 
-  if (data.length === 0 && !loading) {
+  if (processedData.length === 0 && !loading) {
     return <div>Нет данных для отображения</div>;
   }
 
@@ -65,7 +68,7 @@ const TableComponent = ({ data, metadata, page, setPage, size, setSize, total, s
             </tr>
           </thead>
           <tbody>
-            {data.map((row, rowIndex) => (
+            {processedData.map((row, rowIndex) => (
               <tr key={rowIndex}>
                 {visibleColumns.map(column => (
                   <td key={column.name}>
@@ -82,7 +85,7 @@ const TableComponent = ({ data, metadata, page, setPage, size, setSize, total, s
       <PaginationComponent
         page={page}
         pageCount={Math.ceil(total / size)}
-        onPageChange={handlePageChange}  // Убедитесь, что вызов передается корректно
+        onPageChange={handlePageChange}
       />
 
       <select value={size} onChange={(e) => setSize(Number(e.target.value))}>
