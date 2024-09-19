@@ -25,4 +25,17 @@ export const applySort = (data, sortBy) => {
       });
     });
   };
+
+  // Получить значение первичного ключа из строки
+export const getPrimaryKeyValue = (row, metadata) => {
+  // Находим колонку, которая является первичным ключом
+  const primaryKeyColumn = metadata.columns.find(column => column.primary_key);
+  
+  if (primaryKeyColumn) {
+    return row[primaryKeyColumn.name];  // Возвращаем значение ключа
+  }
+  
+  console.warn('Primary key not found in metadata');
+  return null;  // Если ключ не найден, возвращаем null
+};
   

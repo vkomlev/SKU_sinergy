@@ -15,6 +15,7 @@ const FormField = ({ field, value, onChange, error }) => {
           error={!!error} // Указывает, есть ли ошибка
           helperText={error ? error.message : ''} // Сообщение об ошибке
           fullWidth // Полная ширина поля
+          placeholder={value ? '' : field.placeholder}  // Показываем placeholder только если нет значения
         />
       )
 
@@ -28,6 +29,7 @@ const FormField = ({ field, value, onChange, error }) => {
           error={!!error}
           helperText={error ? error.message : ''}
           fullWidth
+          placeholder={value ? '' : field.placeholder}  // Показываем placeholder только если нет значения
         />
       )
 
@@ -42,6 +44,7 @@ const FormField = ({ field, value, onChange, error }) => {
           helperText={error ? error.message : ''}
           fullWidth
           InputLabelProps={{ shrink: true }} // Добавляет эффект сжатия метки
+          placeholder={value ? '' : field.placeholder}  // Показываем placeholder только если нет значения
         />
       )
 
@@ -67,6 +70,7 @@ const FormField = ({ field, value, onChange, error }) => {
           onChange={onChange}
           lookupTable={field.lookup_table}
           error={!!error}
+          placeholder={value ? '' : field.placeholder}  // Показываем placeholder только если нет значения
         />
       )
 

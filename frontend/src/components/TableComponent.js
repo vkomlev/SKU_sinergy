@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'; 
+import React, { useEffect, useMemo, useState } from 'react';
 import { applySort, applyFilters } from '../utils/tableUtils';
 import { deleteRecord, fetchRecord, saveRecord } from '../services/api';
 import SearchComponent from './SearchComponent';
@@ -14,10 +14,11 @@ const TableComponent = ({ data, localData, metadata, page, setPage, size, setSiz
   const [showForm, setShowForm] = useState(false);
   const [editData, setEditData] = useState(null);
   const [formLoading, setFormLoading] = useState(false);
+  const [tableData, setTableData] = useState(data || []);  // Локальное состояние для данных таблицы
 
   useEffect(() => {
-    console.log('TableComponent rendered', { page, size, total, metadata });
-  }, [page, size, total, metadata]);
+    setTableData(data);  // Обновляем локальные данные при загрузке с сервера
+  }, [data]);
 
   // Открыть форму для добавления новой записи
   const handleAddClick = () => {
@@ -30,7 +31,7 @@ const TableComponent = ({ data, localData, metadata, page, setPage, size, setSiz
   const handleEditClick = async (recordId) => {
     setFormLoading(true);
     try {
-      const record = await fetchRecord(tableName, recordId);
+      const record = await fetchRecord(tableName, recordId);  // Запрос на получение данных записи
       setEditData(record);
       setShowForm(true);
       setFormLoading(false);
@@ -40,12 +41,32 @@ const TableComponent = ({ data, localData, metadata, page, setPage, size, setSiz
     }
   };
 
-  // Обработка сохранения формы
+  // Обработка добавления/редактирования записи
   const handleFormSubmit = async (formData) => {
     console.log("Форма отправлена с данными:", formData);
     try {
-      const isEditing = !!editData;
-      await saveRecord(tableName, formData, isEditing);
+      const isEditing = !!editData;  // Определяем, идет ли процесс редактирования
+    
+      // Получаем имя поля, которое является первичным ключом из метаданных
+      const primaryKeyField = metadata.columns.find(column => column.primary_key);
+      const recordId = isEditing && primaryKeyField ? editData[primaryKeyField.name] : null;
+
+      console.log("ID записи для редактирования:", recordId);
+
+      // Сохранение записи
+      const savedRecord = await saveRecord(tableName, formData, isEditing, recordId);  // API-запрос
+
+      // Обновляем таблицу в зависимости от того, добавляется или редактируется запись
+      if (isEditing) {
+        // Редактирование записи: находим запись в локальном состоянии и обновляем её
+        setTableData(prevData =>
+          prevData.map(item => item[primaryKeyField.name] === recordId ? savedRecord : item)
+        );
+      } else {
+        // Добавление новой записи: добавляем её в локальное состояние
+        setTableData(prevData => [savedRecord, ...prevData]);
+      }
+
       setShowForm(false);
     } catch (error) {
       console.error('Ошибка при сохранении данных:', error);
@@ -54,23 +75,29 @@ const TableComponent = ({ data, localData, metadata, page, setPage, size, setSiz
 
   // Удаление записи
   const handleDeleteClick = async (recordId) => {
-    await deleteRecord(tableName, recordId);
+    try {
+      await deleteRecord(tableName, recordId);  // Удаление записи через API
+
+      // Удаляем запись из локального состояния
+      setTableData(prevData => prevData.filter(item => item[metadata.columns.find(column => column.primary_key).name] !== recordId));
+    } catch (error) {
+      console.error('Ошибка при удалении данных:', error);
+    }
   };
 
-  // Обработка данных таблицы с фильтрацией и сортировкой
+  const handlePageChange = (newPage) => {
+    console.log('Page changed to:', newPage);
+    setPage(newPage);  
+  };
+
   const processedData = useMemo(() => {
     if (loading || loadingMetadata) {
       console.log('Using locally sorted data during loading state');
       return applySort(applyFilters(localData || [], filters), sortBy);
     }
     console.log('Processing server data with filters and sorting');
-    return applySort(applyFilters(data || [], filters), sortBy);
-  }, [data, localData, filters, sortBy, loading, loadingMetadata]);
-
-  const handlePageChange = (newPage) => {
-    console.log('Page changed to:', newPage);
-    setPage(newPage);  
-  };
+    return applySort(applyFilters(tableData || [], filters), sortBy);
+  }, [tableData, localData, filters, sortBy, loading, loadingMetadata]);
 
   return (
     <div>
@@ -106,6 +133,7 @@ const TableComponent = ({ data, localData, metadata, page, setPage, size, setSiz
               columns={metadata.columns} 
               onEdit={handleEditClick}
               onDelete={handleDeleteClick}
+              metadata={metadata}  // Передаём метаданные для получения ключа
             />
           </table>
         </div>
@@ -129,9 +157,10 @@ const TableComponent = ({ data, localData, metadata, page, setPage, size, setSiz
         <div className="form-container">
           <EditForm
             onClose={() => setShowForm(false)}
-            initialData={editData}
+            initialData={editData}  // Передаём данные для редактирования в форму
             metadata={metadata}
             formLoading={formLoading}
+            isEditing={!!editData}  // Передаём флаг isEditing: true, если есть данные для редактирования
             onSubmit={handleFormSubmit}
           />
         </div>

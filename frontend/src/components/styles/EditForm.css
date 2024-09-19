@@ -4,3 +4,23 @@
     padding: 10px;
     background-color: white;
 }
+/* Стиль для input */
+.form-field input {
+    width: 100%;
+    padding: 8px;
+    margin: 5px 0;
+    box-sizing: border-box;
+    font-size: 16px;
+  }
+  
+  /* Стиль для ошибки */
+  .error-message {
+    color: red;
+    font-size: 12px;
+  }
+  
+  /* Пример для улучшения видимости значений */
+  .form-field label {
+    font-weight: bold;
+  }
+  

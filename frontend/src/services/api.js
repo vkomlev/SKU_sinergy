@@ -67,18 +67,22 @@ export const fetchTableSearchResults = async (tableName, query) => {
   }
 };
 
-export const saveRecord = async (tableName, data, isEditing) => {
+export const saveRecord = async (tableName, data, isEditing, recordId) => {
   const url = isEditing
-    ? `${API_URL}/${tableName}/records/${data.id}`
-    : `${API_URL}/${tableName}/records`
-  const method = isEditing ? 'PUT' : 'POST'
+    ? `${API_URL}/${tableName}/records/${recordId}`  // Если это редактирование, добавляем ID записи
+    : `${API_URL}/${tableName}/records`;
+  
+  const method = isEditing ? 'PUT' : 'POST';  // Используем метод PUT для редактирования и POST для добавления
+
   const response = await axios({
     method,
     url,
     data,
-  })
-  return response.data
-}
+  });
+
+  return response.data;
+};
+
 
 export const deleteRecord = async (tableName, recordId) => {
   const response = await axios.delete(`/api/tables/${tableName}/records/${recordId}`)
@@ -91,6 +95,13 @@ export const fetchLookupOptions = async (lookupTable) => {
 }
 
 export const fetchRecord = async (tableName, recordId) => {
-  const response = await axios.get(`/api/tables/${tableName}/records/${recordId}`)
-  return response.data
-}
+  try {
+    console.log(`Запрос данных записи ID: ${recordId} из таблицы: ${tableName}`);
+    const response = await axios.get(`${API_URL}/${tableName}/records/${recordId}`);
+    console.log("Ответ сервера:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Ошибка при запросе записи:", error);
+    throw error;
+  }
+};

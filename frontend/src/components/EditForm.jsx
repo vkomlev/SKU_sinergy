@@ -8,7 +8,7 @@ import './styles/EditForm.css';
 
 // Компонент формы для отображения и обработки пользовательских данных.
 
-const EditForm = ({ metadata, defaultValues, onSubmit, onDelete, isEditing, onClose }) => {
+const EditForm = ({ metadata, defaultValues, onSubmit, onDelete, isEditing, onClose, initialData  }) => {
     // Создаем валидационную схему на основе метаданных
     const validationSchema = createValidationSchema(metadata.columns);
 
@@ -19,9 +19,9 @@ const EditForm = ({ metadata, defaultValues, onSubmit, onDelete, isEditing, onCl
     });
 
     useEffect(() => {
-        console.log('Resetting form with defaultValues:', defaultValues);
-        reset(defaultValues); // Сброс формы при изменении значений по умолчанию
-    }, [defaultValues, reset]);
+        console.log("Полученные данные для формы:", initialData);  // Логируем данные, которые передаем в форму
+        reset(initialData);  // Сбрасываем форму с данными для редактирования
+      }, [initialData, reset]);
 
     return (
         <div className="scrollable-form">
