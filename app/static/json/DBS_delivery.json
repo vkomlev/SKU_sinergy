@@ -57,7 +57,7 @@
       "type": "string",
       "visible": true,
       "label": "Планируемая дата доставки",
-      "input_type": "date",
+      "input_type": "text",
       "mappings": {
         "DBSDelivery" : "Планируемая дата доставки",
         "transformation" : "get_data_begin"
@@ -69,7 +69,7 @@
       "type": "string",
       "visible": true,
       "label": "Фактическая дата доставки",
-      "input_type": "date"
+      "input_type": "text"
     },
     {
       "name": "delivery_time",

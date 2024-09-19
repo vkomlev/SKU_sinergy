@@ -90,14 +90,15 @@ const TableComponent = ({ data, localData, metadata, page, setPage, size, setSiz
     setPage(newPage);  
   };
 
+  // Обработка данных с учётом наличия метаданных
   const processedData = useMemo(() => {
-    if (loading || loadingMetadata) {
+    if (loading || loadingMetadata || !metadata || !metadata.columns) {
       console.log('Using locally sorted data during loading state');
       return applySort(applyFilters(localData || [], filters), sortBy);
     }
     console.log('Processing server data with filters and sorting');
     return applySort(applyFilters(tableData || [], filters), sortBy);
-  }, [tableData, localData, filters, sortBy, loading, loadingMetadata]);
+  }, [tableData, localData, filters, sortBy, loading, loadingMetadata, metadata]);
 
   return (
     <div>
@@ -115,28 +116,33 @@ const TableComponent = ({ data, localData, metadata, page, setPage, size, setSiz
           </div>
         </header>
 
-        <DropFilterMenuComponent
-          columns={metadata.columns}
-          filters={filters}
-          setFilters={setFilters}
-        />
+        {/* Проверяем наличие колонок перед рендерингом элементов таблицы */}
+        {metadata && metadata.columns && (
+          <>
+            <DropFilterMenuComponent
+              columns={metadata.columns}
+              filters={filters}
+              setFilters={setFilters}
+            />
 
-        <div className='big-table'>
-          <table className='table'>
-            <TableHeader 
-              columns={metadata.columns} 
-              sortBy={sortBy} 
-              setSortBy={setSortBy} 
-            />
-            <TableBody 
-              data={processedData} 
-              columns={metadata.columns} 
-              onEdit={handleEditClick}
-              onDelete={handleDeleteClick}
-              metadata={metadata}  // Передаём метаданные для получения ключа
-            />
-          </table>
-        </div>
+            <div className='big-table'>
+              <table className='table'>
+                <TableHeader 
+                  columns={metadata.columns} 
+                  sortBy={sortBy} 
+                  setSortBy={setSortBy} 
+                />
+                <TableBody 
+                  data={processedData} 
+                  columns={metadata.columns} 
+                  onEdit={handleEditClick}
+                  onDelete={handleDeleteClick}
+                  metadata={metadata}  // Передаём метаданные для получения ключа
+                />
+              </table>
+            </div>
+          </>
+        )}
 
         <PaginationComponent
           page={page}
