@@ -101,3 +101,13 @@ def delete_record(table_name, record_id):
             }), 200
     else:
         abort(404, description="Record not found")
+
+def get_record(table_name, record_id):
+    session = get_session()
+    service = ImportDBSDeliveryService(session)
+    record = service.get_record(record_id)
+    if record:
+        return jsonify(UniversalSerializer(DBSDelivery).dump(record)), 200
+    else:
+        abort(404, description="Record not found")
+

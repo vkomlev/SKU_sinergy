@@ -47,3 +47,9 @@ class BaseService:
     def delete_data(self, record_id):
         """Удалить данные"""
         return self.controller.delete_record(record_id)
+    
+    def get_record(self, record_id):
+        """Получить данные по id"""
+        return self.controller.get_by_id(record_id)
+
+   
