@@ -1,9 +1,10 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { fetchTableData, fetchTableSearchResults, fetchTableMetadata } from '../services/api';
+import { debounce } from '../utils/debounce';  // Импортируем утилиту дебаунсинга
 
 const useTableData = (tableName) => {
-  const [data, setData] = useState([]);  
-  const [metadata, setMetadata] = useState(null);  
+  const [data, setData] = useState([]);
+  const [metadata, setMetadata] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
@@ -13,22 +14,7 @@ const useTableData = (tableName) => {
   const [filters, setFilters] = useState([]);
   const [query, setQuery] = useState('');
 
-  const updatePage = (newPage) => {
-    console.log('Page updated to:', newPage);
-    setPage(newPage);
-  };
-
-  const fetchMetadata = useCallback(async () => {
-    try {
-      console.log('Fetching table metadata...');
-      const tableMetadata = await fetchTableMetadata(tableName);
-      console.log('Metadata received:', tableMetadata);
-      setMetadata(tableMetadata);
-    } catch (err) {
-      console.error('Error fetching metadata:', err);
-    }
-  }, [tableName]);  // Добавляем tableName как зависимость
-
+  // Функция для получения данных
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
@@ -42,24 +28,38 @@ const useTableData = (tableName) => {
         }, {});
         tableData = await fetchTableData(tableName, page, size, sortBy, formattedFilters);
       }
-      console.log('Table data received:', tableData);
       setData(tableData.data || []);
       setTotal(tableData.total);
       setLoading(false);
     } catch (err) {
-      setError(err);
+      setError('Ошибка загрузки данных таблицы');
       setLoading(false);
-      console.error("Error fetching table data:", err);
     }
-  }, [tableName, page, size, sortBy, filters, query]);  // Указываем зависимости
+  }, [tableName, page, size, sortBy, filters, query]);
 
+  // Меморизируем debouncedFetchData только после инициализации fetchData
+  const debouncedFetchData = useMemo(() => debounce(fetchData, 300), [fetchData]);
+
+  const updatePage = (newPage) => {
+    setPage(newPage);
+  };
+
+  const fetchMetadata = useCallback(async () => {
+    try {
+      const tableMetadata = await fetchTableMetadata(tableName);
+      setMetadata(tableMetadata);
+    } catch (err) {
+      setError('Ошибка загрузки метаданных');
+    }
+  }, [tableName]);
+
+  // Используем debouncedFetchData вместо прямого вызова fetchData
   useEffect(() => {
-    console.log('Fetching data due to state change:', { page, size, sortBy, filters, query });
-    fetchData();
+    debouncedFetchData();
     if (!metadata) {
       fetchMetadata();
     }
-  }, [page, size, sortBy, filters, query, fetchData, fetchMetadata, metadata]);  // Добавляем необходимые зависимости
+  }, [page, size, sortBy, filters, query, debouncedFetchData, fetchMetadata, metadata]);
 
   return {
     data,

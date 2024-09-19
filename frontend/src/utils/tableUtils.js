@@ -3,7 +3,7 @@
 // Функция для обработки сортировки
 export const applySort = (data, sortBy) => {
     if (!sortBy || sortBy.length === 0) return data;
-    
+  
     return [...data].sort((a, b) => {
       const { field, order } = sortBy[0];
       if (order === 'asc') {
@@ -20,7 +20,8 @@ export const applySort = (data, sortBy) => {
   
     return data.filter(row => {
       return filters.every(filter => {
-        return row[filter.column].toString().includes(filter.value);
+        const cellValue = row[filter.column];
+        return cellValue != null && cellValue.toString().includes(filter.value);  // Добавляем проверку на null/undefined
       });
     });
   };

@@ -1,27 +1,32 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import DropFilterMenuComponent from './DropFilterMenuComponent';
 import PaginationComponent from './PaginationComponent';
 import SearchComponent from './SearchComponent';
 import SortComponent from './SortComponent';
-import { applySort, applyFilters } from '../utils/tableUtils';  // Импортируем утилиты
+import { applySort, applyFilters } from '../utils/tableUtils';
 import './styles/TableComponent.css';
 
-const TableComponent = ({ data, metadata, page, setPage, size, setSize, total, sortBy, setSortBy, filters, setFilters, query, setQuery, loading }) => {
+const TableComponent = ({ data, metadata, page, setPage, size, setSize, total, sortBy, setSortBy, filters, setFilters, query, setQuery, loading, error }) => {
 
   useEffect(() => {
     console.log('TableComponent rendered', { page, size, total, metadata });
   }, [page, size, total, metadata]);
 
-  // Применение сортировки и фильтров к данным
-  const processedData = applySort(applyFilters(data, filters), sortBy);
+  // Применяем мемоизацию для данных
+  const processedData = useMemo(() => {
+    return applySort(applyFilters(data, filters), sortBy);
+  }, [data, filters, sortBy]);
 
   const handlePageChange = (newPage) => {
-    console.log('Page change triggered:', newPage);
     setPage(newPage);  
   };
 
-  if (!metadata) {
+  if (loading) {
     return <div>Загрузка данных...</div>;
+  }
+
+  if (error) {
+    return <div className="error-message">{error}</div>;
   }
 
   if (processedData.length === 0 && !loading) {
@@ -44,14 +49,12 @@ const TableComponent = ({ data, metadata, page, setPage, size, setSize, total, s
         </nav>
       </header>
 
-      {/* Компонент меню фильтрации */}
       <DropFilterMenuComponent
         columns={metadata.columns}
         filters={filters}
         setFilters={setFilters}
       />
 
-      {/* Таблица с данными */}
       <div className='big-table'>
         <table className='table'>
           <thead>
@@ -81,7 +84,6 @@ const TableComponent = ({ data, metadata, page, setPage, size, setSize, total, s
         </table>
       </div>
 
-      {/* Компонент пагинации */}
       <PaginationComponent
         page={page}
         pageCount={Math.ceil(total / size)}
