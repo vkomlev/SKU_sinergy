@@ -1,7 +1,11 @@
 // api.js
 import axios from 'axios';
 
-const API_URL = '/api/tables';  // Относительный путь
+import config from '../config'; // Импортируем локальный конфиг
+
+const API_BASE_URL = process.env.REACT_APP_API_URL || config.API_BASE_URL; // Используем переменную окружения в продакшн
+
+const API_URL = `${API_BASE_URL}/api/tables`;  // Относительный путь
 
 // Функция для получения данных таблицы
 export const fetchTableData = async (tableName, page = 1, size = 20, sortBy = [], filters = {}) => {
