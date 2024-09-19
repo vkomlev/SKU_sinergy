@@ -85,12 +85,12 @@ export const saveRecord = async (tableName, data, isEditing, recordId) => {
 
 
 export const deleteRecord = async (tableName, recordId) => {
-  const response = await axios.delete(`/api/tables/${tableName}/records/${recordId}`)
+  const response = await axios.delete(`${API_URL}/${tableName}/records/${recordId}`)
   return response.data
 }
 
 export const fetchLookupOptions = async (lookupTable) => {
-  const response = await axios.get(`/api/tables/${lookupTable}/lookup`)
+  const response = await axios.get(`${API_URL}/${lookupTable}/lookup`)
   return response.data
 }
 
