@@ -38,4 +38,12 @@ export const getPrimaryKeyValue = (row, metadata) => {
   console.warn('Primary key not found in metadata');
   return null;  // Если ключ не найден, возвращаем null
 };
+
+// tableUtils.js
+
+// Получить поле первичного ключа из метаданных
+export const getPrimaryKeyField = (metadata) => {
+  return metadata?.columns?.find(column => column.primary_key);
+};
+
   

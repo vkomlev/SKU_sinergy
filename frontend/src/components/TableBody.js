@@ -1,7 +1,7 @@
 import React from 'react';
 import { getPrimaryKeyValue } from '../utils/tableUtils';
 
-const TableBody = ({ data, columns, onEdit, onDelete, metadata }) => {
+const TableBody = React.memo(({ data, columns, onEdit, onDelete, metadata }) => {
   const visibleColumns = columns.filter(column => column.visible);
 
   return (
@@ -28,6 +28,6 @@ const TableBody = ({ data, columns, onEdit, onDelete, metadata }) => {
       })}
     </tbody>
   );
-};
+});
 
 export default TableBody;

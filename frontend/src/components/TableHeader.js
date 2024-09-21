@@ -1,7 +1,7 @@
 import React from 'react';
 import SortComponent from './SortComponent';
 
-const TableHeader = ({ columns, sortBy, setSortBy }) => {
+const TableHeader = React.memo(({ columns, sortBy, setSortBy }) => {
   const visibleColumns = columns.filter(column => column.visible);
 
   return (
@@ -20,6 +20,6 @@ const TableHeader = ({ columns, sortBy, setSortBy }) => {
       </tr>
     </thead>
   );
-};
+});
 
 export default React.memo(TableHeader);  // Мемоизируем, чтобы избежать лишних рендеров

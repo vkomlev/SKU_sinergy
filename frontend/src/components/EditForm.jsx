@@ -4,11 +4,12 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Button, Grid } from '@mui/material';
 import FormField from './FormField';
 import createValidationSchema from './Validation';
+import React from 'react';
 import './styles/EditForm.css';
 
 // Компонент формы для отображения и обработки пользовательских данных.
 
-const EditForm = ({ metadata, defaultValues, onSubmit, onDelete, isEditing, onClose, initialData  }) => {
+const EditForm = React.memo(({ metadata, defaultValues, onSubmit, onDelete, isEditing, onClose, initialData  }) => {
     // Создаем валидационную схему на основе метаданных
     const validationSchema = createValidationSchema(metadata.columns);
 
@@ -66,6 +67,6 @@ const EditForm = ({ metadata, defaultValues, onSubmit, onDelete, isEditing, onCl
             </form>
         </div>
     );
-};
+});
 
 export default EditForm;

@@ -1,5 +1,5 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { applySort, applyFilters } from '../utils/tableUtils';
+import React, { useEffect, useMemo, useState, useCallback } from 'react';
+import { applySort, applyFilters, getPrimaryKeyField  } from '../utils/tableUtils';
 import { deleteRecord, fetchRecord, saveRecord } from '../services/api';
 import SearchComponent from './SearchComponent';
 import EditForm from './EditForm';
@@ -24,7 +24,7 @@ const TableComponent = ({ data, localData, metadata, page, setPage, size, setSiz
   }, [data]);
 
   const updateTableData = (newData, isEditing, recordId) => {
-    const primaryKeyField = metadata.columns.find(column => column.primary_key); // Определяем primaryKeyField
+    const primaryKeyField = getPrimaryKeyField(metadata);  // Используем утилиту
     if (primaryKeyField) {
       if (isEditing) {
         setTableData(prevData =>
@@ -45,7 +45,7 @@ const TableComponent = ({ data, localData, metadata, page, setPage, size, setSiz
   };
 
   // Открыть форму для редактирования записи
-  const handleEditClick = async (recordId) => {
+  const handleEditClick = useCallback(async (recordId) => {
     setFormLoading(true);
     try {
       const record = await fetchRecord(tableName, recordId);  // Запрос на получение данных записи
@@ -56,33 +56,32 @@ const TableComponent = ({ data, localData, metadata, page, setPage, size, setSiz
       console.error('Ошибка при загрузке данных для редактирования:', error);
       setFormLoading(false);
     }
-  };
+  }, [tableName]);
 
   // Обработка добавления/редактирования записи
 
-  const handleFormSubmit = async (formData) => {
+  const handleFormSubmit = useCallback(async (formData) => {
     try {
-      const primaryKeyField = metadata.columns.find(column => column.primary_key); // Определяем primaryKeyField
+      const primaryKeyField = getPrimaryKeyField(metadata);  // Используем утилиту
       if (!primaryKeyField) {
         throw new Error('Не удалось найти поле первичного ключа.');
       }
   
-      const recordId = editData ? editData[primaryKeyField.name] : null; // Используем primaryKeyField для получения recordId
+      const recordId = editData ? editData[primaryKeyField.name] : null;
       const savedRecord = await saveRecord(tableName, formData, !!editData, recordId);
-      
-      updateTableData(savedRecord, !!editData, savedRecord[primaryKeyField.name]); // Используем primaryKeyField для обновления данных
   
+      updateTableData(savedRecord, !!editData, savedRecord[primaryKeyField.name]);
       setOperationMessage(`Запись ${editData ? 'обновлена' : 'добавлена'} с ID ${savedRecord[primaryKeyField.name]}`);
       setShowForm(false);
     } catch (error) {
       console.error('Ошибка при сохранении данных:', error);
       setOperationMessage('Ошибка при сохранении данных.');
     }
-  };
+  },[metadata, editData, tableName]);     
   
 
   // Удаление записи
-  const handleDeleteClick = async (recordId) => {
+  const handleDeleteClick = useCallback(async (recordId) => {
     try {
       await deleteRecord(tableName, recordId);  // Удаление записи через API
   
@@ -93,7 +92,7 @@ const TableComponent = ({ data, localData, metadata, page, setPage, size, setSiz
       console.error('Ошибка при удалении данных:', error);
       setOperationMessage(`Ошибка при удалении записи с ID ${recordId}.`);
     }
-  };
+  },[tableName, metadata]);
   
   
 
