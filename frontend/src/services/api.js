@@ -1,107 +1,46 @@
 // api.js
 import axios from 'axios';
+import config from '../config';
 
-import config from '../config'; // Импортируем локальный конфиг
+const API_BASE_URL = process.env.REACT_APP_API_URL || config.API_BASE_URL;
+const API_URL = `${API_BASE_URL}/api/tables`;
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || config.API_BASE_URL; // Используем переменную окружения в продакшн
+const apiRequest = async (method, url, data = null, params = {}) => {
+  try {
+    const response = await axios({ method, url, data, params });
+    return response.data;
+  } catch (error) {
+    console.error(`Ошибка API (${method} ${url}):`, error);
+    throw error;
+  }
+};
 
-const API_URL = `${API_BASE_URL}/api/tables`;  // Относительный путь
-
-// Функция для получения данных таблицы
+// Используем базовую функцию для всех запросов
 export const fetchTableData = async (tableName, page = 1, size = 20, sortBy = [], filters = {}) => {
-  // Преобразование параметров сортировки в параметры для API
   const sortParams = sortBy.reduce((acc, sortField, index) => {
     acc[`sort_by${index + 1}`] = `${sortField.field} ${sortField.order}`;
     return acc;
   }, {});
-
-  // Преобразование фильтров в строку
   const filterString = JSON.stringify(filters);
-
-  console.log('API Request Params:', { tableName, page, size, sortParams, filterString });
-
-  try {
-    const response = await axios.get(`${API_URL}/${tableName}/data`, {
-      params: {
-        page,
-        size,
-        ...sortParams,  // Добавляем параметры сортировки
-        filters: filterString  // Добавляем строку фильтров
-      }
-    });
-
-    console.log('API Response:', response.data);
-
-    return response.data;  // Предполагается, что сервер возвращает { data: [], total: number }
-  } catch (error) {
-    console.error('Ошибка загрузки данных таблицы:', error);
-    throw error;
-  }
+  return apiRequest('GET', `${API_URL}/${tableName}/data`, null, { page, size, ...sortParams, filters: filterString });
 };
 
-// Функция для получения метаданных таблицы
-export const fetchTableMetadata = async (tableName) => {
-  try {
-    const response = await axios.get(`${API_URL}/${tableName}/metadata`);
-    console.log('API Metadata Response:', response.data);
-    return response.data;
-  } catch (error) {
-    console.error('Ошибка загрузки метаданных таблицы:', error);
-    throw error;
-  }
-};
+export const fetchTableMetadata = async (tableName) => apiRequest('GET', `${API_URL}/${tableName}/metadata`);
 
-// Функция для поиска
-export const fetchTableSearchResults = async (tableName, query) => {
-  try {
-    const response = await axios.get(`${API_URL}/${tableName}/search`, {
-      params: { query }
-    });
-
-    console.log('API Search Response:', response.data);
-
-    return response.data;  // Предполагается, что сервер возвращает { data: [], total: number }
-  } catch (error) {
-    console.error('Ошибка поиска по таблице:', error);
-    throw error;
-  }
-};
+export const fetchTableSearchResults = async (tableName, query) => apiRequest('GET', `${API_URL}/${tableName}/search`, null, { query });
 
 export const saveRecord = async (tableName, data, isEditing, recordId) => {
-  const url = isEditing
-    ? `${API_URL}/${tableName}/records/${recordId}`  // Если это редактирование, добавляем ID записи
-    : `${API_URL}/${tableName}/records`;
-  
-  const method = isEditing ? 'PUT' : 'POST';  // Используем метод PUT для редактирования и POST для добавления
-
-  const response = await axios({
-    method,
-    url,
-    data,
-  });
-
-  return response.data;
+  const url = isEditing ? `${API_URL}/${tableName}/records/${recordId}` : `${API_URL}/${tableName}/records`;
+  const method = isEditing ? 'PUT' : 'POST';
+  return apiRequest(method, url, data);
 };
 
+export const deleteRecord = async (tableName, recordId) => apiRequest('DELETE', `${API_URL}/${tableName}/records/${recordId}`);
 
-export const deleteRecord = async (tableName, recordId) => {
-  const response = await axios.delete(`${API_URL}/${tableName}/records/${recordId}`)
-  return response.data
-}
 
 export const fetchLookupOptions = async (lookupTable) => {
   const response = await axios.get(`${API_URL}/${lookupTable}/lookup`)
   return response.data
 }
 
-export const fetchRecord = async (tableName, recordId) => {
-  try {
-    console.log(`Запрос данных записи ID: ${recordId} из таблицы: ${tableName}`);
-    const response = await axios.get(`${API_URL}/${tableName}/records/${recordId}`);
-    console.log("Ответ сервера:", response.data);
-    return response.data;
-  } catch (error) {
-    console.error("Ошибка при запросе записи:", error);
-    throw error;
-  }
-};
+export const fetchRecord = async (tableName, recordId) => apiRequest('GET', `${API_URL}/${tableName}/records/${recordId}`);

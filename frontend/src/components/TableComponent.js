@@ -23,6 +23,20 @@ const TableComponent = ({ data, localData, metadata, page, setPage, size, setSiz
     setTableData(data);  // Обновляем локальные данные при загрузке с сервера
   }, [data]);
 
+  const updateTableData = (newData, isEditing, recordId) => {
+    const primaryKeyField = metadata.columns.find(column => column.primary_key); // Определяем primaryKeyField
+    if (primaryKeyField) {
+      if (isEditing) {
+        setTableData(prevData =>
+          prevData.map(item => item[primaryKeyField.name] === recordId ? newData : item)
+        );
+      } else {
+        setTableData(prevData => [newData, ...prevData]);
+      }
+    } else {
+      console.error('Не удалось найти поле первичного ключа.');
+    }
+  };
   // Открыть форму для добавления новой записи
   const handleAddClick = () => {
     setShowForm(true);
@@ -45,48 +59,26 @@ const TableComponent = ({ data, localData, metadata, page, setPage, size, setSiz
   };
 
   // Обработка добавления/редактирования записи
+
   const handleFormSubmit = async (formData) => {
-    console.log("Форма отправлена с данными:", formData);
     try {
-      const isEditing = !!editData;  // Определяем, идет ли процесс редактирования
+      const primaryKeyField = metadata.columns.find(column => column.primary_key); // Определяем primaryKeyField
+      if (!primaryKeyField) {
+        throw new Error('Не удалось найти поле первичного ключа.');
+      }
+  
+      const recordId = editData ? editData[primaryKeyField.name] : null; // Используем primaryKeyField для получения recordId
+      const savedRecord = await saveRecord(tableName, formData, !!editData, recordId);
       
-      // Получаем имя поля, которое является первичным ключом из метаданных
-      const primaryKeyField = metadata.columns.find(column => column.primary_key);
-      const recordId = isEditing && primaryKeyField ? editData[primaryKeyField.name] : null;
+      updateTableData(savedRecord, !!editData, savedRecord[primaryKeyField.name]); // Используем primaryKeyField для обновления данных
   
-      console.log("ID записи для редактирования:", recordId);
-  
-      // Сохранение записи
-      const savedRecord = await saveRecord(tableName, formData, isEditing, recordId);  // API-запрос
-  
-      // Проверяем, что у новой записи есть ID
-      const newRecordId = savedRecord[primaryKeyField.name];
-      if (!newRecordId) {
-        console.error("Ошибка: У новой записи нет ID.");
-        setOperationMessage('Ошибка при добавлении новой записи. ID не получен.');
-        return;
-      }
-  
-      // Обновляем таблицу в зависимости от того, добавляется или редактируется запись
-      if (isEditing) {
-        // Редактирование записи: находим запись в локальном состоянии и обновляем её
-        setTableData(prevData =>
-          prevData.map(item => item[primaryKeyField.name] === recordId ? savedRecord : item)
-        );
-        setOperationMessage(`Запись с ID ${recordId} успешно обновлена.`);
-      } else {
-        // Добавление новой записи: добавляем её в локальное состояние
-        setTableData(prevData => [savedRecord, ...prevData]);
-        setOperationMessage(`Запись успешно добавлена с ID ${newRecordId}.`);
-      }
-  
+      setOperationMessage(`Запись ${editData ? 'обновлена' : 'добавлена'} с ID ${savedRecord[primaryKeyField.name]}`);
       setShowForm(false);
     } catch (error) {
       console.error('Ошибка при сохранении данных:', error);
       setOperationMessage('Ошибка при сохранении данных.');
     }
   };
-  
   
 
   // Удаление записи
