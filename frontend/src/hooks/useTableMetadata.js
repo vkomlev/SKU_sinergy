@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { fetchTableMetadata } from '../services/api';
 
 export const useTableMetadata = (tableName) => {

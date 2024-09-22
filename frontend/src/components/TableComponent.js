@@ -22,7 +22,23 @@ const TableComponent = ({ tableName }) => {
   const { metadata, loadingMetadata } = useTableMetadata(tableName);
 
   // Используем хук для работы с фильтрами, сортировкой и данными
-  const { filteredSortedData, setFilteredSortedData, filters, sortBy, setFilters, setSortBy, loading, total, page, setPage, size, setSize, query, setQuery } = useTableFiltersSort(tableName, [], [], fetchTableData, fetchTableSearchResults);
+  const { 
+    filteredSortedData, 
+    setFilteredSortedData, 
+    filters, 
+    sortBy, 
+    setFilters, 
+    setSortBy, 
+    loading, 
+    total, 
+    page, 
+    setPage, 
+    size, 
+    setSize, 
+    query, 
+    setQuery,
+    resetFiltersSort   
+  } = useTableFiltersSort(tableName, [], [], fetchTableData, fetchTableSearchResults);
 
   const updateTableData = useCallback((newData, isEditing, recordId) => {
     const primaryKeyField = getPrimaryKeyField(metadata);
@@ -92,6 +108,10 @@ const TableComponent = ({ tableName }) => {
     setPage(newPage);  
   };
 
+  const handleReset = () => {
+    resetFiltersSort();  // Сбрасываем фильтры и сортировку
+  };
+
   if (loadingMetadata || !metadata) {
     return <div>Загрузка метаданных...</div>;
   }
@@ -119,6 +139,12 @@ const TableComponent = ({ tableName }) => {
               filters={filters}
               setFilters={setFilters}
             />
+            <div>
+            {/* Кнопка для сброса фильтров и сортировки */}
+            <button onClick={handleReset}>Сбросить фильтры и сортировку</button>
+
+            {/* Остальная часть компонента */}
+            </div>
             <div className='big-table'>
               <table className='table'>
                 <TableHeader 

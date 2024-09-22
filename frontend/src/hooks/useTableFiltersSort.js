@@ -34,6 +34,13 @@ export const useTableFiltersSort = (tableName, initialSortBy = [], initialFilter
     updateTableData();
   }, [sortBy, filters, query, tableName, updateTableData]);
 
+    // Общая функция для сброса фильтров и сортировки
+    const resetFiltersSort = () => {
+      setFilters([]);  // Сброс фильтров
+      setSortBy([]);   // Сброс сортировки
+      setPage(1);      // Возвращаем на первую страницу
+    };
+
   return {
     filteredSortedData,
     setFilteredSortedData,
@@ -48,6 +55,7 @@ export const useTableFiltersSort = (tableName, initialSortBy = [], initialFilter
     size,
     setSize,
     query,       // Возвращаем состояние строки поиска
-    setQuery     // Функция для обновления строки поиска
+    setQuery,     // Функция для обновления строки поиска
+    resetFiltersSort  
   };
 };
