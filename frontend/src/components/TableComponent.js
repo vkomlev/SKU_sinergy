@@ -2,6 +2,7 @@ import React, { useCallback, useState } from 'react';
 import { getPrimaryKeyField } from '../utils/tableUtils';
 import { deleteRecord, fetchRecord, saveRecord, fetchTableData, fetchTableSearchResults } from '../services/api';  
 import { useTableFiltersSort } from '../hooks/useTableFiltersSort';
+import { useTableMetadata } from '../hooks/useTableMetadata';  // Импортируем новый хук
 import SearchComponent from './SearchComponent';
 import EditForm from './EditForm';
 import DropFilterMenuComponent from './DropFilterMenuComponent';
@@ -11,13 +12,16 @@ import PaginationComponent from './PaginationComponent';
 import MessageDisplay from './MessageDisplay';
 import './styles/TableComponent.css';
 
-const TableComponent = ({ metadata, tableName }) => {
+const TableComponent = ({ tableName }) => {
   const [showForm, setShowForm] = useState(false);
   const [editData, setEditData] = useState(null);
   const [formLoading, setFormLoading] = useState(false);
   const [operationMessage, setOperationMessage] = useState(null);
 
-  // Используем обновленный хук с поддержкой поиска
+  // Используем хук для метаданных
+  const { metadata, loadingMetadata } = useTableMetadata(tableName);
+
+  // Используем хук для работы с фильтрами, сортировкой и данными
   const { filteredSortedData, setFilteredSortedData, filters, sortBy, setFilters, setSortBy, loading, total, page, setPage, size, setSize, query, setQuery } = useTableFiltersSort(tableName, [], [], fetchTableData, fetchTableSearchResults);
 
   const updateTableData = useCallback((newData, isEditing, recordId) => {
@@ -87,6 +91,10 @@ const TableComponent = ({ metadata, tableName }) => {
   const handlePageChange = (newPage) => {
     setPage(newPage);  
   };
+
+  if (loadingMetadata || !metadata) {
+    return <div>Загрузка метаданных...</div>;
+  }
 
   return (
     <div>
