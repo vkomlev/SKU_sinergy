@@ -49,8 +49,8 @@ class BaseController:
         """Получить запись по ID"""
         return self.repo.get_by_id(entity_id)
     
-    def filter_orders(self, **filters):
-        """Получить отфильтрованные заказы"""
+    def filter_records(self, **filters):
+        """Получить отфильтрованные данные"""
         return self.repo.filter_by_fields(**filters)
 
     def search(self, query):

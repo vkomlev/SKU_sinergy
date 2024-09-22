@@ -26,7 +26,7 @@ class BaseService:
     
     def filter(self, **filters):
         """Получить данные по фильтрам"""
-        return self.controller.filter_orders(**filters)
+        return self.controller.filter_records(**filters)
 
     def get_table_metadata(self):
         """Получить метаданные таблицы"""

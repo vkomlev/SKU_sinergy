@@ -73,11 +73,11 @@ class BaseRepository:
     def filter_by_fields(self, **filters):
         query = self.__get_query()
         # Проверяем наличие фильтров и корректируем на случай, если они вложены
-        filter_criteria = filters.get('filters', filters)
-        
-        if filter_criteria:
-            for column_name, value in filter_criteria.items():
-                query = query.filter(getattr(self.model, column_name) == value)
+        filters = filters.get('filters', filters)
+        for item in filters:
+            if item.get('column'):
+                if item.get('expression') == '=':
+                    query = query.filter(getattr(self.model, item.get('column')) == item.get('value'))
         self.__temp_query = query
         return query.all() 
 
