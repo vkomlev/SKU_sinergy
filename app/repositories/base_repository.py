@@ -1,7 +1,7 @@
 # app/repositories/base_repository.py
 
 from sqlalchemy.orm import Session
-from sqlalchemy import or_
+from sqlalchemy import or_, and_
 from app.model_registry import get_model_by_table_name
 from sqlalchemy.inspection import inspect
 from app.utils.metadata import MetadataManager
@@ -140,3 +140,33 @@ class BaseRepository:
         results = self.session.query(self.model).filter(or_(*param_check)).all() #фильтрует заказы по условию
         return results
     
+
+
+    def save_import_data_to_table(self, data):
+        '''Импорт данных в таблицу БД'''
+        metadata = MetadataManager()
+        # Получаем название уникального ключа для таблицы
+        key_names = metadata.get_unique_columns(self.model.__tablename__)
+
+        for row in data:
+            # Извлекаем значения уникальных полей
+            keys = {}
+            for key in key_names:
+                keyname = key.get('name')
+                if keyname:
+                    keys[keyname] = row.get(keyname)
+
+            if keys:
+                # Проверяем, существует ли запись с данным значением первичного ключа
+                entity = self.get_by_fields(**keys)
+                if entity:
+                    # Если запись существует, обновляем её
+                    self.update(entity[0], row)
+                else:
+                    # Если записи нет, создаем новую запись
+                    new_entity = self.model(**row)
+                    self.add(new_entity)
+            else:
+                # Если нет значения первичного ключа, создаем новую запись
+                new_entity = self.model(**row)
+                self.add(new_entity)

@@ -51,5 +51,19 @@ class BaseService:
     def get_record(self, record_id):
         """Получить данные по id"""
         return self.controller.get_by_id(record_id)
+    
+    def upload_file_to_server(self, file, filetype='media'):
+        """Загрузить файл"""
+        return self.controller.upload_file(file, filetype)
+    
+    def load_transormed_data(self, file):
+        """Загрузить трансформированные данные в БД"""
+        return self.controller.load_transformed_data(file)
+    
+   
+
+    
+    
+
 
    

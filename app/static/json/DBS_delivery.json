@@ -7,7 +7,7 @@
       "label": "ID записи",
       "input_type": "number" ,
       "mappings": {
-        "DBSDelivery" : "код",
+        "import_name" : "код",
         "transformation" : "skip"
 
       }
@@ -19,9 +19,8 @@
       "label": "Маркетплейс",
       "input_type": "text",
       "mappings": {
-        "DBSDelivery" : "Маркетплейс",
+        "import_name" : "Площадка",
         "transformation" : "direct"
-
       }
     },
     {
@@ -29,28 +28,45 @@
       "type": "string",
       "visible": true,
       "label": "Партнер",
-      "input_type": "text"
+      "input_type": "text",
+      "mappings": {
+        "import_name" : "Кабинет",
+        "transformation" : "direct"
+      }
     },
     {
       "name": "assembly_task",
       "type": "string",
       "visible": true,
       "label": "Задача сборки",
-      "input_type": "text"
+      "input_type": "text",
+      "mappings": {
+        "import_name" : "Сборочное задание",
+        "transformation" : "direct",
+        "unique_key" : true
+      }
     },
     {
       "name": "sku",
       "type": "string",
       "visible": true,
       "label": "Артикул",
-      "input_type": "text"
+      "input_type": "text",
+      "mappings": {
+        "import_name" : "Артикул",
+        "transformation" : "direct"
+      }
     },
     {
       "name": "product_name",
       "type": "string",
       "visible": true,
       "label": "Название продукта",
-      "input_type": "text"
+      "input_type": "text",
+      "mappings": {
+        "import_name" : "Название",
+        "transformation" : "direct"
+      }
     },
     {
       "name": "delivery_date_planned",
@@ -59,8 +75,8 @@
       "label": "Планируемая дата доставки",
       "input_type": "text",
       "mappings": {
-        "DBSDelivery" : "Планируемая дата доставки",
-        "transformation" : "get_data_begin"
+        "import_name" : "Дата доставки заявленная",
+        "transformation" : "direct"
 
       }
     },
@@ -69,98 +85,154 @@
       "type": "string",
       "visible": true,
       "label": "Фактическая дата доставки",
-      "input_type": "text"
+      "input_type": "text",
+      "mappings": {
+        "import_name" : "Актуальная дата доставки",
+        "transformation" : "direct"
+      }
     },
     {
       "name": "delivery_time",
       "type": "string",
       "visible": true,
       "label": "Время доставки",
-      "input_type": "text"
+      "input_type": "text",
+      "mappings": {
+        "import_name" : "Время доставки",
+        "transformation" : "direct"
+      }
     },
     {
       "name": "delivery_address",
       "type": "string",
       "visible": true,
       "label": "Адрес доставки",
-      "input_type": "text"
+      "input_type": "text",
+      "mappings": {
+        "import_name" : "Адрес доставки",
+        "transformation" : "direct"
+      }
     },
     {
       "name": "client_name",
       "type": "string",
       "visible": true,
       "label": "Имя клиента",
-      "input_type": "text"
+      "input_type": "text",
+      "mappings": {
+        "import_name" : "ФИО Покупателя, телефон",
+        "transformation" : "direct"
+      }
     },
     {
       "name": "climb",
       "type": "string",
       "visible": true,
       "label": "Подъем",
-      "input_type": "text"
+      "input_type": "text",
+      "mappings": {
+        "import_name" : "Подъем на этаж",
+        "transformation" : "direct"
+      }
     },
     {
       "name": "status",
       "type": "string",
       "visible": true,
       "label": "Статус",
-      "input_type": "text"
+      "input_type": "text",
+      "mappings": {
+        "import_name" : "Статус",
+        "transformation" : "direct"
+      }
     },
     {
       "name": "delivery_man",
       "type": "string",
       "visible": true,
       "label": "Доставщик",
-      "input_type": "text"
+      "input_type": "text",
+      "mappings": {
+        "import_name" : "Доставщик",
+        "transformation" : "direct"
+      }
     },
     {
       "name": "distance",
       "type": "string",
       "visible": true,
       "label": "Дистанция",
-      "input_type": "text"
+      "input_type": "text",
+      "mappings": {
+        "import_name" : "Расстояние",
+        "transformation" : "direct"
+      }
     },
     {
       "name": "cost",
       "type": "integer",
       "visible": true,
       "label": "Стоимость",
-      "input_type": "number"
+      "input_type": "number",
+      "mappings": {
+        "import_name" : "Стоимость",
+        "transformation" : "direct"
+      }
     },
     {
       "name": "payment_status",
       "type": "string",
       "visible": true,
       "label": "Статус оплаты",
-      "input_type": "text"
+      "input_type": "text",
+      "mappings": {
+        "import_name" : "Примечание",
+        "transformation" : "skip"
+      }
     },
     {
       "name": "compensation",
       "type": "string",
       "visible": true,
       "label": "Компенсация",
-      "input_type": "text"
+      "input_type": "text",
+      "mappings": {
+        "import_name" : "Компенсации за доставку от покупателей",
+        "transformation" : "direct"
+      }
     },
     {
       "name": "note",
       "type": "string",
       "visible": true,
       "label": "Примечание",
-      "input_type": "text"
+      "input_type": "text",
+      "mappings": {
+        "import_name" : "Примечание",
+        "transformation" : "direct"
+      }
     },
     {
       "name": "delivery_date_actual_finished",
       "type": "date",
       "visible": true,
       "label": "Фактическая дата завершения",
-      "input_type": "date"
+      "input_type": "date",
+      "mappings": {
+        "import_name" : "Сборочное задание",
+        "transformation" : "skip"
+      }
     },
     {
       "name": "delivery_date_plan_finished",
       "type": "date",
       "visible": true,
       "label": "Планируемая дата завершения",
-      "input_type": "date"
+      "input_type": "date",
+      "mappings": {
+        "import_name" : "Сборочное задание",
+        "transformation" : "skip"
+      }
     }
   ]
 }

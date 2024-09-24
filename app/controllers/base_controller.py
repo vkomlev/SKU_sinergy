@@ -3,11 +3,19 @@
 from app.utils.metadata import MetadataManager
 from app.repositories.base_repository import BaseRepository
 from sqlalchemy.inspection import inspect
+from settings import UPLOAD_DIR
+from werkzeug.utils import secure_filename
+import os
+import uuid
+import pandas as pd
+from app.utils.functions import apply_transformation
 
 class BaseController:
     def __init__(self, repository):
         self.repo = repository
         self.metadata_manager = MetadataManager()
+        self.allowed_extensions_for_load_table = {'csv', 'xlsx'}
+        self.allowed_extensions_for_mediafile = {'jpg', 'jpeg', 'png', 'gif', 'mp4', 'avi'}
 
     def get_combined_metadata(self):
         """Получить комбинированные метаданные"""
@@ -102,3 +110,102 @@ class BaseController:
                 setattr(model_instance, column_name, data[column_name])
 
         return model_instance
+    
+    def __allowed_file(self, filename: str, filetype: str):
+        """Проверка разрешенного файла"""
+        if filetype == 'data':
+            return '.' in filename and filename.rsplit('.', 1)[1].lower() in self.allowed_extensions_for_load_table
+        elif filetype == 'media':
+            return '.' in filename and filename.rsplit('.', 1)[1].lower() in self.allowed_extensions_for_mediafile
+
+
+    def upload_file(self, file, filetype = 'media'):
+        """Загрузить файл на сервер"""
+        if file and self.__allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file_id = str(uuid.uuid4())  # Генерация уникального идентификатора для файла
+            file_path = os.path.join(UPLOAD_DIR, f"{file_id}_{filename}")
+            file.save(file_path)
+            return file_id
+        return None
+    
+    def transform_file(self, file):
+        '''Преобразование загруженного файла данных по мапингу'''
+        s = file.read()
+        # Определяем формат файла
+        try:
+            if file.filename.endswith('.csv'):
+                data = pd.read_csv(file, delimiter=';')
+            elif file.filename.endswith(('.xls', '.xlsx')):
+                data = pd.read_excel(file)
+            else:
+                return {"status": "fail", "message": "Unsupported file format"}, 400
+        except Exception as e:
+            return {"status": "fail", "message": f"Error reading file: {e}"}, 400
+        
+        data = data.to_dict(orient='records')
+        return self.apply_mapping(data)
+
+    def apply_mapping(self, data):
+        """Применение маппинга к данным с преобразованием типов"""
+
+        metadata = self.get_combined_metadata()
+        # Применяем маппинг и преобразования
+        transformed_data = []
+        
+        # Функция для приведения типов
+        def convert_to_type(value, column_type):
+            if value is None:
+                return None
+            try:
+                if column_type == 'integer':
+                    return int(value)
+                elif column_type == 'float':
+                    return float(value)
+                elif column_type == 'string':
+                    return str(value)
+                elif column_type == 'boolean':
+                    return bool(value)
+                # Добавляем другие типы данных при необходимости
+                else:
+                    return value
+            except (ValueError, TypeError):
+                # Обработка ошибок приведения типов, например, возвращаем значение как есть или None
+                return None
+
+        for row in data:
+            transformed_row = {}
+            for col_meta in metadata['columns']:
+                source_column = col_meta['mappings'].get('import_name', None)
+                transformation = col_meta['mappings'].get('transformation', 'direct')
+                column_type = col_meta.get('type', 'string')  # Получаем тип данных из метаданных
+
+                if transformation == 'skip':
+                    continue
+                elif transformation == 'direct':
+                    # Прямое сопоставление с преобразованием типа
+                    transformed_row[col_meta['name']] = convert_to_type(row[source_column], column_type)
+                else:
+                    # Применение функции преобразования с последующим приведением типа
+                    transformed_value = apply_transformation(row[source_column], transformation)
+                    transformed_row[col_meta['name']] = convert_to_type(transformed_value, column_type)
+            
+            transformed_data.append(transformed_row)
+
+        # Передаем данные в репозиторий для сохранения
+        return transformed_data
+
+    
+    def load_transformed_data(self, file):
+        data = self.transform_file(file)
+        if isinstance(data, dict):
+            return data
+        else:
+            try:
+                self.repo.save_import_data_to_table(data)
+            except Exception as e:
+                return {"status": "fail", "message": f"Error saving data: {e}"}, 400
+            return {"status": "success", "message": "Data saved successfully"}, 200
+
+
+

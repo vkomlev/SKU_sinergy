@@ -1,8 +1,9 @@
 # app/main/__init__.py
 
 from flask import Flask
-from .urls import setup_routes  # Это регистрация маршрутов для главной страницы
-from app.api.tables.urls import setup_my_routes  # Это регистрация маршрутов для API
+#from app.main import setup_routes  # Это регистрация маршрутов для главной страницы
+from app.api.tables.urls import setup_table_api_routes  # Это регистрация маршрутов для API
+from app.api.urls import setup_root_api_routes
 from flask_cors import CORS
 
 def create_app():
@@ -14,6 +15,7 @@ def create_app():
     #setup_routes(app)
 
     # Регистрация маршрутов API через Blueprint
-    setup_my_routes(app)
+    setup_root_api_routes(app)
+    setup_table_api_routes(app)
     
     return app

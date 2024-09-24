@@ -10,14 +10,15 @@ import TableHeader from './TableHeader';
 import TableBody from './TableBody';
 import PaginationComponent from './PaginationComponent';
 import MessageDisplay from './MessageDisplay';
+import FileUploadComponent from './FileUploadComponent';
 import './styles/TableComponent.css';
 
-const TableComponent = ({ tableName }) => {
+const TableComponent = ({ tableName, onDataReload, ...props  }) => {
   const [showForm, setShowForm] = useState(false);
   const [editData, setEditData] = useState(null);
   const [formLoading, setFormLoading] = useState(false);
   const [operationMessage, setOperationMessage] = useState(null);
-
+  const [showUpload, setShowUpload] = useState(false); // Состояние для отображения компонента загрузки
   // Используем хук для метаданных
   const { metadata, loadingMetadata } = useTableMetadata(tableName);
 
@@ -116,6 +117,16 @@ const TableComponent = ({ tableName }) => {
     return <div>Загрузка метаданных...</div>;
   }
 
+  const handleUploadSuccess = () => {
+    setShowUpload(false);
+    // Обновляем таблицу после успешной загрузки данных
+    onDataReload();
+  };
+
+  const handleCancelUpload = () => {
+    setShowUpload(false);  // Закрываем форму при отмене
+  };
+
   return (
     <div>
       <div className={showForm ? 'content-hidden' : ''}>
@@ -128,10 +139,17 @@ const TableComponent = ({ tableName }) => {
           </div>
           <div>
             <button onClick={handleAddClick}>Добавить</button>
+            <button onClick={() => setShowUpload(true)}>Загрузить</button>
           </div>
         </header>
         <MessageDisplay statusMessage={operationMessage} />
-
+        {showUpload && (
+        <FileUploadComponent
+          tableName={tableName}
+          onUploadSuccess={handleUploadSuccess}
+          onCancel={handleCancelUpload}  // Обрабатываем отмену загрузки
+        />
+        )}
         {metadata && metadata.columns && (
           <>
             <DropFilterMenuComponent
