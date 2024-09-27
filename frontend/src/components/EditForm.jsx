@@ -24,27 +24,30 @@ const EditForm = React.memo(({ metadata, defaultValues, onSubmit, onDelete, isEd
         reset(initialData);  // Сбрасываем форму с данными для редактирования
       }, [initialData, reset]);
 
-    return (
+      return (
         <div className="scrollable-form">
             <form onSubmit={handleSubmit(onSubmit)}>
                 <Grid container spacing={2}>
                     {/* Динамическое создание полей на основе метаданных */}
                     {metadata?.columns?.map((field) => (
-                        <Grid item xs={12} sm={6} key={field.name}>
-                            <Controller
-                                name={field.name}
-                                control={control}
-                                render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
-                                    <FormField
-                                        field={field}
-                                        value={value}
-                                        onChange={onChange}
-                                        onBlur={onBlur}
-                                        error={error}
-                                    />
-                                )}
-                            />
-                        </Grid>
+                        // Проверяем visible для каждого поля
+                        field.visible && (
+                            <Grid item xs={12} sm={4} key={field.name}>
+                                <Controller
+                                    name={field.name}
+                                    control={control}
+                                    render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
+                                        <FormField
+                                            field={field}
+                                            value={value}
+                                            onChange={onChange}
+                                            onBlur={onBlur}
+                                            error={error}
+                                        />
+                                    )}
+                                />
+                            </Grid>
+                        )
                     ))}
                 </Grid>
                 <br />
@@ -62,7 +65,7 @@ const EditForm = React.memo(({ metadata, defaultValues, onSubmit, onDelete, isEd
                 )}
                 {/* Добавляем кнопку закрытия */}
                 <Button variant="outlined" color="default" onClick={onClose}>
-                Закрыть
+                    Закрыть
                 </Button>
             </form>
         </div>

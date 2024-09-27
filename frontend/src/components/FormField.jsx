@@ -1,9 +1,10 @@
 import { TextField, Select, MenuItem, InputLabel, FormControl } from '@mui/material'
 import LookupField from './LookupField'
 
-// Компонент поля формы, который рендерит различные типы ввода на основе типа поля.
+// Компонент поля формы, который рендерит различные типы ввода на основе типа поля и свойства видимости.
 
 const FormField = ({ field, value, onChange, error }) => {
+  const inputLabelProps = { shrink: !!value } // Проверяем, есть ли значение для управления меткой
   switch (field.input_type) {
     case 'text':
       return (
@@ -16,6 +17,7 @@ const FormField = ({ field, value, onChange, error }) => {
           helperText={error ? error.message : ''} // Сообщение об ошибке
           fullWidth // Полная ширина поля
           placeholder={value ? '' : field.placeholder}  // Показываем placeholder только если нет значения
+          InputLabelProps={inputLabelProps} // Устанавливаем свойства метки
         />
       )
 
@@ -30,6 +32,7 @@ const FormField = ({ field, value, onChange, error }) => {
           helperText={error ? error.message : ''}
           fullWidth
           placeholder={value ? '' : field.placeholder}  // Показываем placeholder только если нет значения
+          InputLabelProps={inputLabelProps} // Устанавливаем свойства метки
         />
       )
 
@@ -43,7 +46,7 @@ const FormField = ({ field, value, onChange, error }) => {
           error={!!error}
           helperText={error ? error.message : ''}
           fullWidth
-          InputLabelProps={{ shrink: true }} // Добавляет эффект сжатия метки
+          InputLabelProps={{ ...inputLabelProps, shrink: true }} // Добавляет эффект сжатия метки
           placeholder={value ? '' : field.placeholder}  // Показываем placeholder только если нет значения
         />
       )
@@ -51,7 +54,7 @@ const FormField = ({ field, value, onChange, error }) => {
     case 'select':
       return (
         <FormControl fullWidth error={!!error}>
-          <InputLabel>{field.label}</InputLabel>
+          <InputLabel {...inputLabelProps}>{field.label}</InputLabel>
           <Select value={value} onChange={onChange}>
             {field.options?.map((option) => (
               <MenuItem key={option.value} value={option.value}>
