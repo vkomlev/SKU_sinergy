@@ -37,6 +37,25 @@ const LookupField = ({ label, value, onChange, lookupTable, error }) => {
       error={!!error} 
       helperText={error ? error.message : ''} 
       fullWidth 
+      sx={{
+        '& input': {
+          color: '#e6e6e6',
+        },
+        '& label': {
+          color: '#e6e6e6',
+        },
+        '& .MuiInputBase-root': {
+          borderColor: '#346ACF', // Цвет границы для поля ввода
+          '&:hover fieldset': {
+            borderColor: '#346ACF', // Цвет границы при наведении
+          },
+        },
+        '& .MuiOutlinedInput-root': {
+          '& fieldset': {
+            borderColor: '#000000', // Цвет границы
+          },
+        },
+      }}
     >
       {loading ? (
         <MenuItem disabled>Загрузка...</MenuItem> // Показать индикатор загрузки

@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Button, Grid } from '@mui/material';
+import { Button, Grid, Box, Typography } from '@mui/material';
 import FormField from './FormField';
 import createValidationSchema from './Validation';
 import React from 'react';
@@ -26,6 +26,15 @@ const EditForm = React.memo(({ metadata, defaultValues, onSubmit, onDelete, isEd
 
       return (
         <div className="scrollable-form">
+        <header className="form-header">
+            <Typography variant="h5" gutterBottom align="center">
+                {isEditing ? 'Редактировать данные' : 'Добавить данные'}
+            </Typography>
+            <div>
+                <Button className="checkmark-button" onClick={handleSubmit(onSubmit)} aria-label="Сохранить" />
+                <Button onClick={onClose} className="close-button-header" aria-label="Закрыть" />
+            </div>
+            </header>
             <form onSubmit={handleSubmit(onSubmit)}>
                 <Grid container spacing={2}>
                     {/* Динамическое создание полей на основе метаданных */}
@@ -51,22 +60,24 @@ const EditForm = React.memo(({ metadata, defaultValues, onSubmit, onDelete, isEd
                     ))}
                 </Grid>
                 <br />
-                <Button type="submit" variant="contained" color="primary">
-                    {isEditing ? 'Сохранить' : 'Добавить'}
-                </Button>
-                {isEditing && (
-                    <Button
-                        variant="contained"
-                        color="secondary"
-                        onClick={onDelete}
-                    >
-                        Удалить
+                <Box className="buttons-container">
+                    <Button type="submit" variant="contained" color="primary">
+                        {isEditing ? 'Сохранить' : 'Добавить'}
                     </Button>
-                )}
-                {/* Добавляем кнопку закрытия */}
-                <Button variant="outlined" color="default" onClick={onClose}>
-                    Закрыть
-                </Button>
+                    {isEditing && (
+                        <Button
+                            variant="contained"
+                            color="secondary"
+                            onClick={onDelete}
+                        >
+                            Удалить
+                        </Button>
+                    )}
+                    {/* Добавляем кнопку закрытия */}
+                    <Button variant="outlined" color="default" onClick={onClose} className='close-button'>
+                        Закрыть
+                    </Button>
+                </Box>
             </form>
         </div>
     );
