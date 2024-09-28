@@ -65,7 +65,7 @@ def search(table_name):
     results = service.search(query)
     total = len(results) #подсчет записей
 
-    serialized_results = UniversalSerializer(DBSDelivery, many=True).dump(results) # Сереализатор для преобразования результатов в JSON
+    serialized_results = UniversalSerializer(model, many=True).dump(results) # Сереализатор для преобразования результатов в JSON
     query_results = {"total":total, 
                      "data": serialized_results}
     return jsonify(query_results)
@@ -79,7 +79,7 @@ def create_record(table_name):
     short_table_name = table_name.replace('_', '.', 1)
     new_record = service.create_data(data, short_table_name)
     if new_record:
-        return jsonify(UniversalSerializer(DBSDelivery).dump(new_record)), 201
+        return jsonify(UniversalSerializer(model).dump(new_record)), 201
     else:
         abort(404, description="Record not created")
 
@@ -91,7 +91,7 @@ def update_record(table_name, record_id):
     data = request.get_json()
     updated_record = service.update_data(record_id, data)
     if updated_record:
-        return jsonify(UniversalSerializer(DBSDelivery).dump(updated_record)), 200
+        return jsonify(UniversalSerializer(model).dump(updated_record)), 200
     else:
         abort(404, description="Record not found")
 
@@ -115,7 +115,7 @@ def get_record(table_name, record_id):
     service = BaseService(BaseController(BaseRepository(model, session)))
     record = service.get_record(record_id)
     if record:
-        return jsonify(UniversalSerializer(DBSDelivery).dump(record)), 200
+        return jsonify(UniversalSerializer(model).dump(record)), 200
     else:
         abort(404, description="Record not found")
 
