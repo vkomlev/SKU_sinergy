@@ -125,6 +125,7 @@ class BaseRepository:
             columns_info.append(column_info) # Добавление столбцов из БД
 
         db_metadata = {"table_name":self.model.__tablename__,
+                       "schema":self.model.__table_args__.get('schema','public'),
                        "columns": columns_info}
 
         return db_metadata # Возвращаем метаданные только из БД

@@ -37,7 +37,7 @@ def get_data_view(table_name):
         # Применяем только пагинацию
         deliveries = service.get_with_pagination(page, size)
 
-    serializer = UniversalSerializer(DBSDelivery, many = True)
+    serializer = UniversalSerializer(model, many = True)
     deliveries_data = serializer.dump(deliveries)
 
     json_data = {

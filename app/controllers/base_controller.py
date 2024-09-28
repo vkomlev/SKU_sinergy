@@ -20,7 +20,7 @@ class BaseController:
     def get_combined_metadata(self):
         """Получить комбинированные метаданные"""
         db_metadata = self.repo.get_table_metadata()
-        table_name = db_metadata['table_name']
+        table_name = db_metadata['schema'] + '_' + db_metadata['table_name']
 
         
         json_metadata = self.metadata_manager.get_metadata(table_name) # Получение метаданных из JSON-файла

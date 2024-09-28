@@ -3,6 +3,7 @@
 import json
 import os
 from settings import METADATA_DIR
+from app.utils.helpers import get_session
 
 
 class MetadataManager:
@@ -24,4 +25,21 @@ class MetadataManager:
         columns = metadata["columns"]
         unique_columns = [col for col in columns if col.get("mappings",{"unique_key": False}).get("unique_key", False)==True]
         return unique_columns
+    
+    @staticmethod
+    def save_to_file(table_name):
+        """Сохраняет метаданные в JSON-файл"""
+        from app.repositories.base_repository import BaseRepository
+        model = BaseRepository.get_model_by_table_name(table_name.replace('_', '.', 1))
+        session = get_session()
+        br = BaseRepository(model, session)
+        metadata = br.get_table_metadata()
+        file_path = os.path.join(MetadataManager.get_metadata_dir(), f"{table_name}.json")
+        with open(file_path, "w", encoding="utf-8") as f:
+            json.dump(metadata, f, ensure_ascii=False, indent=4)
+    
+    @staticmethod
+    def get_metadata_dir():
+        return METADATA_DIR
+
 

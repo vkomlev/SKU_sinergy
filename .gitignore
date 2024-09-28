@@ -172,3 +172,4 @@ run.py
 .vscode/settings.json
 frontend/src.zip
 frontend/src/config.js
+run_test.py

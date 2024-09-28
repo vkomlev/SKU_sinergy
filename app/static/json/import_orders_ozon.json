@@ -1,0 +1,663 @@
+{
+    "table_name": "orders_ozon",
+    "columns": [
+        {
+            "name": "order_number",
+            "type": "string",
+            "primary_key": true,
+            "foreign_key": null,
+            "visible": true,
+            "label": "Номер заказа",
+            "input_type": "text" ,
+            "mappings": {
+              "import_name" : "Номер заказа",
+              "transformation" : "direct"
+      
+            }
+        },
+        {
+            "name": "ship_number",
+            "type": "string",
+            "primary_key": true,
+            "foreign_key": null,
+            "visible": true,
+            "label": "Номер отправления",
+            "input_type": "text" ,
+            "mappings": {
+              "import_name" : "Номер отправления",
+              "transformation" : "direct"
+      
+            }
+        },
+        {
+            "name": "date_accept",
+            "type": "DATETIME",
+            "primary_key": false,
+            "foreign_key": null,
+            "visible": true,
+            "label": "Принят в обработку",
+            "input_type": "date" ,
+            "mappings": {
+              "import_name" : "Принят в обработку",
+              "transformation" : "direct"
+      
+            }
+        },
+        {
+            "name": "date_ship",
+            "type": "DATETIME",
+            "primary_key": false,
+            "foreign_key": null,
+            "visible": true,
+            "label": "Дата отгрузки",
+            "input_type": "date" ,
+            "mappings": {
+              "import_name" : "Дата отгрузки",
+              "transformation" : "direct"
+      
+            }
+        },
+        {
+            "name": "status",
+            "type": "string",
+            "primary_key": false,
+            "foreign_key": null,
+            "visible": true,
+            "label": "Статус",
+            "input_type": "text" ,
+            "mappings": {
+              "import_name" : "Статус",
+              "transformation" : "direct"
+      
+            }
+        },
+        {
+            "name": "date_delivery",
+            "type": "DATETIME",
+            "primary_key": false,
+            "foreign_key": null,
+            "visible": true,
+            "label": "Дата доставки",
+            "input_type": "date" ,
+            "mappings": {
+              "import_name" : "Дата доставки",
+              "transformation" : "direct"
+      
+            }
+        },
+        {
+            "name": "date_transfer",
+            "type": "DATETIME",
+            "primary_key": false,
+            "foreign_key": null,
+            "visible": true,
+            "label": "Фактическая дата передачи в доставку",
+            "input_type": "date" ,
+            "mappings": {
+              "import_name" : "Фактическая дата передачи в доставку",
+              "transformation" : "direct"
+      
+            }
+        },
+        {
+            "name": "summ_ship",
+            "type": "FLOAT",
+            "primary_key": false,
+            "foreign_key": null,
+            "visible": true,
+            "label": "Сумма отправления",
+            "input_type": "number" ,
+            "mappings": {
+              "import_name" : "Сумма отправления",
+              "transformation" : "direct"
+      
+            }
+        },
+        {
+            "name": "currency_ship",
+            "type": "string",
+            "primary_key": false,
+            "foreign_key": null,
+            "visible": true,
+            "label": "Код валюты отправления",
+            "input_type": "text" ,
+            "mappings": {
+              "import_name" : "Код валюты отправления",
+              "transformation" : "direct"
+      
+            }
+        },
+        {
+            "name": "product_name",
+            "type": "string",
+            "primary_key": false,
+            "foreign_key": null,
+            "visible": true,
+            "label": "Наименование товара",
+            "input_type": "text" ,
+            "mappings": {
+              "import_name" : "Наименование товара",
+              "transformation" : "direct"
+      
+            }
+        },
+        {
+            "name": "ozon_id",
+            "type": "INTEGER",
+            "primary_key": false,
+            "foreign_key": null,
+            "visible": true,
+            "label": "OZON id",
+            "input_type": "number" ,
+            "mappings": {
+              "import_name" : "OZON id",
+              "transformation" : "direct"
+      
+            }
+        },
+        {
+            "name": "sku",
+            "type": "string",
+            "primary_key": false,
+            "foreign_key": null,
+            "visible": true,
+            "label": "Артикул",
+            "input_type": "text" ,
+            "mappings": {
+              "import_name" : "Артикул",
+              "transformation" : "direct"
+      
+            }
+        },
+        {
+            "name": "final_cost",
+            "type": "FLOAT",
+            "primary_key": false,
+            "foreign_key": null,
+            "visible": true,
+            "label": "Итоговая стоимость товара",
+            "input_type": "number" ,
+            "mappings": {
+              "import_name" : "Итоговая стоимость товара",
+              "transformation" : "direct"
+      
+            }
+        },
+        {
+            "name": "currency_product",
+            "type": "string",
+            "primary_key": false,
+            "foreign_key": null,
+            "visible": true,
+            "label": "Код валюты товара",
+            "input_type": "text" ,
+            "mappings": {
+              "import_name" : "Код валюты товара",
+              "transformation" : "direct"
+      
+            }
+        },
+        {
+            "name": "client_cost",
+            "type": "FLOAT",
+            "primary_key": false,
+            "foreign_key": null,
+            "visible": true,
+            "label": "Стоимость товара для покупателя",
+            "input_type": "number" ,
+            "mappings": {
+              "import_name" : "Стоимость товара для покупателя",
+              "transformation" : "direct"
+      
+            }
+        },
+        {
+            "name": "client_currency",
+            "type": "string",
+            "primary_key": false,
+            "foreign_key": null,
+            "visible": true,
+            "label": "Код валюты покупателя",
+            "input_type": "text" ,
+            "mappings": {
+              "import_name" : "Код валюты покупателя",
+              "transformation" : "direct"
+      
+            }
+        },
+        {
+            "name": "product_count",
+            "type": "INTEGER",
+            "primary_key": false,
+            "foreign_key": null,
+            "visible": true,
+            "label": "Количество",
+            "input_type": "number" ,
+            "mappings": {
+              "import_name" : "Количество",
+              "transformation" : "direct"
+      
+            }
+        },
+        {
+            "name": "delivery_cost",
+            "type": "FLOAT",
+            "primary_key": false,
+            "foreign_key": null,
+            "visible": true,
+            "label": "Стоимость доставки",
+            "input_type": "number" ,
+            "mappings": {
+              "import_name" : "Стоимость доставки",
+              "transformation" : "direct"
+      
+            }
+        },
+        {
+            "name": "linked_ships",
+            "type": "string",
+            "primary_key": false,
+            "foreign_key": null,
+            "visible": true,
+            "label": "Связанные отправления",
+            "input_type": "text" ,
+            "mappings": {
+              "import_name" : "Связанные отправления",
+              "transformation" : "direct"
+      
+            }
+        },
+        {
+            "name": "redeemed_product",
+            "type": "string",
+            "primary_key": false,
+            "foreign_key": null,
+            "visible": true,
+            "label": "Выкуп товара",
+            "input_type": "text" ,
+            "mappings": {
+              "import_name" : "Выкуп товара",
+              "transformation" : "direct"
+      
+            }
+        },
+        {
+            "name": "cost_before_discount",
+            "type": "FLOAT",
+            "primary_key": false,
+            "foreign_key": null,
+            "visible": true,
+            "label": "Цена товара до скидок",
+            "input_type": "number" ,
+            "mappings": {
+              "import_name" : "Цена товара до скидок",
+              "transformation" : "direct"
+      
+            }
+        },
+        {
+            "name": "discount_percent",
+            "type": "string",
+            "primary_key": false,
+            "foreign_key": null,
+            "visible": true,
+            "label": "Скидка %",
+            "input_type": "text" ,
+            "mappings": {
+              "import_name" : "Скидка %",
+              "transformation" : "direct"
+      
+            }
+        },
+        {
+            "name": "discount_rub",
+            "type": "FLOAT",
+            "primary_key": false,
+            "foreign_key": null,
+            "visible": true,
+            "label": "Скидка руб",
+            "input_type": "number" ,
+            "mappings": {
+              "import_name" : "Скидка руб",
+              "transformation" : "direct"
+      
+            }
+        },
+        {
+            "name": "actions",
+            "type": "string",
+            "primary_key": false,
+            "foreign_key": null,
+            "visible": true,
+            "label": "Акции",
+            "input_type": "text" ,
+            "mappings": {
+              "import_name" : "Акции",
+              "transformation" : "direct"
+      
+            }
+        },
+        {
+            "name": "climb",
+            "type": "string",
+            "primary_key": false,
+            "foreign_key": null,
+            "visible": true,
+            "label": "Подъем на этаж",
+            "input_type": "text" ,
+            "mappings": {
+              "import_name" : "Подъем на этаж",
+              "transformation" : "direct"
+      
+            }
+        },
+        {
+            "name": "upper_barcode",
+            "type": "string",
+            "primary_key": false,
+            "foreign_key": null,
+            "visible": true,
+            "label": "Верхний штрихкод",
+            "input_type": "text" ,
+            "mappings": {
+              "import_name" : "Верхний штрихкод",
+              "transformation" : "direct"
+      
+            }
+        },
+        {
+            "name": "lower_barcode",
+            "type": "string",
+            "primary_key": false,
+            "foreign_key": null,
+            "visible": true,
+            "label": "Нижний штрихкод",
+            "input_type": "text" ,
+            "mappings": {
+              "import_name" : "Нижний штрихкод",
+              "transformation" : "direct"
+      
+            }
+        },
+        {
+            "name": "shipping_cluster",
+            "type": "string",
+            "primary_key": false,
+            "foreign_key": null,
+            "visible": true,
+            "label": "Кластер отгрузки",
+            "input_type": "text" ,
+            "mappings": {
+              "import_name" : "Кластер отгрузки",
+              "transformation" : "direct"
+      
+            }
+        },
+        {
+            "name": "delivery_cluster",
+            "type": "string",
+            "primary_key": false,
+            "foreign_key": null,
+            "visible": true,
+            "label": "Кластер доставки",
+            "input_type": "text" ,
+            "mappings": {
+              "import_name" : "Кластер доставки",
+              "transformation" : "direct"
+      
+            }
+        },
+        {
+            "name": "delivery_region",
+            "type": "string",
+            "primary_key": false,
+            "foreign_key": null,
+            "visible": true,
+            "label": "Регион доставки",
+            "input_type": "text" ,
+            "mappings": {
+              "import_name" : "Регион доставки",
+              "transformation" : "direct"
+      
+            }
+        },
+        {
+            "name": "delivery_city",
+            "type": "string",
+            "primary_key": false,
+            "foreign_key": null,
+            "visible": true,
+            "label": "Город доставки",
+            "input_type": "text" ,
+            "mappings": {
+              "import_name" : "Город доставки",
+              "transformation" : "direct"
+      
+            }
+        },
+        {
+            "name": "delivery_type",
+            "type": "string",
+            "primary_key": false,
+            "foreign_key": null,
+            "visible": true,
+            "label": "Способ доставки",
+            "input_type": "text" ,
+            "mappings": {
+              "import_name" : "Способ доставки",
+              "transformation" : "direct"
+      
+            }
+        },
+        {
+            "name": "client_segment",
+            "type": "string",
+            "primary_key": false,
+            "foreign_key": null,
+            "visible": true,
+            "label": "Сегмент клиента",
+            "input_type": "text" ,
+            "mappings": {
+              "import_name" : "Сегмент клиента",
+              "transformation" : "direct"
+      
+            }
+        },
+        {
+            "name": "payment_type",
+            "type": "string",
+            "primary_key": false,
+            "foreign_key": null,
+            "visible": true,
+            "label": "Способ оплаты",
+            "input_type": "text" ,
+            "mappings": {
+              "import_name" : "Способ оплаты",
+              "transformation" : "direct"
+      
+            }
+        },
+        {
+            "name": "legal_entity",
+            "type": "string",
+            "primary_key": false,
+            "foreign_key": null,
+            "visible": true,
+            "label": "Юридическое лицо",
+            "input_type": "text" ,
+            "mappings": {
+              "import_name" : "Юридическое лицо",
+              "transformation" : "direct"
+      
+            }
+        },
+        {
+            "name": "client_name",
+            "type": "string",
+            "primary_key": false,
+            "foreign_key": null,
+            "visible": true,
+            "label": "Имя покупателя",
+            "input_type": "text" ,
+            "mappings": {
+              "import_name" : "Имя покупателя",
+              "transformation" : "direct"
+      
+            }
+        },
+        {
+            "name": "client_phone",
+            "type": "string",
+            "primary_key": false,
+            "foreign_key": null,
+            "visible": true,
+            "label": "Телефон покупателя",
+            "input_type": "text" ,
+            "mappings": {
+              "import_name" : "Телефон покупателя",
+              "transformation" : "direct"
+      
+            }
+        },
+        {
+            "name": "client_email",
+            "type": "string",
+            "primary_key": false,
+            "foreign_key": null,
+            "visible": true,
+            "label": "Email покупателя",
+            "input_type": "text" ,
+            "mappings": {
+              "import_name" : "Email покупателя",
+              "transformation" : "direct"
+      
+            }
+        },
+        {
+            "name": "recipient_name",
+            "type": "string",
+            "primary_key": false,
+            "foreign_key": null,
+            "visible": true,
+            "label": "Имя получателя",
+            "input_type": "text" ,
+            "mappings": {
+              "import_name" : "Имя получателя",
+              "transformation" : "direct"
+      
+            }
+        },
+        {
+            "name": "recipient_phone",
+            "type": "string",
+            "primary_key": false,
+            "foreign_key": null,
+            "visible": true,
+            "label": "Телефон получателя",
+            "input_type": "text" ,
+            "mappings": {
+              "import_name" : "Телефон получателя",
+              "transformation" : "direct"
+      
+            }
+        },
+        {
+            "name": "delivery_address",
+            "type": "string",
+            "primary_key": false,
+            "foreign_key": null,
+            "visible": true,
+            "label": "Адрес доставки",
+            "input_type": "text" ,
+            "mappings": {
+              "import_name" : "Адрес доставки",
+              "transformation" : "direct"
+      
+            }
+        },
+        {
+            "name": "postal_code",
+            "type": "string",
+            "primary_key": false,
+            "foreign_key": null,
+            "visible": true,
+            "label": "Индекс",
+            "input_type": "text" ,
+            "mappings": {
+              "import_name" : "Индекс",
+              "transformation" : "direct"
+      
+            }
+        },
+        {
+            "name": "shipping_warehouse",
+            "type": "string",
+            "primary_key": false,
+            "foreign_key": null,
+            "visible": true,
+            "label": "Склад отгрузки",
+            "input_type": "text" ,
+            "mappings": {
+              "import_name" : "Склад отгрузки",
+              "transformation" : "direct"
+      
+            }
+        },
+        {
+            "name": "carrier",
+            "type": "string",
+            "primary_key": false,
+            "foreign_key": null,
+            "visible": true,
+            "label": "Перевозчик",
+            "input_type": "text" ,
+            "mappings": {
+              "import_name" : "Перевозчик",
+              "transformation" : "direct"
+      
+            }
+        },
+        {
+            "name": "method_name",
+            "type": "string",
+            "primary_key": false,
+            "foreign_key": null,
+            "visible": true,
+            "label": "Название метода",
+            "input_type": "text" ,
+            "mappings": {
+              "import_name" : "Название метода",
+              "transformation" : "direct"
+      
+            }
+        },
+        {
+            "name": "weight",
+            "type": "FLOAT",
+            "primary_key": false,
+            "foreign_key": null,
+            "visible": true,
+            "label": "Объемный вес товаров, кг",
+            "input_type": "number" ,
+            "mappings": {
+              "import_name" : "Объемный вес товаров, кг",
+              "transformation" : "direct"
+      
+            }
+        },
+        {
+            "name": "jewelry_barcode",
+            "type": "string",
+            "primary_key": false,
+            "foreign_key": null,
+            "visible": true,
+            "label": "Штрихкод ювелирного изделия",
+            "input_type": "text" ,
+            "mappings": {
+              "import_name" : "Штрихкод ювелирного изделия",
+              "transformation" : "direct"
+      
+            }
+        }
+    ]
+}
