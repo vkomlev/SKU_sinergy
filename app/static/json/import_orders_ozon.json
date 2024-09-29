@@ -51,7 +51,7 @@
             "foreign_key": null,
             "visible": true,
             "label": "Дата отгрузки",
-            "input_type": "date" ,
+            "input_type": "datetime" ,
             "mappings": {
               "import_name" : "Дата отгрузки",
               "transformation" : "direct"
@@ -79,7 +79,7 @@
             "foreign_key": null,
             "visible": true,
             "label": "Дата доставки",
-            "input_type": "date" ,
+            "input_type": "datetime" ,
             "mappings": {
               "import_name" : "Дата доставки",
               "transformation" : "direct"
@@ -93,7 +93,7 @@
             "foreign_key": null,
             "visible": true,
             "label": "Фактическая дата передачи в доставку",
-            "input_type": "date" ,
+            "input_type": "datetime" ,
             "mappings": {
               "import_name" : "Фактическая дата передачи в доставку",
               "transformation" : "direct"
