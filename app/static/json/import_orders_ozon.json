@@ -37,7 +37,7 @@
             "foreign_key": null,
             "visible": true,
             "label": "Принят в обработку",
-            "input_type": "date" ,
+            "input_type": "datetime" ,
             "mappings": {
               "import_name" : "Принят в обработку",
               "transformation" : "direct"
