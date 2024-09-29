@@ -123,9 +123,11 @@ class BaseRepository:
                     }
             
             columns_info.append(column_info) # Добавление столбцов из БД
-
+        args = self.model.__table_args__ if hasattr(self.model, '__table_args__') else None
+        if args:
+            schema = args[-1].get('schema') if isinstance(args, tuple) else args.get('schema','public')
         db_metadata = {"table_name":self.model.__tablename__,
-                       "schema":self.model.__table_args__.get('schema','public'),
+                       "schema":schema,
                        "columns": columns_info}
 
         return db_metadata # Возвращаем метаданные только из БД

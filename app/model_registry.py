@@ -4,7 +4,9 @@ model_registry = {}
 
 def register_model(model):
     table_name = model.__tablename__
-    schema = model.__table_args__.get('schema') if hasattr(model, '__table_args__') else None
+    args = model.__table_args__ if hasattr(model, '__table_args__') else None
+    if args:
+        schema = args[-1].get('schema') if isinstance(args, tuple) else args.get('schema')
     
     if schema:
         table_name = f"{schema}.{table_name}"  # Учитываем схему

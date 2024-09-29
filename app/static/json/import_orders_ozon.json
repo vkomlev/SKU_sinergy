@@ -4,7 +4,7 @@
         {
             "name": "order_number",
             "type": "string",
-            "primary_key": true,
+            "primary_key": false,
             "foreign_key": null,
             "visible": true,
             "label": "Номер заказа",
@@ -18,7 +18,7 @@
         {
             "name": "ship_number",
             "type": "string",
-            "primary_key": true,
+            "primary_key": false,
             "foreign_key": null,
             "visible": true,
             "label": "Номер отправления",
@@ -658,6 +658,19 @@
               "transformation" : "direct"
       
             }
+        },
+        {
+          "foreign_key": null,
+          "name": "id_oo",
+          "primary_key": true,
+          "type": "INTEGER",
+          "visible": false,
+          "input_type": "number",
+          "label": "Код",
+          "mappings": {
+            "import_name" : "Код",
+            "transformation" : "skip"
+          }
         }
     ]
 }
