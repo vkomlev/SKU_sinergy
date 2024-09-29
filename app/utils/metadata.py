@@ -21,7 +21,7 @@ class MetadataManager:
     
     def get_unique_columns(self, table_name):
         """Возвращает список уникальных столбцов для таблицы"""
-        metadata = self.get_metadata(table_name)
+        metadata = self.get_metadata(table_name.replace('.', '_', 1))
         columns = metadata["columns"]
         unique_columns = [col for col in columns if col.get("mappings",{"unique_key": False}).get("unique_key", False)==True]
         return unique_columns

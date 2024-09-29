@@ -102,6 +102,15 @@ class BaseRepository:
             query = query.filter(getattr(self.model, key) == value)
         return query.all()
     
+    @staticmethod
+    def get_full_table_name(model):
+        '''Получить полное название таблицы по модели'''
+        args = model.__table_args__ if hasattr(model, '__table_args__') else None
+        if args:
+            schema = args[-1].get('schema') if isinstance(args, tuple) else args.get('schema','public')
+        
+        return f"{schema}.{model.__tablename__}", schema, model.__tablename__
+    
     def get_table_metadata(self):
         """Получить комбинированные метаданные таблицы"""
         inspector = inspect(self.model)
@@ -123,11 +132,10 @@ class BaseRepository:
                     }
             
             columns_info.append(column_info) # Добавление столбцов из БД
-        args = self.model.__table_args__ if hasattr(self.model, '__table_args__') else None
-        if args:
-            schema = args[-1].get('schema') if isinstance(args, tuple) else args.get('schema','public')
-        db_metadata = {"table_name":self.model.__tablename__,
+        full, schema, tablename =  self.get_full_table_name(self.model)
+        db_metadata = {"table_name":tablename,
                        "schema":schema,
+                       "full_table_name": full,
                        "columns": columns_info}
 
         return db_metadata # Возвращаем метаданные только из БД
@@ -149,7 +157,8 @@ class BaseRepository:
         '''Импорт данных в таблицу БД'''
         metadata = MetadataManager()
         # Получаем название уникального ключа для таблицы
-        key_names = metadata.get_unique_columns(self.model.__tablename__)
+        full_name = self.get_full_table_name(self.model)[0]
+        key_names = metadata.get_unique_columns(full_name)
 
         for row in data:
             # Извлекаем значения уникальных полей

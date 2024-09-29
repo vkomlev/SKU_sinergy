@@ -44,6 +44,6 @@ def upload_to_table(table_name):
                     "message": "Данные загружены в БД."
                 }), 200
         else:
-            return jsonify(fail)
+            return jsonify(fail[0]), fail[1]
     except Exception as e:
         return jsonify({"status": "fail", "message": f"File upload failed. Error: {e}"}), 500

@@ -131,7 +131,6 @@ class BaseController:
     
     def transform_file(self, file):
         '''Преобразование загруженного файла данных по мапингу'''
-        s = file.read()
         # Определяем формат файла
         try:
             if file.filename.endswith('.csv'):
@@ -143,6 +142,8 @@ class BaseController:
         except Exception as e:
             return {"status": "fail", "message": f"Error reading file: {e}"}, 400
         
+        # Преобразуем NaN и NaT в None
+        data = data.where(pd.notna(data), None)
         data = data.to_dict(orient='records')
         return self.apply_mapping(data)
 
@@ -156,6 +157,8 @@ class BaseController:
         # Функция для приведения типов
         def convert_to_type(value, column_type):
             if value is None:
+                return None
+            if pd.isna(value):
                 return None
             try:
                 if column_type == 'integer':
@@ -184,10 +187,10 @@ class BaseController:
                     continue
                 elif transformation == 'direct':
                     # Прямое сопоставление с преобразованием типа
-                    transformed_row[col_meta['name']] = convert_to_type(row[source_column], column_type)
+                    transformed_row[col_meta['name']] = convert_to_type(row.get(source_column), column_type)
                 else:
                     # Применение функции преобразования с последующим приведением типа
-                    transformed_value = apply_transformation(row[source_column], transformation)
+                    transformed_value = apply_transformation(row.get(source_column), transformation)
                     transformed_row[col_meta['name']] = convert_to_type(transformed_value, column_type)
             
             transformed_data.append(transformed_row)

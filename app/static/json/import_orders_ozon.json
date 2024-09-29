@@ -25,7 +25,8 @@
             "input_type": "text" ,
             "mappings": {
               "import_name" : "Номер отправления",
-              "transformation" : "direct"
+              "transformation" : "direct",
+              "unique_key" : true
       
             }
         },
