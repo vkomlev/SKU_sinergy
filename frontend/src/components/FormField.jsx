@@ -18,6 +18,25 @@ const FormField = ({ field, value, onChange, error }) => {
           fullWidth // Полная ширина поля
           placeholder={value ? '' : field.placeholder}  // Показываем placeholder только если нет значения
           InputLabelProps={inputLabelProps} // Устанавливаем свойства метки
+          sx={{
+            '& input': {
+              color: '#e6e6e6',
+            },
+            '& label': {
+              color: '#e6e6e6',
+            },
+            '& .MuiInputBase-root': {
+              borderColor: '#346ACF', // Цвет границы для поля ввода
+              '&:hover fieldset': {
+                borderColor: '#346ACF', // Цвет границы при наведении
+              },
+            },
+            '& .MuiOutlinedInput-root': {
+              '& fieldset': {
+                borderColor: '#000000', // Цвет границы
+              },
+            }
+          }}
         />
       )
 
@@ -33,6 +52,25 @@ const FormField = ({ field, value, onChange, error }) => {
           fullWidth
           placeholder={value ? '' : field.placeholder}  // Показываем placeholder только если нет значения
           InputLabelProps={inputLabelProps} // Устанавливаем свойства метки
+          sx={{
+            '& input': {
+              color: '#e6e6e6',
+            },
+            '& label': {
+              color: '#e6e6e6',
+            },
+            '& .MuiInputBase-root': {
+              borderColor: '#346ACF', 
+              '&:hover fieldset': {
+                borderColor: '#346ACF', 
+              },
+            },
+            '& .MuiOutlinedInput-root': {
+              '& fieldset': {
+                borderColor: '#000000', 
+              },
+            }
+          }}
         />
       )
 
@@ -48,12 +86,43 @@ const FormField = ({ field, value, onChange, error }) => {
           fullWidth
           InputLabelProps={{ ...inputLabelProps, shrink: true }} // Добавляет эффект сжатия метки
           placeholder={value ? '' : field.placeholder}  // Показываем placeholder только если нет значения
+          sx={{
+            '& input': {
+              color: '#e6e6e6',
+            },
+            '& label': {
+              color: '#e6e6e6',
+            },
+            '& .MuiInputBase-root': {
+              borderColor: '#346ACF', 
+              '&:hover fieldset': {
+                borderColor: '#346ACF', 
+              },
+            },
+            '& .MuiOutlinedInput-root': {
+              '& fieldset': {
+                borderColor: '#000000', 
+              },
+            }
+          }}
         />
       )
 
     case 'select':
       return (
-        <FormControl fullWidth error={!!error}>
+        <FormControl fullWidth error={!!error} sx={{
+          '& .MuiSelect-root': {
+            color: '#e6e6e6', 
+          },
+          '& .MuiInputLabel-root': {
+            color: '#e6e6e6', 
+          },
+          '& .MuiOutlinedInput-root': {
+            '& fieldset': {
+              borderColor: '#000000', 
+            },
+          }
+        }}>
           <InputLabel {...inputLabelProps}>{field.label}</InputLabel>
           <Select value={value} onChange={onChange}>
             {field.options?.map((option) => (
@@ -64,7 +133,7 @@ const FormField = ({ field, value, onChange, error }) => {
           </Select>
         </FormControl>
       )
-
+  
     case 'lookup':
       return (
         <LookupField
@@ -76,10 +145,10 @@ const FormField = ({ field, value, onChange, error }) => {
           placeholder={value ? '' : field.placeholder}  // Показываем placeholder только если нет значения
         />
       )
-
+  
     default:
       return null // Возврат null для неподдерживаемых типов
   }
 }
-
+  
 export default FormField
