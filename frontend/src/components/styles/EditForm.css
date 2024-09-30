@@ -1,3 +1,18 @@
+/* Форма отображается поверх страницы */
+.form-container {
+  position: fixed; /* Фиксированное позиционирование */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000; /* Увеличиваем z-index, чтобы форма была поверх всех элементов */
+  background-color: rgba(0, 0, 0, 0.5); /* Затемняем задний фон */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px;
+}
+
 .scrollable-form {
   max-height: 80vh;
   overflow-y: auto;

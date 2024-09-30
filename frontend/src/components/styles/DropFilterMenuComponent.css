@@ -1,0 +1,85 @@
+/* Основной контейнер для блока фильтров */
+.filter-menu {
+  background-color: rgb(29, 28, 39); /* Темный фон */
+  padding: 10px 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+/* Контейнер для формы фильтра */
+.filter-form {
+  display: flex;
+  gap: 10px; /* Отступы между элементами */
+  align-items: center;
+  flex-wrap: wrap; /* Для корректного отображения на узких экранах */
+}
+
+/* Стили для select и input */
+.filter-form select, .filter-form input {
+  width: 200px; /* Ограничиваем ширину полей */
+  padding: 8px;
+  margin: 5px 0;
+  font-size: 16px;
+  background-color: rgb(44, 44, 56); /* Темный фон для полей ввода */
+  color: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+/* Стили для кнопок */
+.filter-form button {
+  background: rgb(52, 106, 207); /* Синий фон для кнопок */
+  color: white;
+  border: none;
+  padding: 8px 16px; /* Сделаем кнопки более компактными */
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.filter-form button:hover {
+  background-color: rgba(52, 106, 207, 0.8); /* Легкое затемнение при наведении */
+}
+
+/* Стили для списка активных фильтров */
+.active-filters {
+  margin-top: 10px;
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.active-filters li {
+  margin-bottom: 5px;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.active-filters button {
+  background-color: red;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 4px;
+  margin-left: 10px;
+  transition: background-color 0.3s ease;
+}
+
+.active-filters button:hover {
+  background-color: darkred;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .filter-form {
+    flex-direction: column; /* Поля и кнопки будут располагаться вертикально на узких экранах */
+    width: 100%;
+  }
+
+  .filter-form select, .filter-form input, .filter-form button {
+    width: 100%; /* Элементы занимают всю ширину экрана на мобильных устройствах */
+  }
+}

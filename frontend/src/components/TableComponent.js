@@ -13,7 +13,7 @@ import MessageDisplay from './MessageDisplay';
 import FileUploadComponent from './FileUploadComponent';
 import './styles/TableComponent.css';
 
-const TableComponent = ({ tableName, onDataReload, ...props  }) => {
+const TableComponent = ({ tableName, onDataReload, ...props }) => {
   const [showForm, setShowForm] = useState(false);
   const [editData, setEditData] = useState(null);
   const [formLoading, setFormLoading] = useState(false);
@@ -156,13 +156,8 @@ const TableComponent = ({ tableName, onDataReload, ...props  }) => {
               columns={metadata.columns}
               filters={filters}
               setFilters={setFilters}
+              resetFiltersSort={resetFiltersSort} 
             />
-            <div>
-            {/* Кнопка для сброса фильтров и сортировки */}
-            <button onClick={handleReset}>Сбросить фильтры и сортировку</button>
-
-            {/* Остальная часть компонента */}
-            </div>
             <div className='big-table'>
               <table className='table'>
                 <TableHeader 

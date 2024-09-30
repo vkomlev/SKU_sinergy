@@ -1,17 +1,24 @@
-.App {
-  text-align: center;
+/* Основной фон для всего приложения */
+body, .App {
+  background-color: rgb(29, 28, 39); /* Темный фон как в форме редактирования */
+  color: white; /* Белый текст для контраста */
+  margin: 0;
+  font-family: Arial, sans-serif;
 }
 
+/* Логотип */
 .App-logo {
   height: 40vmin;
   pointer-events: none;
 }
+
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;
   }
 }
 
+/* Заголовок приложения */
 .App-header {
   background-color: #282c34;
   min-height: 100vh;
@@ -23,10 +30,18 @@
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
+/* Ссылки */
+a {
+  color: #8eb4f0; /* Светлый синий цвет для ссылок */
+  text-decoration: none;
+  transition: color 0.3s ease;
 }
 
+a:hover {
+  color: #ffffff; /* Белый текст при наведении */
+}
+
+/* Анимация вращения логотипа */
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
@@ -34,4 +49,70 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+/* Унификация стиля кнопок для всего приложения */
+button {
+  background: transparent;
+  border: 1px solid rgb(52, 106, 207);
+  color: white;
+  cursor: pointer;
+  padding: 10px 20px;
+  border-radius: 4px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  font-size: 16px;
+  display: inline-block;
+}
+
+button:hover {
+  background-color: rgb(52, 106, 207);
+  color: black; /* Меняем текст на черный при наведении */
+}
+
+button:disabled {
+  background-color: rgba(255, 255, 255, 0.3); /* Полупрозрачная кнопка, если она отключена */
+  cursor: not-allowed;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Кнопки со стилем, похожим на форму редактирования */
+.close-button,
+.save-button {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.close-button:hover,
+.save-button:hover {
+  background-color: rgba(255, 255, 255, 0.8);
+  color: black;
+}
+
+/* Контейнер для кнопок */
+.buttons-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.buttons-container button {
+  max-width: 155px;
+  padding: 10px;
+  flex: 1;
+  border-radius: 5px;
+}
+
+.buttons-container .close-button:hover {
+  background-color: rgba(255, 255, 255, 0.842);
+  color: black;
+}
+
+.buttons-container .save-button:hover {
+  background-color: rgba(52, 106, 207, 0.8);
+  color: white;
 }

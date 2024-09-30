@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import HomePage from './components/HomePage';
 import TableComponent from './components/TableComponent';
+import './App.css';
 
 const App = () => {
   // Массив объектов, включающих имя таблицы и псевдоним

@@ -11,9 +11,9 @@ const TableHeader = React.memo(({ columns, sortBy, setSortBy }) => {
         {visibleColumns.map(column => (
           <th key={column.name}>
             <SortComponent
+              column={column}
               sortBy={sortBy}
               setSortBy={setSortBy}
-              columns={[column]}
             />
           </th>
         ))}
@@ -22,4 +22,4 @@ const TableHeader = React.memo(({ columns, sortBy, setSortBy }) => {
   );
 });
 
-export default React.memo(TableHeader);  // Мемоизируем, чтобы избежать лишних рендеров
+export default React.memo(TableHeader);

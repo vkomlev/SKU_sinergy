@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { addFilter, removeFilter } from '../utils/filterUtils';  // Импортируем утилиты для фильтрации
+import './styles/DropFilterMenuComponent.css';  // Подключаем стили
 
-const DropFilterMenuComponent = React.memo(({ columns, filters, setFilters }) => {
+const DropFilterMenuComponent = React.memo(({ columns, filters, setFilters, resetFiltersSort }) => {
   const [selectedColumn, setSelectedColumn] = useState('');
   const [filterValue, setFilterValue] = useState('');
 
@@ -44,6 +45,7 @@ const DropFilterMenuComponent = React.memo(({ columns, filters, setFilters }) =>
             placeholder="Введите значение"
           />
           <button onClick={handleAddFilter}>Добавить фильтр</button>
+          <button onClick={resetFiltersSort}>Сбросить фильтры и сортировку</button>
         </div>
 
         {Array.isArray(filters) && filters.length > 0 && (

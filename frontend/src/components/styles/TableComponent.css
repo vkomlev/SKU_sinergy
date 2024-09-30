@@ -1,132 +1,140 @@
+/* Основные стили для таблицы */
 .big-table {
 	overflow: auto;
 	position: relative;
-}
-.big-table table {
-	display: inline-block;
-	vertical-align: top;
-	max-width: 100%;
-	overflow-x: auto;
-	white-space: nowrap;
-	-webkit-overflow-scrolling: touch;
+	background-color: rgb(29, 28, 39); /* Темный фон для консистентности */
+	border-radius: 8px;
+	padding: 10px;
 }
 
-.table {
+.big-table table {
 	width: 100%;
-	margin-bottom: 20px;
-	border: 15px solid #F2F8F8;
-	border-top: 5px solid #F2F8F8;
-	border-collapse: collapse; 
+	border-collapse: collapse;
+	overflow-x: auto;
 }
+
+/* Заголовок таблицы */
 .table th {
 	font-weight: bold;
-	padding: 5px;
-	background: #5dd0d0;
-	border: 5px solid #5dd0d0;
-	border-bottom: 5px solid #5dd0d0;
-  cursor: pointer;  /* Добавляем смену курсора */
+	padding: 10px;
+	background-color: rgb(44, 44, 56); /* Цвет схож с цветом строк */
+	color: white;
+	border: 1px solid #F2F8F8; /* Границы такие же, как у тела таблицы */
+	cursor: pointer;
+	position: relative;
+	white-space: nowrap;
 }
+
 .table th:hover {
-  background-color: #e0f7fa;  /* Легкое выделение при наведении */
-}
-tr:nth-child(even) {
-  background-color: rgb(176, 219, 245)
+	background-color: rgb(67, 67, 82); /* Легкое выделение при наведении */
 }
 
+/* Иконка сортировки */
+.table th .sort-icon {
+  margin-left: 8px;
+  font-size: 18px; /* Увеличиваем размер значка сортировки */
+  color: #f0f0f0; /* Светлый цвет для значка */
+  vertical-align: middle; /* Выравнивание по центру с текстом */
+}
+
+.table th.sorted-asc .sort-icon {
+  content: '▲'; /* Значок для сортировки по возрастанию */
+}
+
+.table th.sorted-desc .sort-icon {
+  content: '▼'; /* Значок для сортировки по убыванию */
+}
+
+/* Тело таблицы */
 .table td {
-	padding: 5px;
-	border: 5px solid #F2F8F8;
-	border-bottom: 5px solid #F2F8F8;
+	padding: 10px;
+	border: 1px solid #F2F8F8;
+	color: white;
 }
 
-* {box-sizing: border-box;}
-
-body { 
-  margin: 0;
-  font-family: Arial, sans-serif;
+/* Чередование строк */
+tr:nth-child(even) {
+	background-color: rgb(44, 44, 56); /* Чередование строк */
 }
 
+tr:hover {
+	background-color: rgb(67, 67, 82); /* Подсветка строки при наведении */
+}
+
+/* Кнопки редактирования и удаления записей внутри таблицы */
+.table-button {
+	background-color: rgba(255, 255, 255, 0.2); /* Немного менее прозрачные */
+	color: white;
+	border: none;
+	padding: 5px 10px;
+	cursor: pointer;
+	border-radius: 4px;
+	transition: background-color 0.3s ease;
+	font-size: 20px; /* Увеличиваем размер значков */
+}
+
+.table-button:hover {
+	background-color: rgba(255, 255, 255, 0.4); /* Больше выделяются при наведении */
+}
+
+/* Стили для header */
 header {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  background-color: #46dbfc;
-  padding: 10px 10px;
+	display: flex;
+	justify-content: space-between; /* Разнесение элементов по сторонам */
+	align-items: center;
+	background-color: rgb(52, 106, 207); /* Синий цвет как в заголовке формы */
+	padding: 10px 20px;
+	color: white;
+	border-radius: 8px;
+	margin-bottom: 20px; /* Добавляем отступ снизу для отделения от фильтров */
 }
 
-.wrap-logo {
-  display: flex;
-  align-items: center;
- 
-}
-
+/* Ссылка на главную слева */
 header a {
-  color: #212121;
-  padding: 12px;
-  text-decoration: none;
-  font-size: 18px; 
-  border-radius: 4px;
-}
-
-header a.logo {
-  font-size: 25px;
-  font-weight: bold;
+	color: white;
+	font-size: 18px;
+	text-decoration: none;
+	font-weight: bold;
 }
 
 header a:hover {
-  background-color: #3bdbff;
-  color: #212121;
+	text-decoration: underline;
 }
 
-.filter-menu {
-  padding: 10px;
-  background-color: #f5f5f5;
-  border: 1px solid #ddd;
-  margin-bottom: 20px;
+/* Блок поиска в центре */
+header .search-container {
+	flex: 1;
+	display: flex;
+	justify-content: center;
 }
 
-.filter-form select, .filter-form input {
-  margin-right: 10px;
-  padding: 5px;
+header .search-container input {
+	width: 300px;
+	padding: 8px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	background-color: rgb(29, 28, 39);
+	color: white;
 }
 
-.active-filters {
-  margin-top: 10px;
+/* Блок кнопок справа */
+header .button-group {
+	display: flex;
+	gap: 10px;
 }
 
-.active-filters li {
-  list-style-type: none;
-  margin-bottom: 5px;
+/* Стили для кнопок "Добавить" и "Удалить" */
+.header-button {
+	background: transparent;
+	border: 1px solid white;
+	color: white;
+	cursor: pointer;
+	padding: 10px 20px;
+	border-radius: 4px;
+	transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-.active-filters button {
-  margin-left: 10px;
-  background-color: red;
-  color: white;
-  border: none;
-  padding: 3px 6px;
-  cursor: pointer;
-}
-
-/* Форма отображается поверх страницы */
-.form-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 1000;
-  background-color: rgba(0, 0, 0, 0.5); /* Затемняем задний фон */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.scrollable-form {
-  background-color: white;
-  padding: 0px;
-  border-radius: 8px;
-  max-height: 90vh;
-  overflow-y: auto;
+.header-button:hover {
+	background-color: white;
+	color: rgb(52, 106, 207); /* Меняем текст на синий при наведении */
 }
