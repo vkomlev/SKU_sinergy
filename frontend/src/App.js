@@ -1,10 +1,12 @@
-import React from 'react';
+import {useState} from 'react';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import HomePage from './components/HomePage';
 import TableComponent from './components/TableComponent';
 import './App.css';
+import Menu from './components/Menu.jsx';
 
 const App = () => {
+  const [isMenuActive, setMenuActive] = useState(false); 
   // Массив объектов, включающих имя таблицы и псевдоним
   const tables = [
     { name: 'import_DBS_delivery', alias: 'Импорт Доставка DBS' },
@@ -15,15 +17,21 @@ const App = () => {
   return (
     <Router>
       <div>
-        <nav>
+        <div className="menu-button-container">
+          <div className="hamburger-icon" onClick={() => setMenuActive(!isMenuActive)}/> {/* Иконка гамбургера */}
+        </div>
+  
+        <Menu active={isMenuActive} setActive={setMenuActive} header={"Выберите таблицу"}>  {/* Компонент меню */}
           <ul>
             {tables.map((table) => (
               <li key={table.name}>
-                <Link to={`/${table.name}`}>{table.alias}</Link> {/* Отображаем псевдоним */}
+                <Link to={`/${table.name}`} onClick={() => setMenuActive(false)}>
+                  {table.alias} {/* Отображаем псевдоним */}
+                </Link>
               </li>
             ))}
           </ul>
-        </nav>
+        </Menu>
 
         <Routes>
           <Route path="/" element={<HomePage />} />

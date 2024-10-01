@@ -1,8 +1,7 @@
 import { TextField, Select, MenuItem, InputLabel, FormControl } from '@mui/material'
 import LookupField from './LookupField'
-
+import {formatToDateTimeLocal} from './formatToDateTimeLocal'
 // Компонент поля формы, который рендерит различные типы ввода на основе типа поля и свойства видимости.
-
 const FormField = ({ field, value, onChange, error }) => {
   const inputLabelProps = { shrink: !!value } // Проверяем, есть ли значение для управления меткой
   switch (field.input_type) {
@@ -107,7 +106,44 @@ const FormField = ({ field, value, onChange, error }) => {
           }}
         />
       )
-
+    case 'datetime':
+      return (
+      <TextField
+          label={field.label}
+          value={value ? formatToDateTimeLocal(value) : ''} // Преобразуем для отображения
+          onChange={(e) => {
+            const inputValue = e.target.value; // Получаем значение
+            const date = new Date(inputValue);  // Создаем новый объект Date с выбранным временем
+            date.setHours(date.getHours() + 2);// Добавляем 2 часа для корректного сохранения
+            onChange({ target: { value: date.toISOString() } });// Отправляем обновленное значение
+            }}
+          type="datetime-local"
+          error={!!error}
+          helperText={error ? error.message : ''}
+          fullWidth
+          InputLabelProps={{ shrink: true }}
+          sx={{
+            '& input': {
+              color: '#e6e6e6',
+              },
+            '& label': {
+              color: '#e6e6e6',
+            },
+            '& .MuiInputBase-root': {
+              borderColor: '#346ACF',
+              '&:hover fieldset': {
+                borderColor: '#346ACF',
+              },
+            },
+            '& .MuiOutlinedInput-root': {
+              '& fieldset': {
+                borderColor: '#000000',
+              },
+            },
+          }}
+        />
+      );
+  
     case 'select':
       return (
         <FormControl fullWidth error={!!error} sx={{

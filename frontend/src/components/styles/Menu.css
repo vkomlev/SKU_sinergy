@@ -1,0 +1,60 @@
+/* Основные стили меню */
+.menu{
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    top: 40px;
+    left:0;
+    transform: translateX(-150%); /* Сдвиг меню за пределы экрана */
+    transition: all 0.2s;
+    z-index: 100; /* Плавный переход для всех свойств */
+
+}
+
+/* Активное состояние меню */
+.menu.active{
+    transform: translateX(0); /* Возвращение меню в видимую область */
+}
+
+/* Содержимое меню */
+.menu__content{
+    width: 35%;
+    height: 100%;
+    background-color: rgb(29, 28, 39);
+    display: flex;
+    flex-direction: column;
+    transition: all 0.4s; /* Плавный переход для содержимого */
+
+}
+
+/* Заголовок меню */
+.menu__header{
+    padding: 10px;
+    font-size: 2rem;
+    color: 346ACF;
+    border-bottom: 1px solid rgb(0, 0, 0);
+    width: 97%;
+    text-align: center;
+}
+
+/* Стили для неупорядоченного списка */
+ul{
+    text-align: center;
+    display: flex;
+    align-items:normal;
+    flex-direction: column;
+
+}
+
+/* Стили для элемента списка */
+ ul li{
+    display: flex;
+    margin: 10px 0;
+ }
+
+ /* Медиа-запросы для адаптивного дизайна */
+ @media screen and (max-width:768px) {
+    .menu__content{
+        width: 100%; /* На узких экранах ширина содержимого равна 100% */
+    }
+ }

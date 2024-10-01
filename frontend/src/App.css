@@ -116,3 +116,28 @@ button:disabled {
   background-color: rgba(52, 106, 207, 0.8);
   color: white;
 }
+
+/* Контейнер для меню */
+.menu-button-container {
+  margin-right: 20px;    /* Отступ между кнопкой меню и логотипом */
+  padding: 20px;
+}
+
+/* Иконка меню */
+.hamburger-icon {
+  cursor: pointer; 
+  width: 30px;           /* Ширина иконки */
+  height: 20px;          /* Высота иконки */
+  display: flex;         /* Используем flexbox для расположения полосок */
+  flex-direction: column; 
+  justify-content: space-between; /* Пробел между полосками */
+}
+
+.hamburger-icon::before,
+.hamburger-icon::after,
+.hamburger-icon div{
+  content: "";
+  height: 4px;           /* Высота полосок */
+  background-color: rgba(52, 106, 207, 0.8); 
+  border-radius: 2px;    /* Закругление краев */
+}
