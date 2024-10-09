@@ -161,13 +161,13 @@ class BaseController:
             if pd.isna(value):
                 return None
             try:
-                if column_type == 'integer':
+                if column_type.lower() in { 'integer', 'int', 'smallint', 'bigint'}:
                     return int(value)
-                elif column_type == 'float':
+                elif column_type.lower() in { 'float', 'double', 'money', 'smallmoney'}:
                     return float(value)
-                elif column_type == 'string':
+                elif column_type.lower() in { 'string', 'varchar', 'text', 'jsonb'}:
                     return str(value)
-                elif column_type == 'boolean':
+                elif column_type.lower() in { 'bool', 'boolean'}:
                     return bool(value)
                 # Добавляем другие типы данных при необходимости
                 else:

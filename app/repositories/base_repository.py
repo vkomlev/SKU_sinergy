@@ -125,7 +125,7 @@ class BaseRepository:
             }
 
             if column.foreign_keys: # Внешние ключи
-                for fk in column.foreing_keys:
+                for fk in column.foreign_keys:
                     column_info['foreign_key'] = {
                         'target_table': fk.column.table.name,
                         'target_column': fk.column.name

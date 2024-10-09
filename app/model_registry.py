@@ -14,6 +14,9 @@ def register_model(model):
     model_registry[table_name.lower()] = model
 
 def get_model_by_table_name(table_name):
+    from app.model_import import DBSDelivery, OrdersOzon
+    from app.model_main import Products
+
     model = model_registry.get(table_name.lower())
     if model is None:
         raise ValueError(f"Модель для таблицы '{table_name}' не найдена.")

@@ -11,7 +11,8 @@ const App = () => {
   const tables = [
     { name: 'import_DBS_delivery', alias: 'Импорт Доставка DBS' },
     { name: 'import_orders_ozon', alias: 'Импорт Заказы OZON' },
-    { name: 'third_table', alias: 'Третья таблица' }
+    { name: 'main_products', alias: 'Товары' },
+    { name: 'main_delivery', alias: 'Доставки DBS' },
   ];
 
   return (

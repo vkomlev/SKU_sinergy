@@ -1,0 +1,136 @@
+{
+    "table_name": "products",
+    "schema": "main",
+    "full_table_name": "main.products",
+    "columns": [
+        {
+            "name": "id_product",
+            "type": "INTEGER",
+            "primary_key": true,
+            "foreign_key": null,
+            "label": "Код",
+            "visible": false,
+            "mappings": {
+                "transformation": "skip"
+            },
+            "input_type": "number"
+        },
+        {
+            "name": "product_name",
+            "type": "VARCHAR",
+            "primary_key": false,
+            "foreign_key": null,
+            "label": "Название товара",
+            "visible": true,
+            "mappings": {
+                "import_name" : "ProductName",
+                "transformation": "direct"
+            },
+            "input_type": "text"
+        },
+        {
+            "name": "sku",
+            "type": "VARCHAR",
+            "primary_key": false,
+            "foreign_key": null,
+            "label": "Артикул",
+            "visible": true,
+            "mappings": {
+                "import_name" : "SKU",
+                "transformation": "direct",
+                "unique_key" : true
+            },
+            "input_type": "text"
+        },
+        {
+            "name": "id_pc",
+            "type": "SMALLINT",
+            "label": "Код категории",
+            "primary_key": false,
+            "foreign_key": {
+                "target_table": "product_category",
+                "target_column": "id_pc"
+            },
+            "visible": true,
+            "mappings": {
+                "transformation": "skip"
+            },
+            "input_type": "number"
+        },
+        {
+            "name": "characteristics",
+            "type": "JSONB",
+            "primary_key": false,
+            "foreign_key": null,
+            "label": "Характеристики товара",
+            "visible": true,
+            "mappings": {
+                "transformation": "skip"
+            },
+            "input_type": "text"
+        },
+        {
+            "name": "description_default",
+            "type": "TEXT",
+            "primary_key": false,
+            "foreign_key": null,
+            "label": "Описание товара",
+            "visible": true,
+            "mappings": {
+                "transformation": "skip"
+            },
+            "input_type": "text"
+        },
+        {
+            "name": "create_time",
+            "type": "DATETIME",
+            "primary_key": false,
+            "foreign_key": null,
+            "label": "Дата создания",
+            "visible": true,
+            "mappings": {
+                "transformation": "skip"
+            },
+            "input_type": "datetime"
+        },
+        {
+            "name": "update_time",
+            "type": "DATETIME",
+            "primary_key": false,
+            "foreign_key": null,
+            "label": "Время последнего изменения",
+            "visible": true,
+            "mappings": {
+                "transformation": "skip"
+            },
+            "input_type": "datetime"
+        },
+        {
+            "name": "who_update",
+            "type": "INTEGER",
+            "primary_key": false,
+            "foreign_key": null,
+            "label": "Кто изменил",
+            "visible": true,
+            "mappings": {
+                "transformation": "skip"
+            },
+            "input_type": "number"
+        },
+        {
+            "name": "id_brand",
+            "type": "INTEGER",
+            "label": "Производитель",
+            "primary_key": false,
+            "foreign_key": {
+                "target_table": "brands",
+                "target_column": "id_brand"
+            },
+            "visible": true,
+            "mappings": {
+                "transformation": "skip"
+            },
+            "input_type": "number"
+        }
+    ]
+}
