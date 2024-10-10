@@ -14,31 +14,45 @@ from app.controllers.base_controller import BaseController
 
 def get_data_view(table_name):
     session = get_session()
+    show_view = request.args.get('showview', 'false').lower() == 'true'
+    
     model = BaseRepository.get_model_by_table_name(table_name.replace('_', '.', 1))
+    
+    # Attempt to get view model if showview is True
+    if show_view:
+        try:
+            metadata_manager = MetadataManager()
+            metadata_json = metadata_manager.get_metadata(table_name)
+            view_name = metadata_json.get('view_name')
+            if view_name:
+                model = BaseRepository.get_model_by_table_name(view_name)
+        except ValueError:
+            pass  # If view metadata is not found, fallback to original table model
+
     service = BaseService(BaseController(BaseRepository(model, session)))
     
-    page = request.args.get('page', default= 1, type=int)
-    size = request.args.get('size', default= 25, type=int)
+    page = request.args.get('page', default=1, type=int)
+    size = request.args.get('size', default=25, type=int)
 
     sort_params = {key: value for key, value in request.args.items() if key.startswith('sort_by')}
 
     filters = request.args.get('filters', default='{}', type=str)
     filters_dict = json.loads(filters)
-#
+
     service.filter(filters=filters_dict)
     
     if sort_params:
-        # Применяем сортировку, а затем пагинацию
+        # Apply sorting and then pagination
         service.sort(**sort_params)
-        # Пагинация вручную для отфильтрованных данных
+        # Manual pagination for filtered data
         start = (page - 1) * size
         end = start + size
         deliveries = service.get_with_pagination(page, size)
     else:
-        # Применяем только пагинацию
+        # Apply only pagination
         deliveries = service.get_with_pagination(page, size)
 
-    serializer = UniversalSerializer(model, many = True)
+    serializer = UniversalSerializer(model, many=True)
     deliveries_data = serializer.dump(deliveries)
 
     json_data = {
@@ -73,7 +87,20 @@ def get_metadata_view(table_name):
 
 def search(table_name):
     session = get_session()
+    show_view = request.args.get('showview', 'false').lower() == 'true'
+    
     model = BaseRepository.get_model_by_table_name(table_name.replace('_', '.', 1))
+    
+    # Attempt to get view model if showview is True
+    if show_view:
+        try:
+            metadata_manager = MetadataManager()
+            metadata_json = metadata_manager.get_metadata(table_name)
+            view_name = metadata_json.get('view_name')
+            if view_name:
+                model = BaseRepository.get_model_by_table_name(view_name)
+        except ValueError:
+            pass  # If view metadata is not found, fallback to original table model
     service = BaseService(BaseController(BaseRepository(model, session)))
     query = request.args.get('query', default = '', type= str)
 
