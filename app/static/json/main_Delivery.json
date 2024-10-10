@@ -2,6 +2,7 @@
     "table_name": "delivery",
     "schema": "main",
     "full_table_name": "main.delivery",
+    "view_name": "main_vw_delivery",
     "columns": [
         {
             "name": "id_delivery",
@@ -22,13 +23,16 @@
             "primary_key": false,
             "foreign_key": {
                 "target_table": "marketpalces",
-                "target_column": "id_marketplace"
+                "target_column": "id_marketplace",
+                "key_field":"id_marketplace",
+                "lookup_field":"mp_name"
             },
             "visible": true,
             "mappings": {
                 "transformation": "direct"
+                
             },
-            "input_type": "number"
+            "input_type": "lookup"
         },
         {
             "name": "id_partner",
@@ -37,13 +41,15 @@
             "primary_key": false,
             "foreign_key": {
                 "target_table": "partners",
-                "target_column": "id_partner"
+                "target_column": "id_partner",
+                "key_field":"id_partner",
+                "lookup_field":"partner_name"
             },
             "visible": true,
             "mappings": {
                 "transformation": "direct"
             },
-            "input_type": "number"
+            "input_type": "lookup"
         },
         {
             "name": "assembly_task",
@@ -64,13 +70,15 @@
             "label": "Код товара",
             "foreign_key": {
                 "target_table": "products",
-                "target_column": "id_product"
+                "target_column": "id_product",
+                "key_field":"id_product",
+                "lookup_field":"sku, product_name"
             },
             "visible": true,
             "mappings": {
                 "transformation": "direct"
             },
-            "input_type": "number"
+            "input_type": "lookup"
         },
         {
             "name": "delivery_date_planned",
@@ -151,13 +159,15 @@
             "primary_key": false,
             "foreign_key": {
                 "target_table": "delivery_status",
-                "target_column": "id_ds"
+                "target_column": "id_ds",
+                "key_field":"id_ds",
+                "lookup_field":"ds_name"
             },
             "visible": true,
             "mappings": {
                 "transformation": "direct"
             },
-            "input_type": "number"
+            "input_type": "lookup"
         },
         {
             "name": "distance",
@@ -178,13 +188,15 @@
             "primary_key": false,
             "foreign_key": {
                 "target_table": "delivery_company",
-                "target_column": "id_dc"
+                "target_column": "id_dc",
+                "key_field":"id_dc",
+                "lookup_field":"dc_name"
             },
             "visible": true,
             "mappings": {
                 "transformation": "direct"
             },
-            "input_type": "number"
+            "input_type": "lookup"
         },
         {
             "name": "cost",
