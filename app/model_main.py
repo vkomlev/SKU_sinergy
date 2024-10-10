@@ -1,5 +1,5 @@
 # coding: utf-8
-from sqlalchemy import ARRAY, Column, Date, DateTime, Float, ForeignKey, Index, Integer, SmallInteger, String, Text, text
+from sqlalchemy import ARRAY, Column, Date, DateTime, Float, ForeignKey, Index, Integer, SmallInteger, String, Text, text, Table
 from sqlalchemy.dialects.postgresql import JSONB, MONEY
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
@@ -230,6 +230,29 @@ class ProductMedia(Base):
 
     product = relationship('Products')
 
+t_vw_delivery = Table(
+    'vw_delivery', metadata,
+    Column('id_delivery', Integer),
+    Column('mp_name', String),
+    Column('partner_name', String),
+    Column('assembly_task', String),
+    Column('product_name', String),
+    Column('delivery_date_planned', Date),
+    Column('delivery_date_actual', Date),
+    Column('delivery_time', String),
+    Column('delivery_address', String),
+    Column('client_name', String),
+    Column('climb', String),
+    Column('ds_name', String),
+    Column('distance', Float),
+    Column('dc_name', String),
+    Column('cost', MONEY),
+    Column('payment_status', String),
+    Column('compensation', String),
+    Column('note', Text),
+    schema='main'
+)
+
 
 register_model(Brands)
 register_model(DeliveryCompany)
@@ -248,3 +271,4 @@ register_model(Obx)
 register_model(Orders)
 register_model(ProductCategory)
 register_model(CostHistory)
+register_model(t_vw_delivery)

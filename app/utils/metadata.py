@@ -37,6 +37,8 @@ class MetadataManager:
 
         # Добавление логики заполнения дополнительных параметров
         for column in metadata['columns']:
+            #Установка параметра label
+            column['label'] = column['name']
             # Установка параметра "visible" на false для первичных ключей
             column['visible'] = not column['primary_key']
 
@@ -48,7 +50,11 @@ class MetadataManager:
                 column['mappings']['transformation'] = 'direct'
 
             # Автоматическое определение input_type в зависимости от типа данных
-            if column['type'].lower() in ['integer', 'smallint', 'bigint']:
+            if column.get('foreign_key', False):
+                column['input_type'] = 'loookup'
+                column['foreign_key']['key_field'] = column['name']
+                column['foreign_key']['key_field'] = 'name'
+            elif column['type'].lower() in ['integer', 'smallint', 'bigint']:
                 column['input_type'] = 'number'
             elif column['type'].lower() in ['float', 'double precision', 'numeric', 'money']:
                 column['input_type'] = 'number'

@@ -1,7 +1,7 @@
 # app/repositories/base_repository.py
 
 from sqlalchemy.orm import Session
-from sqlalchemy import or_, and_
+from sqlalchemy import or_, and_, Table
 from app.model_registry import get_model_by_table_name
 from sqlalchemy.inspection import inspect
 from app.utils.metadata import MetadataManager
@@ -104,41 +104,56 @@ class BaseRepository:
     
     @staticmethod
     def get_full_table_name(model):
-        '''Получить полное название таблицы по модели'''
-        args = model.__table_args__ if hasattr(model, '__table_args__') else None
-        if args:
-            schema = args[-1].get('schema') if isinstance(args, tuple) else args.get('schema','public')
+        '''Get full table name from model'''
+        if isinstance(model, Table):
+            schema = model.schema if model.schema else 'public'
+            table_name = model.name
+        else:
+            args = model.__table_args__ if hasattr(model, '__table_args__') else None
+            schema = 'public'
+            if args:
+                schema = args[-1].get('schema') if isinstance(args, tuple) else args.get('schema', 'public')
+            table_name = model.__tablename__
         
-        return f"{schema}.{model.__tablename__}", schema, model.__tablename__
+        return f"{schema}.{table_name}", schema, table_name
     
     def get_table_metadata(self):
-        """Получить комбинированные метаданные таблицы"""
+        """Get combined metadata for the table"""
         inspector = inspect(self.model)
-        columns_info = []
 
-        for column in inspector.columns: # Столбцы таблицы из БД
+        if isinstance(self.model, Table):
+            columns = self.model.columns
+        else:
+            columns = inspector.columns
+
+        columns_info = []
+        for column in columns:  # Columns from the database table
             column_info = {
-                'name':column.name,
-                'type':str(column.type),
-                'primary_key':column.primary_key,
+                'name': column.name,
+                'type': str(column.type),
+                'primary_key': column.primary_key if hasattr(column, 'primary_key') else False,
                 'foreign_key': None
             }
 
-            if column.foreign_keys: # Внешние ключи
+            if column.foreign_keys:  # Foreign keys
                 for fk in column.foreign_keys:
                     column_info['foreign_key'] = {
                         'target_table': fk.column.table.name,
                         'target_column': fk.column.name
                     }
             
-            columns_info.append(column_info) # Добавление столбцов из БД
-        full, schema, tablename =  self.get_full_table_name(self.model)
-        db_metadata = {"table_name":tablename,
-                       "schema":schema,
-                       "full_table_name": full,
-                       "columns": columns_info}
+            columns_info.append(column_info)  # Add columns from DB
 
-        return db_metadata # Возвращаем метаданные только из БД
+        full, schema, tablename = self.get_full_table_name(self.model)
+        db_metadata = {
+            "table_name": tablename,
+            "schema": schema,
+            "full_table_name": full,
+            "columns": columns_info
+        }
+
+        return db_metadata  # Return metadata from DB only
+
     
     def search(self, query):
         """Поиск по строке query"""

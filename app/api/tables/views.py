@@ -4,6 +4,7 @@ import json
 from flask import request, jsonify, abort
 
 from app.utils.helpers import get_session
+from app.utils.metadata import MetadataManager
 
 from app.model_import import DBSDelivery
 from app.api.tables.serializers import UniversalSerializer
@@ -51,7 +52,21 @@ def get_data_view(table_name):
 
 def get_metadata_view(table_name):
     session = get_session()
+    show_view = request.args.get('showview', 'false').lower() == 'true'
+    
     model = BaseRepository.get_model_by_table_name(table_name.replace('_', '.', 1))
+    
+    # Attempt to get view model if showview is True
+    if show_view:
+        try:
+            metadata_manager = MetadataManager()
+            metadata_json = metadata_manager.get_metadata(table_name)
+            view_name = metadata_json.get('view_name').replace('_', '.', 1)
+            if view_name:
+                model = BaseRepository.get_model_by_table_name(view_name)
+        except ValueError:
+            pass  # If view metadata is not found, fallback to original table model
+
     service = BaseService(BaseController(BaseRepository(model, session)))
     metadata = service.get_table_metadata()
     return jsonify(metadata)
