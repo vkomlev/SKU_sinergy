@@ -6,10 +6,10 @@
         {
             "name": "id_delivery",
             "type": "INTEGER",
-            "primary_key": false,
+            "primary_key": true,
             "foreign_key": null,
             "label": "id_delivery",
-            "visible": true,
+            "visible": false,
             "mappings": {
                 "transformation": "direct"
             },
@@ -20,7 +20,7 @@
             "type": "VARCHAR",
             "primary_key": false,
             "foreign_key": null,
-            "label": "mp_name",
+            "label": "Маркетплейс",
             "visible": true,
             "mappings": {
                 "transformation": "direct"

@@ -14,19 +14,15 @@ from app.controllers.base_controller import BaseController
 
 def get_data_view(table_name):
     session = get_session()
-    show_view = request.args.get('showview', 'false').lower() == 'true'
-    
     model = BaseRepository.get_model_by_table_name(table_name.replace('_', '.', 1))
-    
-    # Attempt to get view model if showview is True
-    if show_view:
-        try:
+
+    try:
             metadata_manager = MetadataManager()
             metadata_json = metadata_manager.get_metadata(table_name)
             view_name = metadata_json.get('view_name')
             if view_name:
                 model = BaseRepository.get_model_by_table_name(view_name)
-        except ValueError:
+    except Exception:
             pass  # If view metadata is not found, fallback to original table model
 
     service = BaseService(BaseController(BaseRepository(model, session)))
@@ -66,19 +62,16 @@ def get_data_view(table_name):
 
 def get_metadata_view(table_name):
     session = get_session()
-    show_view = request.args.get('showview', 'false').lower() == 'true'
     
     model = BaseRepository.get_model_by_table_name(table_name.replace('_', '.', 1))
     
-    # Attempt to get view model if showview is True
-    if show_view:
-        try:
+    try:
             metadata_manager = MetadataManager()
             metadata_json = metadata_manager.get_metadata(table_name)
             view_name = metadata_json.get('view_name').replace('_', '.', 1)
             if view_name:
                 model = BaseRepository.get_model_by_table_name(view_name)
-        except ValueError:
+    except Exception:
             pass  # If view metadata is not found, fallback to original table model
 
     service = BaseService(BaseController(BaseRepository(model, session)))
@@ -86,20 +79,16 @@ def get_metadata_view(table_name):
     return jsonify(metadata)
 
 def search(table_name):
-    session = get_session()
-    show_view = request.args.get('showview', 'false').lower() == 'true'
-    
+    session = get_session()    
     model = BaseRepository.get_model_by_table_name(table_name.replace('_', '.', 1))
-    
-    # Attempt to get view model if showview is True
-    if show_view:
-        try:
+
+    try:
             metadata_manager = MetadataManager()
             metadata_json = metadata_manager.get_metadata(table_name)
             view_name = metadata_json.get('view_name')
             if view_name:
                 model = BaseRepository.get_model_by_table_name(view_name)
-        except ValueError:
+    except Exception:
             pass  # If view metadata is not found, fallback to original table model
     service = BaseService(BaseController(BaseRepository(model, session)))
     query = request.args.get('query', default = '', type= str)
