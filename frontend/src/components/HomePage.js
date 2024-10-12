@@ -3,13 +3,29 @@ import { Link } from 'react-router-dom';
 import './styles/HomePage.css'
 
 const HomePage = () => {
+  const tables = [
+    { name: 'import_DBS_delivery', alias: 'Импорт Доставка DBS' },
+    { name: 'import_orders_ozon', alias: 'Импорт Заказы OZON' },
+    { name: 'main_products', alias: 'Товары' },
+    { name: 'main_delivery', alias: 'Доставки DBS' },
+  ];
   return (
     <div>
 
       <h1 className='text'>Добро пожаловать на портал ГК Синергия</h1>
       <p className='text'>
-        Перейдите к просмотру таблицы доставок: 
-        <Link to="/import_DBS_delivery"> Import_DBS_Delivery</Link>
+        <h2>Перейдите к просмотру таблиц:</h2> 
+        <div className='content'>
+          <ul>
+            {tables.map((table) => (
+              <li key={table.name}>
+                <Link to={`/${table.name}`}>
+                  {table.alias} {/* Отображаем псевдоним */}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
       </p>
 
     </div>

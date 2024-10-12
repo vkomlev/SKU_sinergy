@@ -27,3 +27,25 @@
 	background-color: rgb(52, 106, 207); /* Меняем фон при наведении */
 	color: white; /* Белый текст при наведении */
 }
+.content{
+    width: 95%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+ul{
+    text-align: center;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+
+}
+
+/* Стили для элемента списка */
+ul li{
+	display: flex;
+    align-items: center;
+    margin: 10px 0;
+}

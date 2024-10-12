@@ -8,7 +8,6 @@ import React from 'react';
 import './styles/EditForm.css';
 
 // Компонент формы для отображения и обработки пользовательских данных.
-
 const EditForm = React.memo(({ metadata, defaultValues, onSubmit, onDelete, isEditing, onClose, initialData  }) => {
     // Создаем валидационную схему на основе метаданных
     const validationSchema = createValidationSchema(metadata.columns);
@@ -22,18 +21,18 @@ const EditForm = React.memo(({ metadata, defaultValues, onSubmit, onDelete, isEd
     useEffect(() => {
         console.log("Полученные данные для формы:", initialData);  // Логируем данные, которые передаем в форму
         reset(initialData);  // Сбрасываем форму с данными для редактирования
-      }, [initialData, reset]);
+    }, [initialData, reset]);
 
-      return (
+    return (
         <div className="scrollable-form">
-        <header className="form-header">
-            <Typography variant="h5" gutterBottom align="center">
-                {isEditing ? 'Редактировать данные' : 'Добавить данные'}
-            </Typography>
-            <div>
-                <Button className="checkmark-button" onClick={handleSubmit(onSubmit)} aria-label="Сохранить" />
-                <Button onClick={onClose} className="close-button-header" aria-label="Закрыть" />
-            </div>
+            <header className="form-header">
+                <Typography variant="h5" gutterBottom align="center">
+                    {isEditing ? 'Редактировать данные' : 'Добавить данные'}
+                </Typography>
+                <div>
+                    <Button className="checkmark-button" onClick={handleSubmit(onSubmit)} aria-label="Сохранить" />
+                    <Button onClick={onClose} className="close-button-header" aria-label="Закрыть" />
+                </div>
             </header>
             <form onSubmit={handleSubmit(onSubmit)}>
                 <Grid container spacing={2}>
@@ -45,21 +44,28 @@ const EditForm = React.memo(({ metadata, defaultValues, onSubmit, onDelete, isEd
                                 <Controller
                                     name={field.name}
                                     control={control}
-                                    render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
-                                        <FormField
-                                            field={field}
-                                            value={value}
-                                            onChange={onChange}
-                                            onBlur={onBlur}
-                                            error={error}
-                                        />
-                                    )}
+                                    render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => {
+                                        // Проверяем наличие параметра editable
+                                        const isEditable = field.editable !== false; // Если editable отсутствует, то по умолчанию поле можно редактировать
+                                        
+                                        return (
+                                            <FormField
+                                                field={field}
+                                                value={value}
+                                                onChange={isEditable ? onChange : undefined} // Изменение зависит от editable
+                                                onBlur={isEditable ? onBlur : undefined} // Обработка blur зависит от editable
+                                                error={error}
+                                                editable={isEditable} // Передаем состояние editable в FormField
+                                            />
+                                        );
+                                    }}
                                 />
                             </Grid>
                         )
                     ))}
                 </Grid>
-                <br />
+                
+
                 <Box className="buttons-container">
                     <Button type="submit" variant="contained" color="primary">
                         {isEditing ? 'Сохранить' : 'Добавить'}

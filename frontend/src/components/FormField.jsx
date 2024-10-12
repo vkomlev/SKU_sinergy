@@ -2,7 +2,7 @@ import { TextField, Select, MenuItem, InputLabel, FormControl } from '@mui/mater
 import LookupField from './LookupField'
 import {formatToDateTimeLocal} from './formatToDateTimeLocal'
 // Компонент поля формы, который рендерит различные типы ввода на основе типа поля и свойства видимости.
-const FormField = ({ field, value, onChange, error }) => {
+const FormField = ({ field, value, onChange, editable, error }) => {
   const inputLabelProps = { shrink: !!value } // Проверяем, есть ли значение для управления меткой
   switch (field.input_type) {
     case 'text':
@@ -10,19 +10,117 @@ const FormField = ({ field, value, onChange, error }) => {
         <TextField
           label={field.label} // Метка поля
           value={value} // Текущее значение
-          onChange={onChange} // Обработчик изменений
+          onChange={editable ? onChange : undefined} // Обработчик изменений
           type='text' // Тип поля
           error={!!error} // Указывает, есть ли ошибка
           helperText={error ? error.message : ''} // Сообщение об ошибке
           fullWidth // Полная ширина поля
           placeholder={value ? '' : field.placeholder}  // Показываем placeholder только если нет значения
           InputLabelProps={inputLabelProps} // Устанавливаем свойства метки
+          disabled={!editable}
           sx={{
             '& input': {
               color: '#e6e6e6',
+              transition: 'background-color 0.2s ease',
+              borderRadius: '5px',
+            },
+            '&:hover input': {
+              backgroundColor: editable ? '': '#5A567E', 
+              borderRadius: '5px',
             },
             '& label': {
               color: '#e6e6e6',
+            },
+            '&:hover label': {
+              color: '#346ACF', // Цвет метки при наведении
+            },
+            '& .MuiInputBase-root': {
+              borderColor: '#346ACF', // Цвет границы для поля ввода
+              '&:hover fieldset': {
+                borderColor: '#346ACF', // Цвет границы при наведении
+              },
+            },
+            '& .MuiOutlinedInput-root': {
+              '& fieldset': {
+                borderColor: '#000000', // Цвет границы
+              },
+            }
+          }}
+        />
+      )
+    case 'big_text':
+      return (
+        <TextField
+          label={field.label} // Метка поля
+          value={value} // Текущее значение
+          onChange={editable ? onChange : undefined} // Обработчик изменений
+          multiline // Позволяет вводу многострочного текста
+          rows={3} // Начальное количество строк
+          error={!!error} // Указывает, есть ли ошибка
+          helperText={error ? error.message : ''} // Сообщение об ошибке
+          fullWidth // Полная ширина поля
+          placeholder={value ? '' : field.placeholder} // Показываем placeholder только если нет значения
+          InputLabelProps={inputLabelProps} // Устанавливаем свойства метки
+          disabled={!editable}
+          sx={{
+            '& textarea': {
+              color : '#e6e6e6',
+              transition: 'background-color 0.2s ease',
+              borderRadius: '5px',
+            },
+            '&:hover textarea': {
+              backgroundColor: editable ? '': '#5A567E', 
+              borderRadius: '5px',
+            },
+            '& label': {
+              color: '#e6e6e6',
+            },
+            '&:hover label': {
+              color: '#346ACF', // Цвет метки при наведении
+            },
+            '& .MuiInputBase-root': {
+              borderColor: '#346ACF', // Цвет границы для поля ввода
+              '&:hover fieldset': {
+                borderColor: '#346ACF', // Цвет границы при наведении
+              },
+            },
+            '& .MuiOutlinedInput-root': {
+              '& fieldset': {
+                borderColor: '#000000', // Цвет границы
+              },
+            },
+          }}
+        />
+      )
+
+    case 'number':
+      return (
+        <TextField
+          label={field.label}
+          value={value}
+          onChange={editable ? onChange : undefined}
+          type="number"
+          error={!!error}
+          helperText={error ? error.message : ''}
+          fullWidth
+          placeholder={value ? '' : field.placeholder}  // Показываем placeholder только если нет значения
+          InputLabelProps={inputLabelProps} // Устанавливаем свойства метки
+          disabled={!editable}
+          sx={{
+            '& input': {
+              color: '#e6e6e6',
+              transition: 'background-color 0.2s ease',
+              borderRadius: '5px',
+            },
+            '&:hover input': {
+              backgroundColor: editable ? '': '#5A567E', 
+              borderRadius: '5px',
+            },
+            '& label': {
+              color: '#e6e6e6',
+            },
+            '&:hover label': {
+              color: '#346ACF', // Цвет метки при наведении
             },
             '& .MuiInputBase-root': {
               borderColor: '#346ACF', // Цвет границы для поля ввода
@@ -39,68 +137,44 @@ const FormField = ({ field, value, onChange, error }) => {
         />
       )
 
-    case 'number':
-      return (
-        <TextField
-          label={field.label}
-          value={value}
-          onChange={onChange}
-          type="number"
-          error={!!error}
-          helperText={error ? error.message : ''}
-          fullWidth
-          placeholder={value ? '' : field.placeholder}  // Показываем placeholder только если нет значения
-          InputLabelProps={inputLabelProps} // Устанавливаем свойства метки
-          sx={{
-            '& input': {
-              color: '#e6e6e6',
-            },
-            '& label': {
-              color: '#e6e6e6',
-            },
-            '& .MuiInputBase-root': {
-              borderColor: '#346ACF', 
-              '&:hover fieldset': {
-                borderColor: '#346ACF', 
-              },
-            },
-            '& .MuiOutlinedInput-root': {
-              '& fieldset': {
-                borderColor: '#000000', 
-              },
-            }
-          }}
-        />
-      )
-
     case 'date':
       return (
         <TextField
           label={field.label}
           value={value}
-          onChange={onChange}
+          onChange={editable ? onChange : undefined}
           type="date"
           error={!!error}
           helperText={error ? error.message : ''}
           fullWidth
           InputLabelProps={{ ...inputLabelProps, shrink: true }} // Добавляет эффект сжатия метки
           placeholder={value ? '' : field.placeholder}  // Показываем placeholder только если нет значения
+          disabled={!editable}
           sx={{
             '& input': {
               color: '#e6e6e6',
+              transition: 'background-color 0.2s ease',
+              borderRadius: '5px',
+            },
+            '&:hover input': {
+              backgroundColor: editable ? '': '#5A567E', 
+              borderRadius: '5px',
             },
             '& label': {
               color: '#e6e6e6',
             },
+            '&:hover label': {
+              color: '#346ACF', // Цвет метки при наведении
+            },
             '& .MuiInputBase-root': {
-              borderColor: '#346ACF', 
+              borderColor: '#346ACF', // Цвет границы для поля ввода
               '&:hover fieldset': {
-                borderColor: '#346ACF', 
+                borderColor: '#346ACF', // Цвет границы при наведении
               },
             },
             '& .MuiOutlinedInput-root': {
               '& fieldset': {
-                borderColor: '#000000', 
+                borderColor: '#000000', // Цвет границы
               },
             }
           }}
@@ -122,24 +196,34 @@ const FormField = ({ field, value, onChange, error }) => {
           helperText={error ? error.message : ''}
           fullWidth
           InputLabelProps={{ shrink: true }}
+          disabled={!editable}
           sx={{
             '& input': {
               color: '#e6e6e6',
-              },
+              transition: 'background-color 0.2s ease',
+              borderRadius: '5px',
+            },
+            '&:hover input': {
+              backgroundColor: editable ? '': '#5A567E', 
+              borderRadius: '5px',
+            },
             '& label': {
               color: '#e6e6e6',
             },
+            '&:hover label': {
+              color: '#346ACF', // Цвет метки при наведении
+            },
             '& .MuiInputBase-root': {
-              borderColor: '#346ACF',
+              borderColor: '#346ACF', // Цвет границы для поля ввода
               '&:hover fieldset': {
-                borderColor: '#346ACF',
+                borderColor: '#346ACF', // Цвет границы при наведении
               },
             },
             '& .MuiOutlinedInput-root': {
               '& fieldset': {
-                borderColor: '#000000',
+                borderColor: '#000000', // Цвет границы
               },
-            },
+            }
           }}
         />
       );
@@ -160,7 +244,10 @@ const FormField = ({ field, value, onChange, error }) => {
           }
         }}>
           <InputLabel {...inputLabelProps}>{field.label}</InputLabel>
-          <Select value={value} onChange={onChange}>
+          <Select
+          value={value}
+          onChange={editable ? onChange : undefined}
+          disabled={!editable}>
             {field.options?.map((option) => (
               <MenuItem key={option.value} value={option.value}>
                 {option.label}
@@ -173,13 +260,14 @@ const FormField = ({ field, value, onChange, error }) => {
     case 'lookup':
       return (
         <LookupField
-          label={field.label}
-          value={value}
-          onChange={onChange}
-          lookupTable={field.lookup_table}
-          error={!!error}
-          placeholder={value ? '' : field.placeholder}  // Показываем placeholder только если нет значения
-        />
+        label={field.label}
+        value={value}
+        onChange={editable ? onChange : undefined}
+        foreignKey={field.foreign_key} // Передаем foreignKey
+        inputType={field.input_type} // Передаем inputType
+        error={!!error}
+        disabled={!editable}
+      />
       )
   
     default:
