@@ -3,7 +3,7 @@ import { TextField, MenuItem } from '@mui/material'
 import { fetchTableData } from '../services/api'
 
 // Компонент поля ввода с выбором из списка (lookup).
-const LookupField = ({ label, value, onChange, inputType, foreignKey, editable, error }) => {
+const LookupField = ({ label, value, onChange, inputType, foreignKey, disabled, error }) => {
   const [options, setOptions] = useState([]) 
   const [loading, setLoading] = useState(false) 
   const [fetchError, setFetchError] = useState(null) 
@@ -17,9 +17,12 @@ const LookupField = ({ label, value, onChange, inputType, foreignKey, editable, 
         if (!foreignKey || !foreignKey.target_table || !foreignKey.target_column || !foreignKey.key_field || !foreignKey.lookup_field) {
           throw new Error('Некорректные данные для лукапа: отсутствует foreign_key')
         }
+const response = await fetchTableData(foreignKey.target_table); 
 
-        const data = await fetchTableData(foreignKey.target_table) 
+      // Предполагаем, что return из API имеет структуру { data: [], page: 1, size: 20, total: 5 }
+      const data = response.data;
         setOptions(data) // Устанавливаем загруженные опции
+        console.log("Полученные данные для lookup:", data)
       } catch (error) {
         console.error('Ошибка при загрузке опций:', error) // Обработка ошибок
         setFetchError(error.message) 
@@ -42,7 +45,7 @@ const LookupField = ({ label, value, onChange, inputType, foreignKey, editable, 
         onChange={onChange}
         error={!!error || !!fetchError}
         helperText={error ? error.message : fetchError}
-        disabled={!editable}
+        disabled={disabled}
         fullWidth
         sx={{
           '& input': {
@@ -51,7 +54,7 @@ const LookupField = ({ label, value, onChange, inputType, foreignKey, editable, 
             borderRadius: '5px',
           },
           '&:hover input': {
-            backgroundColor: editable ? '': '#5A567E', 
+            backgroundColor: disabled ? '': '#5A567E', 
             borderRadius: '5px',
           },
           '& label': {
@@ -84,7 +87,7 @@ const LookupField = ({ label, value, onChange, inputType, foreignKey, editable, 
       onChange={onChange}
       error={!!error || !!fetchError}
       helperText={error ? error.message : fetchError}
-      disabled={!editable}
+      disabled={disabled}
       fullWidth
       sx={{
         '& input': {
@@ -93,7 +96,7 @@ const LookupField = ({ label, value, onChange, inputType, foreignKey, editable, 
           borderRadius: '5px',
         },
         '&:hover input': {
-          backgroundColor: editable ? '': '#5A567E', 
+          backgroundColor: disabled ? '': '#5A567E', 
           borderRadius: '5px',
         },
         '& label': {
@@ -119,7 +122,7 @@ const LookupField = ({ label, value, onChange, inputType, foreignKey, editable, 
         <MenuItem disabled>Загрузка...</MenuItem>
       ) : options.length > 0 ? (
         options.map((option) => (
-          <MenuItem key={option[foreignKey.key_field]} value={option[foreignKey.key_field]}>
+          <MenuItem key={option[foreignKey.target_column]} value={option[foreignKey.key_field]} >
             {option[foreignKey.lookup_field]}
           </MenuItem>
         ))

@@ -123,7 +123,7 @@
             "label": "Производитель",
             "primary_key": false,
             "foreign_key": {
-                "target_table": "brands",
+                "target_table": "main_brands",
                 "target_column": "id_brand",
                 "key_field":"id_brand",
                 "lookup_field":"brand_name"
