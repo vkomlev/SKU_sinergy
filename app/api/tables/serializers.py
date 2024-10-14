@@ -2,7 +2,7 @@
 
 from marshmallow import Schema, fields
 from sqlalchemy.orm import class_mapper
-from sqlalchemy import Integer, String, DateTime, Float, Boolean, Date
+from sqlalchemy import Table, Integer, String, DateTime, Float, Boolean, Date
 
 # Словарь для сопоставления типов SQLAlchemy и Marshmallow
 SQLALCHEMY_TYPE_MAPPING = {
@@ -11,7 +11,7 @@ SQLALCHEMY_TYPE_MAPPING = {
     DateTime: fields.DateTime,
     Float: fields.Float,
     Boolean: fields.Bool,
-    Date: fields.Date
+    Date: fields.Date,
 }
 
 def get_field_class(column_type):
@@ -25,6 +25,12 @@ class UniversalSerializer(Schema):
     def __init__(self, model, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Добавляем поля на основе модели
-        for column in class_mapper(model).columns:
+        if isinstance(model, Table):
+            columns = model.columns
+        else:
+            columns = class_mapper(model).columns
+        
+        for column in columns:
             field_class = get_field_class(column.type)
             self.dump_fields[column.name] = field_class(attribute=column.name)
+        

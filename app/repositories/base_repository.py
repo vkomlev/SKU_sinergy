@@ -1,10 +1,49 @@
 # app/repositories/base_repository.py
 
 from sqlalchemy.orm import Session
-from sqlalchemy import or_, and_, Table
+from sqlalchemy import or_, and_, Table, any_
 from app.model_registry import get_model_by_table_name
 from sqlalchemy.inspection import inspect
 from app.utils.metadata import MetadataManager
+import time
+from sqlalchemy.exc import OperationalError
+
+def retry_on_failure(retries=5, delay=2):
+    """Декоратор для повторных попыток при сбоях подключения"""
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            attempts = 0
+            while attempts < retries:
+                try:
+                    return func(*args, **kwargs)
+                except OperationalError as e:
+                    attempts += 1
+                    print(f"Попытка {attempts} из {retries} не удалась: {e}")
+                    if attempts < retries:
+                        print(f"Повтор через {delay} секунд...")
+                        time.sleep(delay)
+                    else:
+                        print("Все попытки исчерпаны.")
+                        raise
+        return wrapper
+    return decorator
+
+def manage_session(func):
+    """Декоратор для автоматического закрытия сессии SQLAlchemy"""
+    def wrapper(self, *args, **kwargs):
+        try:
+            # Выполняем основную функцию
+            result = func(self, *args, **kwargs)
+            # Возвращаем результат
+            return result
+        except Exception as e:
+            # В случае ошибки откатываем транзакцию
+            self.session.rollback()
+            raise e
+        finally:
+            # Закрываем сессию после использования
+            self.session.close()
+    return wrapper
 
 
 class BaseRepository:
@@ -16,18 +55,23 @@ class BaseRepository:
         self.metadata_manager = MetadataManager()
     
     @staticmethod
+    @retry_on_failure(retries=5, delay=2)
     def get_model_by_table_name(table_name: str):
         """
         Универсальный метод для поиска класса модели по имени таблицы с использованием рефлексии.
         """
         return get_model_by_table_name(table_name)
-
+    
+    @retry_on_failure(retries=5, delay=2)
+    @manage_session
     def add(self, entity):
         """Добавить запись"""
         self.session.add(entity)
         self.session.commit()
         return entity
     
+    @retry_on_failure(retries=5, delay=2)
+    @manage_session
     def update(self, entity, data):
         """Обновить запись"""
         for key, value in data.items():
@@ -35,41 +79,59 @@ class BaseRepository:
         self.session.commit()
         return entity
     
+    @retry_on_failure(retries=5, delay=2)
+    @manage_session
     def delete(self, entity):
         """Удалить запись"""
         self.session.delete(entity)
         self.session.commit()
 
+    @retry_on_failure(retries=5, delay=2)
+    @manage_session
     def get_all(self):
         """Получить все записи"""
         return self.session.query(self.model).all()
 
+    @retry_on_failure(retries=5, delay=2)
+    @manage_session
     def get_by_id(self, entity_id):
         """Получить запись по ID"""
         return self.session.query(self.model).get(entity_id)
     
+    @retry_on_failure(retries=5, delay=2)
+    @manage_session
     def get_primary_key_name(self):
         """Получить название первичного ключа для модели"""
         primary_key_column = self.model.__table__.primary_key.columns.keys()[0]
         return primary_key_column
     
+    @retry_on_failure(retries=5, delay=2)
+    @manage_session
     def __get_query(self):
         if self.__temp_query:
             return self.__temp_query
         return self.session.query(self.model)
 
+    @retry_on_failure(retries=5, delay=2)
+    @manage_session
     def get_count(self):
         """Получить количество записей"""
         return self.__get_query().count()
 
+    @retry_on_failure(retries=5, delay=2)
+    @manage_session
     def get_page_count(self, limit):
         """Получить количество страниц"""
         return (self.get_count() + limit - 1) // limit
 
+    @retry_on_failure(retries=5, delay=2)
+    @manage_session
     def get_page(self, offset, limit):
         query = self.__get_query()
         return query.offset(offset).limit(limit).all()
 
+    @retry_on_failure(retries=5, delay=2)
+    @manage_session
     def filter_by_fields(self, **filters):
         query = self.__get_query()
         # Проверяем наличие фильтров и корректируем на случай, если они вложены
@@ -81,6 +143,8 @@ class BaseRepository:
         self.__temp_query = query
         return query.all() 
 
+    @retry_on_failure(retries=5, delay=2)
+    @manage_session
     def sort_by_fields(self, **kwargs):
         query = self.__get_query()
         for field, direction in kwargs.items():
@@ -95,12 +159,30 @@ class BaseRepository:
         self.__temp_query = query
         return query.all()
 
+    @retry_on_failure(retries=5, delay=2)
+    @manage_session
     def get_by_fields(self, **kwargs):
         """Получить записи по значениям полей, переданным через kwargs"""
         query = self.session.query(self.model)
         for key, value in kwargs.items():
             query = query.filter(getattr(self.model, key) == value)
         return query.all()
+    
+    @retry_on_failure(retries=5, delay=2)
+    @manage_session
+    def find_by_name(self, name_column, name_value):
+        """Поиск записи по имени"""
+        return self.session.query(self.model).filter(getattr(self.model, name_column) == name_value).all()
+    
+    @retry_on_failure(retries=5, delay=2)
+    @manage_session
+    def find_by_name_in_array(self, name_column, name_value):
+        """Поиск записи, когда поле является массивом строк (PostgreSQL)"""
+        # Получаем колонку через getattr
+        column = getattr(self.model, name_column)
+        
+        # Используем правильный синтаксис PostgreSQL для поиска по массиву
+        return self.session.query(self.model).filter(name_value == any_(column)).all()
     
     @staticmethod
     def get_full_table_name(model):
@@ -117,6 +199,8 @@ class BaseRepository:
         
         return f"{schema}.{table_name}", schema, table_name
     
+    @retry_on_failure(retries=5, delay=2)
+    @manage_session
     def get_table_metadata(self):
         """Get combined metadata for the table"""
         inspector = inspect(self.model)
@@ -127,6 +211,7 @@ class BaseRepository:
             columns = inspector.columns
 
         columns_info = []
+        full, schema, tablename = self.get_full_table_name(self.model)
         for column in columns:  # Columns from the database table
             column_info = {
                 'name': column.name,
@@ -138,13 +223,12 @@ class BaseRepository:
             if column.foreign_keys:  # Foreign keys
                 for fk in column.foreign_keys:
                     column_info['foreign_key'] = {
-                        'target_table': fk.column.table.name,
+                        'target_table': schema + '_' + fk.column.table.name,
                         'target_column': fk.column.name
                     }
             
             columns_info.append(column_info)  # Add columns from DB
-
-        full, schema, tablename = self.get_full_table_name(self.model)
+        
         db_metadata = {
             "table_name": tablename,
             "schema": schema,
@@ -154,7 +238,8 @@ class BaseRepository:
 
         return db_metadata  # Return metadata from DB only
 
-    
+    @retry_on_failure(retries=5, delay=2)
+    @manage_session
     def search(self, query):
         """Поиск по строке query"""
         if not query: #Если параметр не задан, возвращается пустой список
@@ -167,7 +252,8 @@ class BaseRepository:
         return results
     
 
-
+    @retry_on_failure(retries=5, delay=2)
+    @manage_session
     def save_import_data_to_table(self, data):
         '''Импорт данных в таблицу БД'''
         metadata = MetadataManager()

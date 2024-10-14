@@ -60,6 +60,9 @@ class BaseService:
         """Загрузить трансформированные данные в БД"""
         return self.controller.load_transformed_data(file)
     
+    def get_key_from_fields(self, **kwargs):
+        """Получить ключ по значению полей"""
+        return self.controller.get_key_from_fields(**kwargs)
    
 
     

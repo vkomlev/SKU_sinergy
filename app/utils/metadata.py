@@ -3,7 +3,7 @@
 import json
 import os
 from settings import METADATA_DIR
-from app.utils.helpers import get_session
+
 
 
 class MetadataManager:
@@ -30,6 +30,7 @@ class MetadataManager:
     def save_to_file(table_name):
         """Сохраняет метаданные в JSON-файл с расширенными параметрами."""
         from app.repositories.base_repository import BaseRepository
+        from app.utils.helpers import get_session
         model = BaseRepository.get_model_by_table_name(table_name.replace('_', '.', 1))
         session = get_session()
         br = BaseRepository(model, session)

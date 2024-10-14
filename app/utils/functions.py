@@ -1,6 +1,9 @@
-def apply_transformation(value, transformation):
-    if transformation == 'function_name':
-        return custom_transformation_function(value)
+from app.services.base_service import BaseService
+def apply_transformation(value, transformation, **kwargs):
+    if transformation == 'db_get_key_from_fields':
+        service = kwargs.get('service')
+        if service:
+            return service.get_key_from_fields(value=value, **kwargs)
     # Можно добавить дополнительные преобразования
     return value
 
