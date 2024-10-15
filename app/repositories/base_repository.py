@@ -72,12 +72,19 @@ class BaseRepository:
     
     @retry_on_failure(retries=5, delay=2)
     #@manage_session
+    @retry_on_failure(retries=5, delay=2)
     def update(self, entity, data):
         """Обновить запись"""
+        # Привязать entity к сессии, если он не был загружен с этой сессии
+        if self.session.object_session(entity) is None:
+            self.session.add(entity)  # Привязка объекта к сессии, если это необходимо
+            
         for key, value in data.items():
             setattr(entity, key, value)
+
         self.session.commit()
         return entity
+
     
     @retry_on_failure(retries=5, delay=2)
     #@manage_session
@@ -90,19 +97,18 @@ class BaseRepository:
     @manage_session
     def get_all(self):
         """Получить все записи"""
-        return self.session.query(self.model).all()
-
+        return self.session.query(self.model).all() if isinstance(self.model, Table) else self.__get_query().all()
     @retry_on_failure(retries=5, delay=2)
     @manage_session
     def get_by_id(self, entity_id):
         """Получить запись по ID"""
-        return self.session.query(self.model).get(entity_id)
+        return self.__get_query().get(entity_id) if hasattr(self.model, '__tablename__') else self.session.query(self.model).get(entity_id)
     
     @retry_on_failure(retries=5, delay=2)
     @manage_session
     def get_primary_key_name(self):
         """Получить название первичного ключа для модели"""
-        primary_key_column = self.model.__table__.primary_key.columns.keys()[0]
+        primary_key_column = self.model.primary_key.columns.keys()[0] if isinstance(self.model, Table) else self.model.__table__.primary_key.columns.keys()[0]
         return primary_key_column
     
     @retry_on_failure(retries=5, delay=2)
@@ -134,14 +140,14 @@ class BaseRepository:
     @manage_session
     def filter_by_fields(self, **filters):
         query = self.__get_query()
-        # Проверяем наличие фильтров и корректируем на случай, если они вложены
         filters = filters.get('filters', filters)
         for item in filters:
             if item.get('column'):
+                column = self.get_column(item.get('column'))
                 if item.get('expression') == '=':
-                    query = query.filter(getattr(self.model, item.get('column')) == item.get('value'))
+                    query = query.filter(column == item.get('value'))
         self.__temp_query = query
-        return query.all() 
+        return query.all()
 
     @retry_on_failure(retries=5, delay=2)
     @manage_session
@@ -149,7 +155,7 @@ class BaseRepository:
         query = self.__get_query()
         for field, direction in kwargs.items():
             field_name, order = direction.split()
-            column = getattr(self.model, field_name)
+            column = self.get_column(field_name)
             if order.upper() == "ASC":
                 query = query.order_by(column.asc())
             elif order.upper() == "DESC":
@@ -162,10 +168,10 @@ class BaseRepository:
     @retry_on_failure(retries=5, delay=2)
     @manage_session
     def get_by_fields(self, **kwargs):
-        """Получить записи по значениям полей, переданным через kwargs"""
         query = self.session.query(self.model)
         for key, value in kwargs.items():
-            query = query.filter(getattr(self.model, key) == value)
+            column = self.get_column(key)
+            query = query.filter(column == value)
         return query.all()
     
     @retry_on_failure(retries=5, delay=2)
@@ -242,18 +248,16 @@ class BaseRepository:
     @manage_session
     def search(self, query):
         """Поиск по строке query"""
-        if not query: #Если параметр не задан, возвращается пустой список
+        if not query:
             return []
-        
-        columns = self.model.__table__.columns
-        
-        param_check = [column.ilike(f"%{query}%") for column in columns if column.type.python_type == str] #поиск по параметру
-        results = self.session.query(self.model).filter(or_(*param_check)).all() #фильтрует заказы по условию
+        columns = self.model.columns if isinstance(self.model, Table) else self.model.__table__.columns
+        param_check = [column.ilike(f"%{query}%") for column in columns if column.type.python_type == str]
+        results = self.session.query(self.model).filter(or_(*param_check)).all()
         return results
     
 
-    @retry_on_failure(retries=5, delay=2)
-    @manage_session
+    #@retry_on_failure(retries=5, delay=2)
+    #@manage_session
     def save_import_data_to_table(self, data):
         '''Импорт данных в таблицу БД'''
         metadata = MetadataManager()
@@ -283,3 +287,8 @@ class BaseRepository:
                 # Если нет значения первичного ключа, создаем новую запись
                 new_entity = self.model(**row)
                 self.add(new_entity)
+    
+    def get_column(self, column_name):
+        if isinstance(self.model, Table):
+            return self.model.columns.get(column_name)
+        return getattr(self.model, column_name)

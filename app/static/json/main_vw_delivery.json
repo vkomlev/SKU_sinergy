@@ -56,7 +56,7 @@
             "type": "VARCHAR",
             "primary_key": false,
             "foreign_key": null,
-            "label": "product_name",
+            "label": "Название товара",
             "visible": true,
             "mappings": {
                 "transformation": "direct"
@@ -68,7 +68,7 @@
             "type": "DATE",
             "primary_key": false,
             "foreign_key": null,
-            "label": "delivery_date_planned",
+            "label": "Планируемая дата доставки",
             "visible": true,
             "mappings": {
                 "transformation": "direct"
@@ -80,7 +80,7 @@
             "type": "DATE",
             "primary_key": false,
             "foreign_key": null,
-            "label": "delivery_date_actual",
+            "label": "Фактическая дата доставки",
             "visible": true,
             "mappings": {
                 "transformation": "direct"
@@ -92,7 +92,7 @@
             "type": "VARCHAR",
             "primary_key": false,
             "foreign_key": null,
-            "label": "delivery_time",
+            "label": "Время доставки",
             "visible": true,
             "mappings": {
                 "transformation": "direct"
@@ -104,7 +104,7 @@
             "type": "VARCHAR",
             "primary_key": false,
             "foreign_key": null,
-            "label": "delivery_address",
+            "label": "Адрес доставки",
             "visible": true,
             "mappings": {
                 "transformation": "direct"
@@ -116,7 +116,7 @@
             "type": "VARCHAR",
             "primary_key": false,
             "foreign_key": null,
-            "label": "client_name",
+            "label": "Клиент",
             "visible": true,
             "mappings": {
                 "transformation": "direct"
@@ -128,7 +128,7 @@
             "type": "VARCHAR",
             "primary_key": false,
             "foreign_key": null,
-            "label": "climb",
+            "label": "Подъем",
             "visible": true,
             "mappings": {
                 "transformation": "direct"
@@ -140,7 +140,7 @@
             "type": "VARCHAR",
             "primary_key": false,
             "foreign_key": null,
-            "label": "ds_name",
+            "label": "Статус",
             "visible": true,
             "mappings": {
                 "transformation": "direct"
@@ -152,7 +152,7 @@
             "type": "FLOAT",
             "primary_key": false,
             "foreign_key": null,
-            "label": "distance",
+            "label": "Дистанция",
             "visible": true,
             "mappings": {
                 "transformation": "direct"
@@ -164,7 +164,7 @@
             "type": "VARCHAR",
             "primary_key": false,
             "foreign_key": null,
-            "label": "dc_name",
+            "label": "Доставщик",
             "visible": true,
             "mappings": {
                 "transformation": "direct"
@@ -176,7 +176,7 @@
             "type": "MONEY",
             "primary_key": false,
             "foreign_key": null,
-            "label": "cost",
+            "label": "Стоимость",
             "visible": true,
             "mappings": {
                 "transformation": "direct"
@@ -188,7 +188,7 @@
             "type": "VARCHAR",
             "primary_key": false,
             "foreign_key": null,
-            "label": "payment_status",
+            "label": "Статус оплаты",
             "visible": true,
             "mappings": {
                 "transformation": "direct"
@@ -200,7 +200,7 @@
             "type": "VARCHAR",
             "primary_key": false,
             "foreign_key": null,
-            "label": "compensation",
+            "label": "Компенсация",
             "visible": true,
             "mappings": {
                 "transformation": "direct"
@@ -212,7 +212,7 @@
             "type": "TEXT",
             "primary_key": false,
             "foreign_key": null,
-            "label": "note",
+            "label": "Примечание",
             "visible": true,
             "mappings": {
                 "transformation": "direct"

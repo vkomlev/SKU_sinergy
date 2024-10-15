@@ -10,12 +10,15 @@ import uuid
 import pandas as pd
 from app.utils.functions import apply_transformation
 
+_cache = {}
 class BaseController:
+
     def __init__(self, repository):
         self.repo = repository
         self.metadata_manager = MetadataManager()
         self.allowed_extensions_for_load_table = {'csv', 'xlsx'}
         self.allowed_extensions_for_mediafile = {'jpg', 'jpeg', 'png', 'gif', 'mp4', 'avi'}
+        #self._cache = {}  # Кэш запросов
 
     def get_combined_metadata(self):
         """Получить комбинированные метаданные"""
@@ -246,21 +249,39 @@ class BaseController:
 
     def get_key_from_fields(self, **kwargs):
         """Получить значение ключа по значениям полей"""
+        # Формируем ключ для кэша на основе входных данных
+        cache_key = f"{kwargs.get('field_name')}_{kwargs.get('value')}"
+        cache_key_p = f"{kwargs.get('pseudonym')}_{kwargs.get('value')}"
+        # Проверяем, есть ли результат в кэше
+        if cache_key in _cache:
+            return _cache[cache_key]
+
+        if cache_key_p in _cache:
+            return _cache[cache_key_p]
 
         field_name = kwargs.get('field_name')
         key_name = kwargs.get('key_name')
         value = kwargs.get('value')
         pseudonym = kwargs.get('pseudonym')
+
+        # Выполняем запросы к базе данных
         rows = self.repo.find_by_name(field_name, value)
 
         if rows:
-            return getattr(rows[0], key_name)
+            result = getattr(rows[0], key_name)
+            _cache[cache_key] = result
         else:
             if pseudonym:
                 rows = self.repo.find_by_name_in_array(pseudonym, value)
                 if rows:
-                    return getattr(rows[0], key_name)
-        return None
+                    result = getattr(rows[0], key_name)
+                    _cache[cache_key_p] = result
+                else:
+                    result = None
+            else:
+                result = None
+        # Сохраняем результат в кэш
+        return result
 
     
 

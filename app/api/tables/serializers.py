@@ -4,6 +4,7 @@ from marshmallow import Schema, fields
 from sqlalchemy.orm import class_mapper
 from sqlalchemy import Table, Integer, String, DateTime, Float, Boolean, Date
 import datetime
+from app.utils.functions import parse_date_string
 
 # Словарь для сопоставления типов SQLAlchemy и Marshmallow
 SQLALCHEMY_TYPE_MAPPING = {
@@ -37,7 +38,8 @@ class UniversalSerializer(Schema):
             # Handle date fields by converting them properly if they are strings
             if field_class == fields.Date:
                 self.dump_fields[column.name] = fields.Method(
-                    serialize=lambda obj: obj[column.name].isoformat() if isinstance(obj[column.name], (datetime.date, datetime.datetime)) else obj[column.name],
+                    serialize=lambda obj: parse_date_string(obj[column.name]) if isinstance(obj[column.name], str) else obj[column.name],
+                    deserialize=lambda value: parse_date_string(value) if isinstance(value, str) else value,
                     attribute=column.name
                 )
         
