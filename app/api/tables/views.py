@@ -93,6 +93,7 @@ def search(table_name):
                 metadata_json = metadata_manager.get_metadata(table_name)
                 view_name = metadata_json.get('view_name')
                 if view_name:
+                    view_name = view_name.replace('_', '.', 1)
                     model = BaseRepository.get_model_by_table_name(view_name)
         except Exception:
                 pass  # If view metadata is not found, fallback to original table model

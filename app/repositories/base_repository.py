@@ -247,11 +247,18 @@ class BaseRepository:
     @retry_on_failure(retries=5, delay=2)
     @manage_session
     def search(self, query):
-        """Поиск по строке query"""
         if not query:
             return []
         columns = self.model.columns if isinstance(self.model, Table) else self.model.__table__.columns
-        param_check = [column.ilike(f"%{query}%") for column in columns if column.type.python_type == str]
+        param_check = []
+        for column in columns:
+            try:
+                if column.type.python_type == str:
+                    param_check.append(column.ilike(f"%{query}%"))
+            except NotImplementedError:
+                continue
+        if not param_check:
+            return []
         results = self.session.query(self.model).filter(or_(*param_check)).all()
         return results
     
