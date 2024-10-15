@@ -10,16 +10,17 @@ export const useTableFiltersSort = (tableName, initialSortBy = [], initialFilter
   const [size, setSize] = useState(20);   
   const [query, setQuery] = useState('');  // Добавляем состояние для строки поиска
 
+  // Обновлена логика для получения данных: если есть query, запрашиваем searchResults
   const updateTableData = useCallback(async () => {
     setLoading(true);
     try {
       let response;
       if (query) {
         // Если есть запрос, используем API для поиска
-        response = await fetchTableSearchResults(tableName, query);
+        response = await fetchTableSearchResults(tableName, query, true);  // Добавлен параметр showView = true
       } else {
         // Иначе получаем обычные данные
-        response = await fetchTableData(tableName, page, size, sortBy, filters);  
+        response = await fetchTableData(tableName, page, size, sortBy, filters, true);  // Добавлен параметр showView = true
       }
       setFilteredSortedData(response.data);  // Обновляем данные
       setTotal(response.total);  // Обновляем количество записей
@@ -34,12 +35,12 @@ export const useTableFiltersSort = (tableName, initialSortBy = [], initialFilter
     updateTableData();
   }, [sortBy, filters, query, tableName, updateTableData]);
 
-    // Общая функция для сброса фильтров и сортировки
-    const resetFiltersSort = () => {
-      setFilters([]);  // Сброс фильтров
-      setSortBy([]);   // Сброс сортировки
-      setPage(1);      // Возвращаем на первую страницу
-    };
+  // Общая функция для сброса фильтров и сортировки
+  const resetFiltersSort = () => {
+    setFilters([]);  // Сброс фильтров
+    setSortBy([]);   // Сброс сортировки
+    setPage(1);      // Возвращаем на первую страницу
+  };
 
   return {
     filteredSortedData,

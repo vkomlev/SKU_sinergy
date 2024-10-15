@@ -63,7 +63,7 @@ class BaseRepository:
         return get_model_by_table_name(table_name)
     
     @retry_on_failure(retries=5, delay=2)
-    @manage_session
+    #@manage_session
     def add(self, entity):
         """Добавить запись"""
         self.session.add(entity)
@@ -71,7 +71,7 @@ class BaseRepository:
         return entity
     
     @retry_on_failure(retries=5, delay=2)
-    @manage_session
+    #@manage_session
     def update(self, entity, data):
         """Обновить запись"""
         for key, value in data.items():
@@ -80,7 +80,7 @@ class BaseRepository:
         return entity
     
     @retry_on_failure(retries=5, delay=2)
-    @manage_session
+    #@manage_session
     def delete(self, entity):
         """Удалить запись"""
         self.session.delete(entity)

@@ -3,6 +3,7 @@
 from marshmallow import Schema, fields
 from sqlalchemy.orm import class_mapper
 from sqlalchemy import Table, Integer, String, DateTime, Float, Boolean, Date
+import datetime
 
 # Словарь для сопоставления типов SQLAlchemy и Marshmallow
 SQLALCHEMY_TYPE_MAPPING = {
@@ -33,4 +34,10 @@ class UniversalSerializer(Schema):
         for column in columns:
             field_class = get_field_class(column.type)
             self.dump_fields[column.name] = field_class(attribute=column.name)
+            # Handle date fields by converting them properly if they are strings
+            if field_class == fields.Date:
+                self.dump_fields[column.name] = fields.Method(
+                    serialize=lambda obj: obj[column.name].isoformat() if isinstance(obj[column.name], (datetime.date, datetime.datetime)) else obj[column.name],
+                    attribute=column.name
+                )
         

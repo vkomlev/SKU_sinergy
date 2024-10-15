@@ -95,7 +95,8 @@
             "foreign_key": null,
             "visible": true,
             "mappings": {
-                "transformation": "skip"
+                "import_name" : "Дата доставки заявленная",
+                "transformation": "parse_date_string"
             },
             "input_type": "date"
         },
@@ -107,7 +108,8 @@
             "foreign_key": null,
             "visible": true,
             "mappings": {
-                "transformation": "skip"
+                "import_name" : "Фактическая дата доставки",
+                "transformation": "parse_date_string"
             },
             "input_type": "date"
         },

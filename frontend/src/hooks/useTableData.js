@@ -18,6 +18,7 @@ const useTableData = (tableName) => {
   // Локально применяем сортировку, пока данные не обновлены с сервера
   const [localData, setLocalData] = useState([]);
 
+  // Добавлен параметр showView, чтобы управлять запросами в view
   const fetchData = useCallback(async () => {
     if (loadingMetadata || !metadata) {
       console.log('Skipping data fetch until metadata is loaded');
@@ -28,13 +29,13 @@ const useTableData = (tableName) => {
       console.log('Fetching table data from server...');
       let tableData;
       if (query) {
-        tableData = await fetchTableSearchResults(tableName, query);
+        tableData = await fetchTableSearchResults(tableName, query, true); // Добавлен параметр showView = true
       } else {
         const formattedFilters = filters.reduce((acc, filter) => {
           acc[filter.column] = filter.value;
           return acc;
         }, {});
-        tableData = await fetchTableData(tableName, page, size, sortBy, formattedFilters);
+        tableData = await fetchTableData(tableName, page, size, sortBy, formattedFilters, true); // Добавлен параметр showView = true
       }
       console.log('Data fetched:', tableData);
       setData(tableData.data || []);
@@ -55,6 +56,7 @@ const useTableData = (tableName) => {
     setPage(newPage);
   };
 
+  // Добавлен параметр showView = false, чтобы запрашивались метаданные таблицы, а не view
   const fetchMetadata = useCallback(async () => {
     if (metadata || !loadingMetadata) {
       console.log('Metadata already fetched, skipping...');
@@ -62,7 +64,7 @@ const useTableData = (tableName) => {
     }
     try {
       console.log('Fetching table metadata...');
-      const tableMetadata = await fetchTableMetadata(tableName);
+      const tableMetadata = await fetchTableMetadata(tableName, false); // Запрос метаданных без showView
       console.log('Metadata fetched:', tableMetadata);
       setMetadata(tableMetadata);
       setLoadingMetadata(false);
