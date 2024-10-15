@@ -1,6 +1,7 @@
 import { TextField, Select, MenuItem, InputLabel, FormControl } from '@mui/material'
 import LookupField from './LookupField'
 import {formatToDateTimeLocal} from './formatToDateTimeLocal'
+import {formatToDate} from './formatToDate'
 // Компонент поля формы, который рендерит различные типы ввода на основе типа поля и свойства видимости.
 const FormField = ({ field, value, onChange, editable, error }) => {
   const inputLabelProps = { shrink: !!value } // Проверяем, есть ли значение для управления меткой
@@ -141,8 +142,12 @@ const FormField = ({ field, value, onChange, editable, error }) => {
       return (
         <TextField
           label={field.label}
-          value={value}
-          onChange={editable ? onChange : undefined}
+          value={value ? formatToDate(value) : ''} // Преобразуем для отображения
+          onChange={(e) => {
+            const inputValue = e.target.value; // Получаем значение
+            const date = new Date(inputValue);  // Создаем новый объект Date с выбранным временем
+            onChange({ target: { value: date.toISOString() } });// Отправляем обновленное значение
+            }}
           type="date"
           error={!!error}
           helperText={error ? error.message : ''}

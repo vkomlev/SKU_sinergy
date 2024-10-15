@@ -73,7 +73,7 @@
       "type": "string",
       "visible": true,
       "label": "Планируемая дата доставки",
-      "input_type": "text",
+      "input_type": "date",
       "mappings": {
         "import_name" : "Дата доставки заявленная",
         "transformation" : "direct"
