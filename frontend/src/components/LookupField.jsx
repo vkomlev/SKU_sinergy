@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { TextField, MenuItem } from '@mui/material'
+import { TextField, MenuItem,  Menu  } from '@mui/material';
 import { fetchTableData } from '../services/api'
 
 // Компонент поля ввода с выбором из списка (lookup).
@@ -7,6 +7,7 @@ const LookupField = ({ label, value, onChange, inputType, foreignKey, disabled, 
   const [options, setOptions] = useState([]) 
   const [loading, setLoading] = useState(false) 
   const [fetchError, setFetchError] = useState(null) 
+  const [open, setOpen] = useState(false)
 
   useEffect(() => {
 
@@ -34,6 +35,10 @@ const response = await fetchTableData(foreignKey.target_table)
       loadOptions() 
     }
   }, [inputType, foreignKey]) 
+  const handleOptionClick = (option) => {
+    onChange(option[foreignKey.key_field]);
+    setOpen(false);
+  };
 
   // Если inputType не 'lookup' или отсутствует foreignKey, рендерим обычное поле редактирования
   if (inputType !== 'lookup' || !foreignKey) {
@@ -82,11 +87,8 @@ const response = await fetchTableData(foreignKey.target_table)
     <TextField
       label={label}
       select
-      value={value || ''} 
-      onChange={(e) => {
-        const selectedId = e.target.value // Получаем id выбранного элемента
-        onChange(selectedId) // Передаем id 
-      }}
+      value={value || ''}
+      onChange={(e) => onChange(e.target.value)}
       error={!!error || !!fetchError}
       helperText={error ? error.message : fetchError}
       disabled={disabled}
@@ -110,23 +112,36 @@ const response = await fetchTableData(foreignKey.target_table)
           },
         }
       }}
+      SelectProps={{
+        MenuProps: {
+          PaperProps: {
+            style: {
+              maxHeight: 250, //устанавливаем максимальную высоту, превышает - появляется прокрутка 
+              overflowY: 'auto',
+              backgroundColor: '#292839',
+              color: '#e6e6e6'
+            },
+          },
+        },
+      }}
     >
       {loading ? (
-        <MenuItem disabled >Загрузка...</MenuItem>
+        <MenuItem disabled>Загрузка...</MenuItem>
       ) : options.length > 0 ? (
         options.map((option) => (
-          <MenuItem key={option[foreignKey.target_column]} value={option[foreignKey.key_field]} sx={{
-            backgroundColor: '#292839',
-            '&:hover, &:focus': {
-              backgroundColor: '#1a1924', 
-            },
-            '&.Mui-selected': {
-              backgroundColor: '#1a1924', // Подсветка выбранного элемента
+          <MenuItem
+            key={option[foreignKey.target_column]}
+            value={option[foreignKey.key_field]}
+            sx={{
+              backgroundColor: '#292839',
               '&:hover, &:focus': {
-                backgroundColor: '#1a1924', 
+                backgroundColor: '#1a1924',
               },
-            }
-          }}>
+              '&.Mui-selected': {
+                backgroundColor: '#1a1924',
+              }
+            }}
+          >
             <span style={{ color: '#e6e6e6'}}>{option[foreignKey.lookup_field]}</span>
           </MenuItem>
         ))
@@ -134,7 +149,7 @@ const response = await fetchTableData(foreignKey.target_table)
         <MenuItem disabled>Нет доступных опций</MenuItem>
       )}
     </TextField>
-  )
+  );
 }
 
-export default LookupField
+export default LookupField;
