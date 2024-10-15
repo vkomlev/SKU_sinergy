@@ -22,14 +22,16 @@
             "label": "Площадка",
             "primary_key": false,
             "foreign_key": {
-                "target_table": "marketpalces",
+                "target_table": "main_marketpalces",
                 "target_column": "id_marketplace",
                 "key_field":"id_marketplace",
-                "lookup_field":"mp_name"
+                "lookup_field":"mp_name",
+                "pseudonym": "pseudonyms"
             },
             "visible": true,
             "mappings": {
-                "transformation": "direct"
+                "import_name" : "Площадка",
+                "transformation": "db_get_key_from_fields"
                 
             },
             "input_type": "lookup"
@@ -40,14 +42,16 @@
             "label": "Партнер",
             "primary_key": false,
             "foreign_key": {
-                "target_table": "partners",
+                "target_table": "main_partners",
                 "target_column": "id_partner",
                 "key_field":"id_partner",
-                "lookup_field":"partner_name"
+                "lookup_field":"partner_name",
+                "pseudonym": "pseudonyms"
             },
             "visible": true,
             "mappings": {
-                "transformation": "direct"
+                "import_name" : "Кабинет",
+                "transformation": "db_get_key_from_fields"
             },
             "input_type": "lookup"
         },
@@ -59,7 +63,9 @@
             "foreign_key": null,
             "visible": true,
             "mappings": {
-                "transformation": "direct"
+                "import_name" : "Сборочное задание",
+                "transformation": "direct",
+                "unique_key" : true
             },
             "input_type": "text"
         },
@@ -69,14 +75,15 @@
             "primary_key": false,
             "label": "Код товара",
             "foreign_key": {
-                "target_table": "products",
+                "target_table": "main_products",
                 "target_column": "id_product",
                 "key_field":"id_product",
-                "lookup_field":"sku, product_name"
+                "lookup_field":"sku"
             },
             "visible": true,
             "mappings": {
-                "transformation": "direct"
+                "import_name" : "Артикул",
+                "transformation": "db_get_key_from_fields"
             },
             "input_type": "lookup"
         },
@@ -88,7 +95,8 @@
             "foreign_key": null,
             "visible": true,
             "mappings": {
-                "transformation": "direct"
+                "import_name" : "Дата доставки заявленная",
+                "transformation": "parse_date_string"
             },
             "input_type": "date"
         },
@@ -100,7 +108,8 @@
             "foreign_key": null,
             "visible": true,
             "mappings": {
-                "transformation": "direct"
+                "import_name" : "Фактическая дата доставки",
+                "transformation": "parse_date_string"
             },
             "input_type": "date"
         },
@@ -112,6 +121,7 @@
             "foreign_key": null,
             "visible": true,
             "mappings": {
+                "import_name" : "Время доставки",
                 "transformation": "direct"
             },
             "input_type": "text"
@@ -124,6 +134,7 @@
             "foreign_key": null,
             "visible": true,
             "mappings": {
+                "import_name" : "Адрес доставки",
                 "transformation": "direct"
             },
             "input_type": "text"
@@ -136,6 +147,7 @@
             "foreign_key": null,
             "visible": true,
             "mappings": {
+                "import_name" : "ФИО Покупателя, телефон",
                 "transformation": "direct"
             },
             "input_type": "text"
@@ -148,6 +160,7 @@
             "foreign_key": null,
             "visible": true,
             "mappings": {
+                "import_name" : "Подъем на этаж",
                 "transformation": "direct"
             },
             "input_type": "text"
@@ -158,14 +171,16 @@
             "label": "Статус",
             "primary_key": false,
             "foreign_key": {
-                "target_table": "delivery_status",
+                "target_table": "main_delivery_status",
                 "target_column": "id_ds",
                 "key_field":"id_ds",
                 "lookup_field":"ds_name"
             },
             "visible": true,
             "mappings": {
-                "transformation": "direct"
+                "import_name" : "Статус",
+                "transformation": "db_get_key_from_fields",
+                "unique_key" : true
             },
             "input_type": "lookup"
         },
@@ -177,6 +192,7 @@
             "foreign_key": null,
             "visible": true,
             "mappings": {
+                "import_name" : "Расстояние",
                 "transformation": "direct"
             },
             "input_type": "number"
@@ -187,14 +203,15 @@
             "label": "Доставщик",
             "primary_key": false,
             "foreign_key": {
-                "target_table": "delivery_company",
+                "target_table": "main_delivery_company",
                 "target_column": "id_dc",
                 "key_field":"id_dc",
                 "lookup_field":"dc_name"
             },
             "visible": true,
             "mappings": {
-                "transformation": "direct"
+                "import_name" : "Доставщик",
+                "transformation": "db_get_key_from_fields"
             },
             "input_type": "lookup"
         },
@@ -206,6 +223,7 @@
             "foreign_key": null,
             "visible": true,
             "mappings": {
+                "import_name" : "Стоимость",
                 "transformation": "direct"
             },
             "input_type": "number"
@@ -218,6 +236,7 @@
             "foreign_key": null,
             "visible": true,
             "mappings": {
+                "import_name" : "Примечание",
                 "transformation": "direct"
             },
             "input_type": "text"
@@ -230,6 +249,7 @@
             "foreign_key": null,
             "visible": true,
             "mappings": {
+                "import_name" : "Компенсации за доставку от покупателей",
                 "transformation": "direct"
             },
             "input_type": "text"
@@ -242,6 +262,7 @@
             "foreign_key": null,
             "visible": true,
             "mappings": {
+                "import_name" : "Примечание",
                 "transformation": "direct"
             },
             "input_type": "text"

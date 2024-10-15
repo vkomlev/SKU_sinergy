@@ -141,15 +141,32 @@ class BaseController:
                 return {"status": "fail", "message": "Unsupported file format"}, 400
         except Exception as e:
             return {"status": "fail", "message": f"Error reading file: {e}"}, 400
+
+        # Убираем пробелы и символы перевода строк в текстовых данных
+        def clean_string(value):
+            if isinstance(value, str):
+                return value.strip()  # Удаляем пробелы, табуляции и переводы строк
+            return value  # Возвращаем значение без изменений, если это не строка
         
+        # Применяем функцию очистки ко всем ячейкам датафрейма
+        data = data.applymap(clean_string)
+
         # Преобразуем NaN и NaT в None
         data = data.where(pd.notna(data), None)
+        
+        # Конвертируем данные в формат словаря
         data = data.to_dict(orient='records')
-        return self.apply_mapping(data)
+        try:
+            mapped_data = self.apply_mapping(data)
+            return mapped_data
+        except Exception as e:
+            print(e)# Выводим ошибку
+            return {"status": "fail", "message": f"Error mapping data: {e}"}, 400
+
 
     def apply_mapping(self, data):
         """Применение маппинга к данным с преобразованием типов"""
-
+        from app.utils.helpers import create_service
         metadata = self.get_combined_metadata()
         # Применяем маппинг и преобразования
         transformed_data = []
@@ -188,18 +205,34 @@ class BaseController:
                 elif transformation == 'direct':
                     # Прямое сопоставление с преобразованием типа
                     transformed_row[col_meta['name']] = convert_to_type(row.get(source_column), column_type)
+                elif transformation == 'db_get_key_from_fields':
+                     # Применение функции преобразования с обращением к базе данных
+                    if col_meta.get('foreign_key'):
+                        table_name = col_meta['foreign_key'].get('target_table')
+                        if table_name:
+                            service = create_service(table_name)
+                            field_name = col_meta['foreign_key'].get('lookup_field','name')
+                            key_name =  col_meta['foreign_key'].get('key_field','id')
+                            pseudonym = col_meta['foreign_key'].get('pseudonym')
+                            value = str(row.get(source_column))   
+                            transformed_value = apply_transformation(
+                                value, transformation, service=service, field_name = field_name, key_name = key_name, pseudonym = pseudonym
+                                )
+                            transformed_row[col_meta['name']] = convert_to_type(transformed_value, column_type)
                 else:
                     # Применение функции преобразования с последующим приведением типа
                     transformed_value = apply_transformation(row.get(source_column), transformation)
                     transformed_row[col_meta['name']] = convert_to_type(transformed_value, column_type)
             
             transformed_data.append(transformed_row)
+            print(len(transformed_data))
 
         # Передаем данные в репозиторий для сохранения
         return transformed_data
 
     
     def load_transformed_data(self, file):
+        """Загрузка преобразованных данных в БД"""
         data = self.transform_file(file)
         if isinstance(data, dict):
             return data
@@ -207,8 +240,29 @@ class BaseController:
             try:
                 self.repo.save_import_data_to_table(data)
             except Exception as e:
+                print (e)
                 return {"status": "fail", "message": f"Error saving data: {e}"}, 400
             return {"status": "success", "message": "Data saved successfully"}, 200
+
+    def get_key_from_fields(self, **kwargs):
+        """Получить значение ключа по значениям полей"""
+
+        field_name = kwargs.get('field_name')
+        key_name = kwargs.get('key_name')
+        value = kwargs.get('value')
+        pseudonym = kwargs.get('pseudonym')
+        rows = self.repo.find_by_name(field_name, value)
+
+        if rows:
+            return getattr(rows[0], key_name)
+        else:
+            if pseudonym:
+                rows = self.repo.find_by_name_in_array(pseudonym, value)
+                if rows:
+                    return getattr(rows[0], key_name)
+        return None
+
+    
 
 
 

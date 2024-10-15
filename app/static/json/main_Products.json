@@ -48,7 +48,7 @@
             "label": "Код категории",
             "primary_key": false,
             "foreign_key": {
-                "target_table": "product_category",
+                "target_table": "main_product_category",
                 "target_column": "id_pc"
             },
             "visible": true,

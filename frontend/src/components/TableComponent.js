@@ -2,7 +2,7 @@ import React, { useCallback, useState } from 'react';
 import { getPrimaryKeyField } from '../utils/tableUtils';
 import { deleteRecord, fetchRecord, saveRecord, fetchTableData, fetchTableSearchResults } from '../services/api';  
 import { useTableFiltersSort } from '../hooks/useTableFiltersSort';
-import { useTableMetadata } from '../hooks/useTableMetadata';  // Импортируем новый хук
+import { useTableMetadata } from '../hooks/useTableMetadata';  // Импортируем хук метаданных
 import SearchComponent from './SearchComponent';
 import EditForm from './EditForm';
 import DropFilterMenuComponent from './DropFilterMenuComponent';
@@ -19,8 +19,11 @@ const TableComponent = ({ tableName, onDataReload, ...props }) => {
   const [formLoading, setFormLoading] = useState(false);
   const [operationMessage, setOperationMessage] = useState(null);
   const [showUpload, setShowUpload] = useState(false); // Состояние для отображения компонента загрузки
-  // Используем хук для метаданных
-  const { metadata, loadingMetadata } = useTableMetadata(tableName);
+  // Используем хук для метаданных с showView = true для отображения таблицы
+  const { metadata: tableMetadata, loadingMetadata: loadingTableMetadata } = useTableMetadata(tableName, true);
+
+  // Используем хук для метаданных с showView = false для формы редактирования
+  const { metadata: formMetadata, loadingMetadata: loadingFormMetadata } = useTableMetadata(tableName, false);
 
   // Используем хук для работы с фильтрами, сортировкой и данными
   const { 
@@ -42,7 +45,7 @@ const TableComponent = ({ tableName, onDataReload, ...props }) => {
   } = useTableFiltersSort(tableName, [], [], fetchTableData, fetchTableSearchResults);
 
   const updateTableData = useCallback((newData, isEditing, recordId) => {
-    const primaryKeyField = getPrimaryKeyField(metadata);
+    const primaryKeyField = getPrimaryKeyField(tableMetadata);
     if (primaryKeyField) {
       if (isEditing) {
         setFilteredSortedData(prevData =>
@@ -54,7 +57,7 @@ const TableComponent = ({ tableName, onDataReload, ...props }) => {
     } else {
       console.error('Не удалось найти поле первичного ключа.');
     }
-  }, [metadata, setFilteredSortedData]);
+  }, [tableMetadata, setFilteredSortedData]);
 
   const handleAddClick = () => {
     setShowForm(true);
@@ -77,7 +80,7 @@ const TableComponent = ({ tableName, onDataReload, ...props }) => {
 
   const handleFormSubmit = useCallback(async (formData) => {
     try {
-      const primaryKeyField = getPrimaryKeyField(metadata);  
+      const primaryKeyField = getPrimaryKeyField(formMetadata);  
       if (!primaryKeyField) {
         throw new Error('Не удалось найти поле первичного ключа.');
       }
@@ -92,18 +95,18 @@ const TableComponent = ({ tableName, onDataReload, ...props }) => {
       console.error('Ошибка при сохранении данных:', error);
       setOperationMessage('Ошибка при сохранении данных.');
     }
-  }, [metadata, editData, tableName, updateTableData]);
+  }, [formMetadata, editData, tableName, updateTableData]);
 
   const handleDeleteClick = useCallback(async (recordId) => {
     try {
       await deleteRecord(tableName, recordId);  
-      setFilteredSortedData(prevData => prevData.filter(item => item[metadata.columns.find(column => column.primary_key).name] !== recordId));
+      setFilteredSortedData(prevData => prevData.filter(item => item[tableMetadata.columns.find(column => column.primary_key).name] !== recordId));
       setOperationMessage(`Запись с ID ${recordId} успешно удалена.`);
     } catch (error) {
       console.error('Ошибка при удалении данных:', error);
       setOperationMessage(`Ошибка при удалении записи с ID ${recordId}.`);
     }
-  }, [tableName, metadata, setFilteredSortedData]);
+  }, [tableName, tableMetadata, setFilteredSortedData]);
 
   const handlePageChange = (newPage) => {
     setPage(newPage);  
@@ -113,7 +116,7 @@ const TableComponent = ({ tableName, onDataReload, ...props }) => {
     resetFiltersSort();  // Сбрасываем фильтры и сортировку
   };
 
-  if (loadingMetadata || !metadata) {
+  if (loadingTableMetadata || !tableMetadata) {
     return <div>Загрузка метаданных...</div>;
   }
 
@@ -150,10 +153,10 @@ const TableComponent = ({ tableName, onDataReload, ...props }) => {
           onCancel={handleCancelUpload}  // Обрабатываем отмену загрузки
         />
         )}
-        {metadata && metadata.columns && (
+        {tableMetadata && tableMetadata.columns && (
           <>
             <DropFilterMenuComponent
-              columns={metadata.columns}
+              columns={tableMetadata.columns}
               filters={filters}
               setFilters={setFilters}
               resetFiltersSort={resetFiltersSort} 
@@ -161,16 +164,16 @@ const TableComponent = ({ tableName, onDataReload, ...props }) => {
             <div className='big-table'>
               <table className='table'>
                 <TableHeader 
-                  columns={metadata.columns} 
+                  columns={tableMetadata.columns} 
                   sortBy={sortBy} 
                   setSortBy={setSortBy} 
                 />
                 <TableBody 
                   data={filteredSortedData} 
-                  columns={metadata.columns} 
+                  columns={tableMetadata.columns} 
                   onEdit={handleEditClick}
                   onDelete={handleDeleteClick}
-                  metadata={metadata}
+                  metadata={tableMetadata}
                 />
               </table>
             </div>
@@ -196,7 +199,7 @@ const TableComponent = ({ tableName, onDataReload, ...props }) => {
           <EditForm
             onClose={() => setShowForm(false)}
             initialData={editData}
-            metadata={metadata}
+            metadata={formMetadata}
             formLoading={formLoading}
             isEditing={!!editData}
             onSubmit={handleFormSubmit}

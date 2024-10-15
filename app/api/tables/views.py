@@ -15,15 +15,18 @@ from app.controllers.base_controller import BaseController
 def get_data_view(table_name):
     session = get_session()
     model = BaseRepository.get_model_by_table_name(table_name.replace('_', '.', 1))
-
-    try:
-            metadata_manager = MetadataManager()
-            metadata_json = metadata_manager.get_metadata(table_name)
-            view_name = metadata_json.get('view_name')
-            if view_name:
-                model = BaseRepository.get_model_by_table_name(view_name)
-    except Exception:
-            pass  # If view metadata is not found, fallback to original table model
+    show_view = request.args.get('showview', 'false').lower() == 'true'
+    if show_view:
+        try:
+                metadata_manager = MetadataManager()
+                metadata_json = metadata_manager.get_metadata(table_name)
+                view_name = metadata_json.get('view_name')
+                if view_name:
+                    view_name = view_name.replace('_', '.', 1)
+                    model = BaseRepository.get_model_by_table_name(view_name)
+        except Exception as e:
+                print(f'Модель не найдена или не существует: {e}')
+                pass  # If view metadata is not found, fallback to original table model
 
     service = BaseService(BaseController(BaseRepository(model, session)))
     
@@ -64,15 +67,17 @@ def get_metadata_view(table_name):
     session = get_session()
     
     model = BaseRepository.get_model_by_table_name(table_name.replace('_', '.', 1))
-    
-    try:
-            metadata_manager = MetadataManager()
-            metadata_json = metadata_manager.get_metadata(table_name)
-            view_name = metadata_json.get('view_name').replace('_', '.', 1)
-            if view_name:
-                model = BaseRepository.get_model_by_table_name(view_name)
-    except Exception:
-            pass  # If view metadata is not found, fallback to original table model
+    show_view = request.args.get('showview', 'false').lower() == 'true'
+    if show_view:
+        try:
+                metadata_manager = MetadataManager()
+                metadata_json = metadata_manager.get_metadata(table_name)
+                view_name = metadata_json.get('view_name')
+                if view_name:
+                    view_name = view_name.replace('_', '.', 1)
+                    model = BaseRepository.get_model_by_table_name(view_name)
+        except Exception:
+                pass  # If view metadata is not found, fallback to original table model
 
     service = BaseService(BaseController(BaseRepository(model, session)))
     metadata = service.get_table_metadata()
@@ -81,15 +86,16 @@ def get_metadata_view(table_name):
 def search(table_name):
     session = get_session()    
     model = BaseRepository.get_model_by_table_name(table_name.replace('_', '.', 1))
-
-    try:
-            metadata_manager = MetadataManager()
-            metadata_json = metadata_manager.get_metadata(table_name)
-            view_name = metadata_json.get('view_name')
-            if view_name:
-                model = BaseRepository.get_model_by_table_name(view_name)
-    except Exception:
-            pass  # If view metadata is not found, fallback to original table model
+    show_view = request.args.get('showview', 'false').lower() == 'true'
+    if show_view:
+        try:
+                metadata_manager = MetadataManager()
+                metadata_json = metadata_manager.get_metadata(table_name)
+                view_name = metadata_json.get('view_name')
+                if view_name:
+                    model = BaseRepository.get_model_by_table_name(view_name)
+        except Exception:
+                pass  # If view metadata is not found, fallback to original table model
     service = BaseService(BaseController(BaseRepository(model, session)))
     query = request.args.get('query', default = '', type= str)
 
