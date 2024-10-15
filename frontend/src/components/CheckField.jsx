@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { TextField } from '@mui/material';
 import { fetchTableData } from '../services/api';
+import './styles/CheckField.css'
 
 const CheckField = ({ label, value, onChange, disabled, error, foreignKey }) => {
     const [loading, setLoading] = useState(false);
@@ -86,6 +87,9 @@ const CheckField = ({ label, value, onChange, disabled, error, foreignKey }) => 
             validateValue(displayValue); // Проверяем значение на Enter
         }
     };
+    const handleCheckClick = () => {
+      validateValue(displayValue); // Проверяем значение при клике на галочку
+  };
 
     return (
         <>
@@ -127,6 +131,7 @@ const CheckField = ({ label, value, onChange, disabled, error, foreignKey }) => 
                     },
                 }}
             />
+            <button className="check-button" onClick={handleCheckClick} disabled={disabled || loading}/>
         </>
     );
 };

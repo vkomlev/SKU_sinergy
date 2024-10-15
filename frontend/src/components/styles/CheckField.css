@@ -1,0 +1,31 @@
+/*кнопка сохранения/добавления в шапке*/
+.check-button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    width: 30px; /* Ширина кнопки */
+    height: 30px; /* Высота кнопки */
+  }
+  
+  .check-button::before,
+  .check-button::after {
+    content: '';
+    position: absolute;
+    background: white; /* Цвет галочки */
+  }
+  
+  .check-button::before {
+    width: 2px; /* Толщина линии */
+    height: 23px; /* Высота линии */
+    left: 22px; /* Положение линии */
+    bottom: 4px;
+    transform: rotate(45deg);
+  }
+  .check-button::after {
+    width: 2px; 
+    height: 13px;
+    left: 11px; 
+    bottom: 6px;
+    transform: rotate(-45deg);
+  }
