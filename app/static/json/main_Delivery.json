@@ -85,7 +85,7 @@
                 "import_name" : "Артикул",
                 "transformation": "db_get_key_from_fields"
             },
-            "input_type": "lookup"
+            "input_type": "check"
         },
         {
             "name": "delivery_date_planned",

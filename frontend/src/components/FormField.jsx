@@ -1,5 +1,6 @@
 import { TextField, Select, MenuItem, InputLabel, FormControl } from '@mui/material'
 import LookupField from './LookupField'
+import CheckField from './CheckField'
 import {formatToDateTimeLocal} from './formatToDateTimeLocal'
 import {formatToDate} from './formatToDate'
 // Компонент поля формы, который рендерит различные типы ввода на основе типа поля и свойства видимости.
@@ -274,6 +275,17 @@ const FormField = ({ field, value, onChange, editable, error }) => {
         disabled={!editable}
       />
       )
+    case 'check':
+      return (
+        <CheckField
+          label={field.label}
+          value={value}
+          onChange={editable ? onChange : undefined}
+          disabled={!editable}
+          error={!!error}
+          foreignKey={field.foreign_key}  // Передаем foreign_key
+        />
+      );
   
     default:
       return null // Возврат null для неподдерживаемых типов
