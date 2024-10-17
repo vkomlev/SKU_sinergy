@@ -9,6 +9,10 @@ import os
 import uuid
 import pandas as pd
 from app.utils.functions import apply_transformation
+import logging
+
+logging.basicConfig(filename='app.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
 _cache = {}
 class BaseController:
@@ -143,6 +147,7 @@ class BaseController:
             else:
                 return {"status": "fail", "message": "Unsupported file format"}, 400
         except Exception as e:
+            logger.error(f'Ошибка: {e}')
             return {"status": "fail", "message": f"Error reading file: {e}"}, 400
 
         # Убираем пробелы и символы перевода строк в текстовых данных
@@ -196,39 +201,42 @@ class BaseController:
                 # Обработка ошибок приведения типов, например, возвращаем значение как есть или None
                 return None
 
-        for row in data:
-            transformed_row = {}
-            for col_meta in metadata['columns']:
-                source_column = col_meta['mappings'].get('import_name', None)
-                transformation = col_meta['mappings'].get('transformation', 'direct')
-                column_type = col_meta.get('type', 'string')  # Получаем тип данных из метаданных
+        try:
+            for row in data:
+                transformed_row = {}
+                for col_meta in metadata['columns']:
+                    source_column = col_meta['mappings'].get('import_name', None)
+                    transformation = col_meta['mappings'].get('transformation', 'direct')
+                    column_type = col_meta.get('type', 'string')  # Получаем тип данных из метаданных
 
-                if transformation == 'skip':
-                    continue
-                elif transformation == 'direct':
-                    # Прямое сопоставление с преобразованием типа
-                    transformed_row[col_meta['name']] = convert_to_type(row.get(source_column), column_type)
-                elif transformation == 'db_get_key_from_fields':
-                     # Применение функции преобразования с обращением к базе данных
-                    if col_meta.get('foreign_key'):
-                        table_name = col_meta['foreign_key'].get('target_table')
-                        if table_name:
-                            service = create_service(table_name)
-                            field_name = col_meta['foreign_key'].get('lookup_field','name')
-                            key_name =  col_meta['foreign_key'].get('key_field','id')
-                            pseudonym = col_meta['foreign_key'].get('pseudonym')
-                            value = str(row.get(source_column))   
-                            transformed_value = apply_transformation(
-                                value, transformation, service=service, field_name = field_name, key_name = key_name, pseudonym = pseudonym
-                                )
-                            transformed_row[col_meta['name']] = convert_to_type(transformed_value, column_type)
-                else:
-                    # Применение функции преобразования с последующим приведением типа
-                    transformed_value = apply_transformation(row.get(source_column), transformation)
-                    transformed_row[col_meta['name']] = convert_to_type(transformed_value, column_type)
-            
-            transformed_data.append(transformed_row)
-            print(len(transformed_data))
+                    if transformation == 'skip':
+                        continue
+                    elif transformation == 'direct':
+                        # Прямое сопоставление с преобразованием типа
+                        transformed_row[col_meta['name']] = convert_to_type(row.get(source_column), column_type)
+                    elif transformation == 'db_get_key_from_fields':
+                        # Применение функции преобразования с обращением к базе данных
+                        if col_meta.get('foreign_key'):
+                            table_name = col_meta['foreign_key'].get('target_table')
+                            if table_name:
+                                service = create_service(table_name)
+                                field_name = col_meta['foreign_key'].get('lookup_field','name')
+                                key_name =  col_meta['foreign_key'].get('key_field','id')
+                                pseudonym = col_meta['foreign_key'].get('pseudonym')
+                                value = str(row.get(source_column))   
+                                transformed_value = apply_transformation(
+                                    value, transformation, service=service, field_name = field_name, key_name = key_name, pseudonym = pseudonym
+                                    )
+                                transformed_row[col_meta['name']] = convert_to_type(transformed_value, column_type)
+                    else:
+                        # Применение функции преобразования с последующим приведением типа
+                        transformed_value = apply_transformation(row.get(source_column), transformation)
+                        transformed_row[col_meta['name']] = convert_to_type(transformed_value, column_type)
+                
+                transformed_data.append(transformed_row)
+                #print(len(transformed_data))
+        except Exception as e:
+            logger.error(f'Ошибка {e}')
 
         # Передаем данные в репозиторий для сохранения
         return transformed_data
