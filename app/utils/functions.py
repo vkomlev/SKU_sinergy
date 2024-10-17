@@ -1,5 +1,8 @@
+# app/utils/functions.py
+
 from app.services.base_service import BaseService
-import datetime, re
+import datetime
+import re
 
 def apply_transformation(value, transformation, **kwargs):
     if transformation == 'db_get_key_from_fields':
@@ -12,24 +15,67 @@ def apply_transformation(value, transformation, **kwargs):
     return value
 
 def parse_date_string(value):
-    """Parse date range strings and other formats to return the appropriate date."""
+    """Parse date range strings and other formats to return the latest date."""
+    
+    # Словарь для преобразования названий месяцев
+    months = {
+        'января': 1,
+        'февраля': 2,
+        'марта': 3,
+        'апреля': 4,
+        'мая': 5,
+        'июня': 6,
+        'июля': 7,
+        'августа': 8,
+        'сентября': 9,
+        'октября': 10,
+        'ноября': 11,
+        'декабря': 12
+    }
+    
+    # Список регулярных выражений для поиска дат
+    patterns = [
+        r'(\d{1,2})[,\s\u202f]*—[,\s\u202f]*(\d{1,2})\s([\wа-яА-ЯёЁ]+)',   # Диапазоны дат, например "12 — 13 августа"
+        r'(\d{1,2})-(\d{1,2})\s([\wа-яА-ЯёЁ]+)',                         # Диапазоны, например "12-13 августа"
+        r'(\d{1,2})\s([\wа-яА-ЯёЁ]+)',                                   # Одиночные даты, например "7 августа"
+        r'(\d{1,2})[,\s\u202f]+(\d{1,2})\s([\wа-яА-ЯёЁ]+)',               # Несколько дат, например "7, 8 сентября"
+        r'(\d{1,2})([\wа-яА-ЯёЁ]+)',                                     # Слипшиеся даты, например "7августа"
+    ]
+
+    # Функция для поиска всех дат в строке
+    def find_dates(text):
+        dates = []
+        for pattern in patterns:
+            matches = re.findall(pattern, text)
+            for match in matches:
+                if len(match) == 2:  # Одиночная дата (слипшаяся)
+                    day, month = match
+                else:  # Диапазоны и другие сложные варианты
+                    day = match[-2]
+                    month = match[-1]
+                if month in months:
+                    dates.append((int(day), months[month]))
+        return dates
+    
     if isinstance(value, str):
         try:
-            # Match patterns like "17 — 18 сентября"
-            match = re.match(r'\d+\s*[–—\-]\s*\d+\s*(\D+)', value)
-            if match:
-                day = match.group(0).split()[-1]
-                month = match.group(1).strip()
-                date_str = f"{day} {month} {datetime.datetime.now().year}"
-                return datetime.datetime.strptime(date_str, '%d %B %Y').date()
-
-            # Match single date with extra text, e.g. "18.09.2024\nДубль. Товар у акопа"
-            match = re.match(r'\d{2}\.\d{2}\.\d{4}', value)
-            if match:
-                return datetime.datetime.strptime(match.group(0), '%d.%m.%Y').date()
+            # Поиск дат в строке
+            found_dates = find_dates(value)
+            if not found_dates:
+                return None
+            
+            # Преобразуем найденные даты в объекты datetime.date с текущим годом
+            current_year = datetime.datetime.now().year
+            date_objects = [datetime.date(current_year, month, day) for day, month in found_dates]
+            
+            # Возвращаем самую позднюю дату
+            return max(date_objects)
+        
         except ValueError:
             pass
+    
     elif isinstance(value, datetime.date):
         return value
-    # For other non-date texts, return None
+    
+    # Если не удалось найти даты, возвращаем None
     return None

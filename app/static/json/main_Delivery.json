@@ -108,7 +108,7 @@
             "foreign_key": null,
             "visible": true,
             "mappings": {
-                "import_name" : "Фактическая дата доставки",
+                "import_name" : "Актуальная дата доставки",
                 "transformation": "parse_date_string"
             },
             "input_type": "date"
