@@ -3,6 +3,7 @@ from app.services.base_service import BaseService
 from app.utils.helpers import get_session
 from app.repositories.base_repository import BaseRepository
 from app.controllers.base_controller import BaseController
+import logging
 
 def upload_file():
     if 'file' not in request.files:
@@ -49,5 +50,5 @@ def upload_to_table(table_name):
         except Exception as e:
             return jsonify({"status": "fail", "message": f"File upload failed. Error: {e}"}), 500
     except Exception as e:
-        print (f'Ошибка: {e}')
+        logging.error (f'Ошибка: {e}')
         return jsonify({"status": "fail", "message": f"File upload failed. Error: {e}"}), 500
