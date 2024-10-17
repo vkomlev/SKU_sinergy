@@ -72,7 +72,6 @@ class BaseRepository:
     
     @retry_on_failure(retries=5, delay=2)
     #@manage_session
-    @retry_on_failure(retries=5, delay=2)
     def update(self, entity, data):
         """Обновить запись"""
         # Привязать entity к сессии, если он не был загружен с этой сессии

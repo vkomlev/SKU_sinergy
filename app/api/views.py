@@ -26,24 +26,28 @@ def upload_file():
 
 def upload_to_table(table_name):
     # Реализация загрузки файла
-    if 'file' not in request.files:
-        return jsonify({"status": "fail", "message": "No file part in the request"}), 400
-
-    file = request.files['file']
-
-    if file.filename == '':
-        return jsonify({"status": "fail", "message": "No selected file"}), 400
     try:
-        model = BaseRepository.get_model_by_table_name(table_name.replace('_', '.', 1))
-        session = get_session()
-        service = BaseService(BaseController(BaseRepository(model, session)))
-        fail = service.load_transormed_data(file)
-        if not fail:
-            return jsonify({
-                    "status": "success",
-                    "message": "Данные загружены в БД."
-                }), 200
-        else:
-            return jsonify(fail[0]), fail[1]
+        if 'file' not in request.files:
+            return jsonify({"status": "fail", "message": "No file part in the request"}), 400
+
+        file = request.files['file']
+
+        if file.filename == '':
+            return jsonify({"status": "fail", "message": "No selected file"}), 400
+        try:
+            model = BaseRepository.get_model_by_table_name(table_name.replace('_', '.', 1))
+            session = get_session()
+            service = BaseService(BaseController(BaseRepository(model, session)))
+            fail = service.load_transormed_data(file)
+            if not fail:
+                return jsonify({
+                        "status": "success",
+                        "message": "Данные загружены в БД."
+                    }), 200
+            else:
+                return jsonify(fail[0]), fail[1]
+        except Exception as e:
+            return jsonify({"status": "fail", "message": f"File upload failed. Error: {e}"}), 500
     except Exception as e:
+        print (f'Ошибка: {e}')
         return jsonify({"status": "fail", "message": f"File upload failed. Error: {e}"}), 500
