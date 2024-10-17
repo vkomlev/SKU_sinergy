@@ -36,10 +36,10 @@ class UniversalSerializer(Schema):
             field_class = get_field_class(column.type)
             self.dump_fields[column.name] = field_class(attribute=column.name)
             # Handle date fields by converting them properly if they are strings
-            if field_class == fields.Date:
+            '''if field_class == fields.Date:
                 self.dump_fields[column.name] = fields.Method(
                     serialize=lambda obj: parse_date_string(obj[column.name]) if isinstance(obj[column.name], str) else obj[column.name],
                     deserialize=lambda value: parse_date_string(value) if isinstance(value, str) else value,
                     attribute=column.name
-                )
+                )'''
         

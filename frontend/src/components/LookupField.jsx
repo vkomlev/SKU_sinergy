@@ -20,7 +20,7 @@ const LookupField = ({ label, value, onChange, inputType, foreignKey, disabled, 
       let allData = [];
       let currentPage = 1;
       let hasMoreData = true;
-      const pageSize = 20; // Размер страницы, можно изменить при необходимости
+      const pageSize = 2000; // Размер страницы, можно изменить при необходимости
 
       while (hasMoreData) {
         const response = await fetchTableData(foreignKey.target_table, currentPage, pageSize);
