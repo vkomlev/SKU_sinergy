@@ -177,3 +177,4 @@ frontend/src/config.js
 run_test.py
 app/models_template.py
 wsgi.py
+gunicorn.conf.py
