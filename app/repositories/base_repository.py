@@ -5,6 +5,7 @@ from sqlalchemy import or_, and_, Table, any_
 from app.model_registry import get_model_by_table_name
 from sqlalchemy.inspection import inspect
 from app.utils.metadata import MetadataManager
+from datetime import datetime, timedelta
 import time
 from sqlalchemy.exc import OperationalError
 
@@ -140,11 +141,38 @@ class BaseRepository:
     def filter_by_fields(self, **filters):
         query = self.__get_query()
         filters = filters.get('filters', filters)
+
+        # Получаем метаданные таблицы
+        table_metadata = self.get_table_metadata()
+        column_types = {col['name']: col['type'] for col in table_metadata['columns']}
+
         for item in filters:
-            if item.get('column'):
-                column = self.get_column(item.get('column'))
-                if item.get('expression') == '=':
-                    query = query.filter(column == item.get('value'))
+            if item.get('column') and item.get('expression'):
+                column_name = item['column']
+                column = self.get_column(column_name)
+                expression = item['expression']
+                value = item.get('value')
+
+                # Получаем тип данных для столбца
+                column_type = column_types.get(column_name)
+
+                # Применение фильтров на основе типа данных столбца
+                if column_type in ["VARCHAR", "TEXT", "STRING"]:
+                    # Текстовые фильтры
+                    query = self._apply_text_filter(query, column, expression, value)
+                elif column_type in ["INTEGER", "FLOAT", "NUMERIC"]:
+                    # Числовые фильтры
+                    query = self._apply_numeric_filter(query, column, expression, value)
+                elif "DATE" in column_type or "TIME" in column_type:
+                    # Дата/время фильтры
+                    if isinstance(value, str):
+                        # Преобразуем строку в объект date для корректного сравнения
+                        value = datetime.strptime(value, '%Y-%m-%d').date()
+                    elif isinstance(value, list):
+                        # Преобразуем список строк в объекты date
+                        value = [datetime.strptime(v, '%Y-%m-%d').date() for v in value]
+                    query = self._apply_date_filter(query, column, expression, value)
+        
         self.__temp_query = query
         return query.all()
 
@@ -298,3 +326,102 @@ class BaseRepository:
         if isinstance(self.model, Table):
             return self.model.columns.get(column_name)
         return getattr(self.model, column_name)
+    
+    # Вспомогательный метод для текстовых фильтров
+    def _apply_text_filter(self, query, column, expression, value):
+        if expression == '=':
+            return query.filter(column == value)
+        elif expression == '!=':
+            return query.filter(column != value)
+        elif expression == 'contains':
+            return query.filter(column.like(f'%{value}%'))
+        elif expression == 'not contains':
+            return query.filter(~column.like(f'%{value}%'))
+        elif expression == 'starts with':
+            return query.filter(column.like(f'{value}%'))
+        elif expression == 'ends with':
+            return query.filter(column.like(f'%{value}'))
+        return query
+
+    def _apply_numeric_filter(self, query, column, expression, value):
+        if expression == '=':
+            return query.filter(and_(column == value, column != None))
+        elif expression == '!=':
+            return query.filter(or_(column != value, column == None))
+        elif expression == '>':
+            return query.filter(and_(column > value, column != None))
+        elif expression == '<':
+            return query.filter(and_(column < value, column != None))
+        elif expression == '>=':
+            return query.filter(and_(column >= value, column != None))
+        elif expression == '<=':
+            return query.filter(and_(column <= value, column != None))
+        elif expression == 'between' and isinstance(value, list) and len(value) == 2:
+            # Добавлено дополнительное условие для исключения NULL значений
+            return query.filter(and_(column.between(value[0], value[1]), column != None))
+        return query
+    
+    # Вспомогательный метод для датовых фильтров
+    def _apply_date_filter(self, query, column, expression, value):
+        today = datetime.today().date()
+
+        # Фильтры для дат с учетом возможных NULL значений
+        if expression == '=':
+            return query.filter(and_(column == value, column != None))
+        elif expression == '!=':
+            return query.filter(or_(column != value, column == None))
+        elif expression == '>':
+            return query.filter(and_(column > value, column != None))
+        elif expression == '<':
+            return query.filter(and_(column < value, column != None))
+        elif expression == '>=':
+            return query.filter(and_(column >= value, column != None))
+        elif expression == '<=':
+            return query.filter(and_(column <= value, column != None))
+        elif expression == 'between' and isinstance(value, list) and len(value) == 2:
+            return query.filter(and_(column.between(value[0], value[1]), column != None))
+
+        # Фильтры для текущих и прошлых периодов
+        elif expression == 'today':
+            return query.filter(and_(column == today, column != None))
+        elif expression == 'yesterday':
+            return query.filter(and_(column == today - timedelta(days=1), column != None))
+        elif expression == 'current_week':
+            start_of_week = today - timedelta(days=today.weekday())
+            return query.filter(and_(column >= start_of_week, column != None))
+        elif expression == 'current_month':
+            start_of_month = today.replace(day=1)
+            return query.filter(and_(column >= start_of_month, column != None))
+        elif expression == 'current_quarter':
+            start_of_quarter = today.replace(month=((today.month - 1) // 3) * 3 + 1, day=1)
+            return query.filter(and_(column >= start_of_quarter, column != None))
+        elif expression == 'current_year':
+            start_of_year = today.replace(month=1, day=1)
+            return query.filter(and_(column >= start_of_year, column != None))
+
+        elif expression == 'previous_week':
+            start_of_last_week = today - timedelta(days=today.weekday() + 7)
+            end_of_last_week = start_of_last_week + timedelta(days=6)
+            return query.filter(and_(column.between(start_of_last_week, end_of_last_week), column != None))
+        elif expression == 'previous_month':
+            start_of_last_month = (today.replace(day=1) - timedelta(days=1)).replace(day=1)
+            end_of_last_month = (today.replace(day=1) - timedelta(days=1))
+            return query.filter(and_(column.between(start_of_last_month, end_of_last_month), column != None))
+        elif expression == 'previous_year':
+            start_of_last_year = today.replace(year=today.year - 1, month=1, day=1)
+            end_of_last_year = today.replace(year=today.year - 1, month=12, day=31)
+            return query.filter(and_(column.between(start_of_last_year, end_of_last_year), column != None))
+
+        return query
+    
+    # Вспомогательный метод для получения столбца
+    def get_column(self, column_name):
+        """
+        Получает столбец по имени, проверяя тип self.model.
+        """
+        if isinstance(self.model, Table):
+            # Если self.model - это объект Table, доступ к столбцу через self.model.c
+            return self.model.c.get(column_name)
+        else:
+            # Если self.model - это класс модели, используем getattr
+            return getattr(self.model, column_name, None)
