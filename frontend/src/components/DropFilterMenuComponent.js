@@ -40,6 +40,8 @@ const DropFilterMenuComponent = React.memo(({ columns, filters, setFilters, rese
         return ['=', '!=', '>', '<', '>=', '<=', 'between'];
       case 'big_text':
       case 'text':
+      case 'lookup':
+      case 'check':
         return ['=', '!=', 'contains', 'not contains', 'starts with', 'ends with'];
       case 'date':
       case 'datetime':
