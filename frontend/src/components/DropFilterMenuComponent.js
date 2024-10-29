@@ -112,12 +112,12 @@ const DropFilterMenuComponent = React.memo(({ columns, filters, setFilters, rese
       return (
         <div>
           <input
-            type={selectedColumnData.input_type === 'date' ? 'date' : 'text'}
+            type={selectedColumnData.input_type === 'date' || selectedColumnData.input_type === 'datetime' ? 'date' : 'number'}
             placeholder="От"
             onChange={(e) => setFilterValueFrom(e.target.value)}
           />
           <input
-            type={selectedColumnData.input_type === 'date' ? 'date' : 'text'}
+            type={selectedColumnData.input_type === 'date' || selectedColumnData.input_type === 'datetime' ? 'date' : 'number'}
             placeholder="До"
             onChange={(e) => setFilterValueTo(e.target.value)}
           />
@@ -145,6 +145,7 @@ const DropFilterMenuComponent = React.memo(({ columns, filters, setFilters, rese
           />
         );
       case 'date':
+      case 'datetime':
         return (
           <input
             type="date"
@@ -154,6 +155,8 @@ const DropFilterMenuComponent = React.memo(({ columns, filters, setFilters, rese
         );
       case 'big_text':
       case 'text':
+      case 'lookup':
+      case 'check':
       default:
         return (
           <input
