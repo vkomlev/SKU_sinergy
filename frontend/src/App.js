@@ -9,8 +9,6 @@ const App = () => {
   const [isMenuActive, setMenuActive] = useState(false); 
   // Массив объектов, включающих имя таблицы и псевдоним
   const tables = [
-    { name: 'import_DBS_delivery', alias: 'Импорт Доставка DBS' },
-    { name: 'import_orders_ozon', alias: 'Импорт Заказы OZON' },
     { name: 'main_products', alias: 'Товары' },
     { name: 'main_delivery', alias: 'Доставки DBS' },
   ];
@@ -22,7 +20,7 @@ const App = () => {
           <div className="hamburger-icon" onClick={() => setMenuActive(!isMenuActive)}/> {/* Иконка гамбургера */}
         </div>
   
-        <Menu active={isMenuActive} setActive={setMenuActive} header={"Выберите таблицу"}>  {/* Компонент меню */}
+        <Menu active={isMenuActive} setActive={setMenuActive} header={"Выберите данные"}>  {/* Компонент меню */}
           <ul>
             {tables.map((table) => (
               <li key={table.name}>

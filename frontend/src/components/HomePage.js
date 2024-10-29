@@ -4,8 +4,6 @@ import './styles/HomePage.css'
 
 const HomePage = () => {
   const tables = [
-    { name: 'import_DBS_delivery', alias: 'Импорт Доставка DBS' },
-    { name: 'import_orders_ozon', alias: 'Импорт Заказы OZON' },
     { name: 'main_products', alias: 'Товары' },
     { name: 'main_delivery', alias: 'Доставки DBS' },
   ];
@@ -14,7 +12,7 @@ const HomePage = () => {
 
       <h1 className='text'>Добро пожаловать на портал ГК Синергия</h1>
       <p className='text'>
-        <h2>Перейдите к просмотру таблиц:</h2> 
+        <h2>Перейдите к просмотру данных:</h2> 
         <div className='content'>
           <ul>
             {tables.map((table) => (
