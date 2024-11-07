@@ -87,7 +87,7 @@ New_DBS_DF@date_to   <- "2024-11-30T00:00:00Z"
 New_DBS_DF@limit     <- 1000
 New_DBS_DF@offset    <- 0
 # Делаем запрос к АПИ ОЗОНА и обрабатываем его
-message(paste("Запускаем обработку заказов Озона. Клиент:  ",Client_Input_Data[k,"Client_Name"]))
+print(paste("Запускаем обработку заказов Озона. Клиент:  ",Client_Input_Data[k,"Client_Name"]))
 New_DBS_DF       <- Read.Data(x = New_DBS_DF)
 
 # --- теперь готовим таблицу к загрузке для дальнейшего прозвона
@@ -122,6 +122,6 @@ if(New_DBS_DF@count != 0) {
   googlesheets4::sheet_append(ss = DBS_Table@DBS_Google_URL, data= DBS_Table@DF, sheet = DBS_Table@DBS_Google_Sheet)
   DBS_Table@DF <- DBS_Table@DF[0,] # обнуляем датафрейм
   
-  } else message("Запрос вернул нулевой результат. Новых отправлений нет.")
+  } else print("Запрос вернул нулевой результат. Новых отправлений нет.")
 
 }

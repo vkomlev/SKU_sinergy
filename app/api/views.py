@@ -1,6 +1,7 @@
 from flask import request, jsonify
 from app.services.base_service import BaseService
 from app.utils.helpers import get_session
+from app.utils.runners import run_r_script
 from app.repositories.base_repository import BaseRepository
 from app.controllers.base_controller import BaseController
 import logging
@@ -58,3 +59,23 @@ def upload_to_table(table_name):
     except Exception as e:
         logger.error (f'Ошибка: {e}')
         return jsonify({"status": "fail", "message": f"File upload failed. Error: {e}"}), 500
+    
+def r_script():
+    path = request.args.get('path')
+    if not path:
+        return jsonify({"status": "fail", "message": "Path not provided"}), 400
+    result = run_r_script(path)
+    if isinstance(result, dict):
+        if result.get('status') == 'fail' and result.get('message') =='R script not found.':
+            return jsonify({"status": "fail", "message": "R script not found."}), 404
+        elif result.get('status') == 'fail':
+             return jsonify({"status": "fail", "message": result.get('message')}), 500
+    else:
+        if result.returncode != 0:
+            logger.error(f"R script failed: {result.stderr}")
+            return jsonify({"status": "fail", "message": f"R script execution failed. Error: {result.stderr}"}), 500
+    logger.info(f"R script executed successfully: {result.stdout}")
+    return jsonify({"status": "success", "message": "R script executed successfully.", "output": result.stdout}), 200
+
+
+
