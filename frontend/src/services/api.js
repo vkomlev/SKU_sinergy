@@ -48,3 +48,16 @@ export const fetchLookupOptions = async (lookupTable) => {
 }
 
 export const fetchRecord = async (tableName, recordId) => apiRequest('GET', `${API_URL}/${tableName}/records/${recordId}`);
+
+// Обновленная функция в frontend\src\services\api.js
+export const runRScript = async (scriptPath) => {
+  const url = `${API_BASE_URL}/api/run-r-script?path=${encodeURIComponent(scriptPath)}`; // Добавляем параметры в строку запроса
+  try {
+    const response = await axios.post(url); // Используем метод GET
+    return response.data;
+  } catch (error) {
+    console.error(`Ошибка при запуске R-скрипта (${scriptPath}):`, error);
+    throw error;
+  }
+};
+
