@@ -4,6 +4,7 @@ from app.utils.helpers import get_session
 from app.utils.runners import run_r_script
 from app.repositories.base_repository import BaseRepository
 from app.controllers.base_controller import BaseController
+from app.utils.road_distance import get_distance
 import logging
 
 logging.basicConfig(filename='app.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -77,5 +78,19 @@ def r_script():
     logger.info(f"R script executed successfully: {result.stdout}")
     return jsonify({"status": "success", "message": "R script executed successfully.", "output": result.stdout}), 200
 
+def calculate_distance():
+    try:
+        locations = request.args.get("locations")
+        api_key = request.args.get("api_key")
 
+        if not locations:
+            return jsonify({"error": "Отсутствует обязательный параметр: 'locations'"}), 400
+        if api_key:
+            result = get_distance(locations, api_key)
+        else:
+            result = get_distance(locations)
+        return jsonify(result)
+    except Exception as e:
+        logger.error(f"Ошибка при расчете расстояния: {e}")
+        return jsonify({"error": str(e)}), 500
 
