@@ -178,3 +178,7 @@ run_test.py
 app/models_template.py
 wsgi.py
 gunicorn.conf.py
+.Rproj.user
+scripts/Import2Google/.RData
+scripts/Import2Google/.Rhistory
+.Rhistory
