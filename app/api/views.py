@@ -4,7 +4,7 @@ from app.utils.helpers import get_session
 from app.utils.runners import run_r_script
 from app.repositories.base_repository import BaseRepository
 from app.controllers.base_controller import BaseController
-from app.utils.road_distance import get_distance
+from app.utils.road_distance import RoadDistance
 import logging
 
 logging.basicConfig(filename='app.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -86,11 +86,26 @@ def calculate_distance():
         if not locations:
             return jsonify({"error": "Отсутствует обязательный параметр: 'locations'"}), 400
         if api_key:
-            result = get_distance(locations, api_key)
+            distance = RoadDistance(api_key=api_key)            
         else:
-            result = get_distance(locations)
-        return jsonify(result)
+            distance = RoadDistance()
+        return jsonify(distance.get_distance(locations))
     except Exception as e:
         logger.error(f"Ошибка при расчете расстояния: {e}")
         return jsonify({"error": str(e)}), 500
 
+def mkad_distance():
+    try:
+        location = request.args.get("location")
+        api_key = request.args.get("api_key")
+        max_points = request.args.get("max_points", 3)
+        if not location:
+            return jsonify({"error": "Отсутствует обязательный параметр: 'location'"}), 400
+        if api_key:
+            distance = RoadDistance(api_key=api_key)            
+        else:
+            distance = RoadDistance()
+        return jsonify(distance.get_mkad_distance(location, max_points))
+    except Exception as e:
+        logger.error(f"Ошибка при расчете расстояния от МКАД: {e}")
+        return jsonify({"error": str(e)}), 500
