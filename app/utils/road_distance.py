@@ -50,6 +50,7 @@ class RoadDistance:
         if geocode_data.get("hits"):
             lat = geocode_data["hits"][0]["point"]["lat"]
             lng = geocode_data["hits"][0]["point"]["lng"]
+            sleep(1)
             return {'lng' :lng, 'lat' :lat}
         else:
              return {"error": f"Ошибка при геокодировании адреса: {loc}"}
@@ -93,10 +94,12 @@ class RoadDistance:
         if response.status_code == 200:
             data = response.json()
             if "paths" in data and data["paths"]:
+                sleep(1)
                 return {"distance": data["paths"][0]["distance"]}
             else:
                 return {"error": "Нет маршрутов в ответе."}
         else:
+            sleep(1)
             return {"error": f"HTTP {response.status_code} - {response.text}"}
         
     def __get_nearest(self, lng, lat, max_points = 3):
@@ -121,7 +124,6 @@ class RoadDistance:
         points = self.__get_nearest(location["lng"], location["lat"],max_points)
         for point in points:
             result = self.get_distance([{'lat':point[0],'lng':point[1]}, location])
-            sleep(1)
             if result.get("error"):
                 return {"error": result.get("error")}
             else:

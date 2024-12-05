@@ -1,17 +1,18 @@
 # app/controllers/base_controller.py
 
-from app.utils.metadata import MetadataManager
-from app.repositories.base_repository import BaseRepository
 from sqlalchemy.inspection import inspect
 from settings import UPLOAD_DIR
 from werkzeug.utils import secure_filename
 import os
 import uuid
 import pandas as pd
-from app.utils.functions import apply_transformation
 import logging
 
-logging.basicConfig(filename='app.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+from app.utils.functions import apply_transformation
+from app.utils.metadata import MetadataManager
+from app.repositories.base_repository import BaseRepository
+import logging_config
+
 logger = logging.getLogger(__name__)
 
 _cache = {}
@@ -172,9 +173,9 @@ class BaseController:
             return {"status": "fail", "message": f"Error mapping data: {e}"}, 400
 
 
-    def apply_mapping(self, data):
+    def apply_mapping(self, data, function_object = None):
         """Применение маппинга к данным с преобразованием типов"""
-        from app.utils.helpers import create_service
+        from app.utils.helpers import create_service, get_value_by_path
         metadata = self.get_combined_metadata()
         # Применяем маппинг и преобразования
         transformed_data = []
@@ -202,18 +203,23 @@ class BaseController:
                 return None
 
         try:
+            if function_object:
+                if function_object.__class__.__name__ == 'OzonTransfomationFunctions':
+                    mapkey = 'mappings_json_ozon'
+            else:
+                mapkey = 'mappings'
             for row in data:
                 transformed_row = {}
                 for col_meta in metadata['columns']:
-                    source_column = col_meta['mappings'].get('import_name', None)
-                    transformation = col_meta['mappings'].get('transformation', 'direct')
+                    source_column = col_meta[mapkey].get('import_name', None)
+                    transformation = col_meta[mapkey].get('transformation', 'direct')
                     column_type = col_meta.get('type', 'string')  # Получаем тип данных из метаданных
 
                     if transformation == 'skip':
                         continue
                     elif transformation == 'direct':
                         # Прямое сопоставление с преобразованием типа
-                        transformed_row[col_meta['name']] = convert_to_type(row.get(source_column), column_type)
+                        transformed_row[col_meta['name']] = convert_to_type(get_value_by_path(row, source_column), column_type)
                     elif transformation == 'db_get_key_from_fields':
                         # Применение функции преобразования с обращением к базе данных
                         if col_meta.get('foreign_key'):
@@ -223,14 +229,20 @@ class BaseController:
                                 field_name = col_meta['foreign_key'].get('lookup_field','name')
                                 key_name =  col_meta['foreign_key'].get('key_field','id')
                                 pseudonym = col_meta['foreign_key'].get('pseudonym')
-                                value = str(row.get(source_column))   
+                                value = str(get_value_by_path(row, source_column))   
                                 transformed_value = apply_transformation(
                                     value, transformation, service=service, field_name = field_name, key_name = key_name, pseudonym = pseudonym
                                     )
                                 transformed_row[col_meta['name']] = convert_to_type(transformed_value, column_type)
+                    elif transformation == 'get_ozon_client_phone':
+                        posting_number = get_value_by_path(row, 'posting_number')
+                        if posting_number:
+                            value = get_value_by_path(row, source_column)
+                            transformed_value = apply_transformation(value, transformation, func_obj=function_object, posting_number = posting_number)
+                            transformed_row[col_meta['name']] = convert_to_type(transformed_value, column_type)
                     else:
                         # Применение функции преобразования с последующим приведением типа
-                        transformed_value = apply_transformation(row.get(source_column), transformation)
+                        transformed_value = apply_transformation(get_value_by_path(row, source_column), transformation, func_obj=function_object)
                         transformed_row[col_meta['name']] = convert_to_type(transformed_value, column_type)
                 
                 transformed_data.append(transformed_row)

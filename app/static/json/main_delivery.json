@@ -14,6 +14,10 @@
             "mappings": {
                 "transformation": "skip"
             },
+            "mappings_json_ozon": {
+                "import_name": null,
+                "transformation": "skip"
+            },
             "input_type": "number"
         },
         {
@@ -24,15 +28,18 @@
             "foreign_key": {
                 "target_table": "main_marketpalces",
                 "target_column": "id_marketplace",
-                "key_field":"id_marketplace",
-                "lookup_field":"mp_name",
+                "key_field": "id_marketplace",
+                "lookup_field": "mp_name",
                 "pseudonym": "pseudonyms"
             },
             "visible": true,
             "mappings": {
-                "import_name" : "Площадка",
+                "import_name": "Площадка",
                 "transformation": "db_get_key_from_fields"
-                
+            },
+            "mappings_json_ozon": {
+                "import_name": "null",
+                "transformation": "get_ozon_id"
             },
             "input_type": "lookup"
         },
@@ -44,14 +51,18 @@
             "foreign_key": {
                 "target_table": "main_partners",
                 "target_column": "id_partner",
-                "key_field":"id_partner",
-                "lookup_field":"partner_name",
+                "key_field": "id_partner",
+                "lookup_field": "partner_name",
                 "pseudonym": "pseudonyms"
             },
             "visible": true,
             "mappings": {
-                "import_name" : "Кабинет",
+                "import_name": "Кабинет",
                 "transformation": "db_get_key_from_fields"
+            },
+            "mappings_json_ozon": {
+                "import_name": "null",
+                "transformation": "get_ozon_client_id"
             },
             "input_type": "lookup"
         },
@@ -63,9 +74,14 @@
             "foreign_key": null,
             "visible": true,
             "mappings": {
-                "import_name" : "Сборочное задание",
+                "import_name": "Сборочное задание",
                 "transformation": "direct",
-                "unique_key" : true
+                "unique_key": true
+            },
+            "mappings_json_ozon": {
+                "import_name": "posting_number",
+                "transformation": "direct",
+                "unique_key": true
             },
             "input_type": "text"
         },
@@ -77,13 +93,17 @@
             "foreign_key": {
                 "target_table": "main_products",
                 "target_column": "id_product",
-                "key_field":"id_product",
-                "lookup_field":"sku"
+                "key_field": "id_product",
+                "lookup_field": "sku"
             },
             "visible": true,
             "mappings": {
-                "import_name" : "Артикул",
+                "import_name": "Артикул",
                 "transformation": "db_get_key_from_fields"
+            },
+            "mappings_json_ozon": {
+                "import_name": "products[0].offer_id",
+                "transformation": "get_ozon_product_id"
             },
             "input_type": "check"
         },
@@ -95,8 +115,12 @@
             "foreign_key": null,
             "visible": true,
             "mappings": {
-                "import_name" : "Дата доставки заявленная",
+                "import_name": "Дата доставки заявленная",
                 "transformation": "parse_date_string"
+            },
+            "mappings_json_ozon": {
+                "import_name": "analytics_data.delivery_date_end",
+                "transformation": "direct"
             },
             "input_type": "date"
         },
@@ -108,24 +132,30 @@
             "foreign_key": null,
             "visible": true,
             "mappings": {
-                "import_name" : "Актуальная дата доставки",
+                "import_name": "Актуальная дата доставки",
                 "transformation": "parse_date_string"
+            },
+            "mappings_json_ozon": {
+                "import_name": "delivering_date",
+                "transformation": "direct"
             },
             "input_type": "date"
         },
         {
             "name": "delivery_time",
             "type": "VARCHAR",
-            "label": "Время доставки",
-            "primary_key": false,
-            "foreign_key": null,
             "visible": true,
+            "label": "Время доставки",
+            "input_type": "text",
             "mappings": {
-                "import_name" : "Время доставки",
-                "transformation": "direct"
+              "import_name" : "Время доставки",
+              "transformation" : "direct"
             },
-            "input_type": "text"
-        },
+            "mappings_json_ozon": {
+                "import_name": "null",
+                "transformation": "skip"
+            }
+          },
         {
             "name": "delivery_address",
             "type": "VARCHAR",
@@ -134,7 +164,11 @@
             "foreign_key": null,
             "visible": true,
             "mappings": {
-                "import_name" : "Адрес доставки",
+                "import_name": "Адрес доставки",
+                "transformation": "direct"
+            },
+            "mappings_json_ozon": {
+                "import_name": "customer.address.address_tail",
                 "transformation": "direct"
             },
             "input_type": "text"
@@ -147,8 +181,12 @@
             "foreign_key": null,
             "visible": true,
             "mappings": {
-                "import_name" : "ФИО Покупателя, телефон",
+                "import_name": "ФИО Покупателя, телефон",
                 "transformation": "direct"
+            },
+            "mappings_json_ozon": {
+                "import_name": "customer.name",
+                "transformation": "get_ozon_client_phone"
             },
             "input_type": "text"
         },
@@ -160,8 +198,12 @@
             "foreign_key": null,
             "visible": true,
             "mappings": {
-                "import_name" : "Подъем на этаж",
+                "import_name": "Подъем на этаж",
                 "transformation": "direct"
+            },
+            "mappings_json_ozon": {
+                "import_name": "prr_option",
+                "transformation": "get_ozon_climb"
             },
             "input_type": "text"
         },
@@ -173,14 +215,18 @@
             "foreign_key": {
                 "target_table": "main_delivery_status",
                 "target_column": "id_ds",
-                "key_field":"id_ds",
-                "lookup_field":"ds_name"
+                "key_field": "id_ds",
+                "lookup_field": "ds_name"
             },
             "visible": true,
             "mappings": {
-                "import_name" : "Статус",
+                "import_name": "Статус",
                 "transformation": "db_get_key_from_fields",
-                "unique_key" : true
+                "unique_key": true
+            },
+            "mappings_json_ozon": {
+                "import_name": "status",
+                "transformation": "get_ozon_status"
             },
             "input_type": "lookup"
         },
@@ -192,8 +238,12 @@
             "foreign_key": null,
             "visible": true,
             "mappings": {
-                "import_name" : "Расстояние",
+                "import_name": "Расстояние",
                 "transformation": "direct"
+            },
+            "mappings_json_ozon": {
+                "import_name": "customer.address.address_tail",
+                "transformation": "get_ozon_distance"
             },
             "input_type": "number"
         },
@@ -205,13 +255,17 @@
             "foreign_key": {
                 "target_table": "main_delivery_company",
                 "target_column": "id_dc",
-                "key_field":"id_dc",
-                "lookup_field":"dc_name"
+                "key_field": "id_dc",
+                "lookup_field": "dc_name"
             },
             "visible": true,
             "mappings": {
-                "import_name" : "Доставщик",
+                "import_name": "Доставщик",
                 "transformation": "db_get_key_from_fields"
+            },
+            "mappings_json_ozon": {
+                "import_name": "null",
+                "transformation": "get_ozon_delivery_name"
             },
             "input_type": "lookup"
         },
@@ -223,8 +277,12 @@
             "foreign_key": null,
             "visible": true,
             "mappings": {
-                "import_name" : "Стоимость",
+                "import_name": "Стоимость",
                 "transformation": "direct"
+            },
+            "mappings_json_ozon": {
+                "import_name": "null",
+                "transformation": "get_ozon_cost"
             },
             "input_type": "number"
         },
@@ -236,8 +294,12 @@
             "foreign_key": null,
             "visible": true,
             "mappings": {
-                "import_name" : "Примечание",
+                "import_name": "Примечание",
                 "transformation": "direct"
+            },
+            "mappings_json_ozon": {
+                "import_name": "null",
+                "transformation": "skip"
             },
             "input_type": "text"
         },
@@ -249,8 +311,12 @@
             "foreign_key": null,
             "visible": true,
             "mappings": {
-                "import_name" : "Компенсации за доставку от покупателей",
+                "import_name": "Компенсации за доставку от покупателей",
                 "transformation": "direct"
+            },
+            "mappings_json_ozon": {
+                "import_name": "null",
+                "transformation": "skip"
             },
             "input_type": "text"
         },
@@ -262,8 +328,12 @@
             "foreign_key": null,
             "visible": true,
             "mappings": {
-                "import_name" : "Примечание",
+                "import_name": "Примечание",
                 "transformation": "direct"
+            },
+            "mappings_json_ozon": {
+                "import_name": "null",
+                "transformation": "skip"
             },
             "input_type": "text"
         }

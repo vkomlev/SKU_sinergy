@@ -322,10 +322,6 @@ class BaseRepository:
                 new_entity = self.model(**row)
                 self.add(new_entity)
     
-    def get_column(self, column_name):
-        if isinstance(self.model, Table):
-            return self.model.columns.get(column_name)
-        return getattr(self.model, column_name)
     
     # Вспомогательный метод для текстовых фильтров
     def _apply_text_filter(self, query, column, expression, value):

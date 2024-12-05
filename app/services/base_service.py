@@ -1,6 +1,12 @@
 # app/services/base_service.py
+import logging
 
+from settings import CLIENTS
+from app.utils.functions import OzonTransfomationFunctions
+from app.extract.ozon_data import get_postings
+import logging_config
 
+logger = logging.getLogger(__name__)
 class BaseService:
     def __init__(self, controller):
         self.controller = controller
@@ -63,6 +69,25 @@ class BaseService:
     def get_key_from_fields(self, **kwargs):
         """Получить ключ по значению полей"""
         return self.controller.get_key_from_fields(**kwargs)
+    
+    def extract_ozon_dbs(self):
+        '''Получить и загрузить данные по доставкам ОЗОН'''
+        from app.utils.helpers import get_date_range
+        try:
+            from_, to = get_date_range()
+            for client, value in CLIENTS.items():
+                
+                data = get_postings(value.get('id_ozon'), value.get('api_ozon'),from_, to)
+                if data:
+                    ozon = OzonTransfomationFunctions(client)
+                    db_data = self.controller.apply_mapping(data, ozon)
+                    self.controller.repo.save_import_data_to_table(db_data)
+                else:
+                    logger.warning(f"No data for id_client = {client}")
+        except Exception as e:
+            logger.error(e)
+            return {"status": "fail", "message": f"Error saving data: {e}"}, 400
+        return {"status": "success", "message": "Data saved successfully"}, 200
    
 
     

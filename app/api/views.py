@@ -1,4 +1,5 @@
 from flask import request, jsonify
+
 from app.services.base_service import BaseService
 from app.utils.helpers import get_session
 from app.utils.runners import run_r_script
@@ -6,8 +7,9 @@ from app.repositories.base_repository import BaseRepository
 from app.controllers.base_controller import BaseController
 from app.utils.road_distance import RoadDistance
 import logging
+import logging_config
 
-logging.basicConfig(filename='app.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
 logger = logging.getLogger(__name__)
 
 def upload_file():
@@ -108,4 +110,15 @@ def mkad_distance():
         return jsonify(distance.get_mkad_distance(location, max_points))
     except Exception as e:
         logger.error(f"Ошибка при расчете расстояния от МКАД: {e}")
+        return jsonify({"error": str(e)}), 500
+
+def ozon_dbs_api_load():
+    try:
+        model = BaseRepository.get_model_by_table_name('main.delivery')
+        session = get_session()
+        service = BaseService(BaseController(BaseRepository(model, session)))
+        logger.info(f"Ozon DBS loaded successfully")
+        return jsonify(service.extract_ozon_dbs()), 200        
+    except Exception as e:
+        logger.error(f"Ошибка при загрузке Ozon DBS: {e}")
         return jsonify({"error": str(e)}), 500
