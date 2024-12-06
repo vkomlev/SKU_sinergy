@@ -243,6 +243,7 @@
             },
             "mappings_json_ozon": {
                 "import_name": "customer.address.address_tail",
+                "additional_fields": ["customer.address.latitude", "customer.address.longitude"],
                 "transformation": "get_ozon_distance"
             },
             "input_type": "number"

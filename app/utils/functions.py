@@ -2,6 +2,7 @@
 import datetime
 import re
 import logging
+import json
 
 import logging_config
 from app.utils.road_distance import RoadDistance
@@ -169,8 +170,16 @@ class OzonTransfomationFunctions:
         logger.info(f'Fuction get_ozon_status. Result: {result}')
         return result
     
-    def get_ozon_distance(self, value):
-        if value:
+    def get_ozon_distance(self, value, **kwargs):
+        if kwargs.get('latitude') and kwargs.get('longitude'):
+            params = {'lat': kwargs.get('latitude'), 'lng': kwargs.get('longitude')}
+            params = json.dumps(params)
+            rd = RoadDistance()
+            result = float(rd.get_mkad_distance(params).get('distance',0))/1000
+            self.distance = result
+            logger.info(f'Fuction get_ozon_distance. Result: {result}')
+            return result
+        elif value:
             rd = RoadDistance()
             result = float(rd.get_mkad_distance(value).get('distance',0))/1000
             self.distance = result

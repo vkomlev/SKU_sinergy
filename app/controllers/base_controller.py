@@ -213,6 +213,7 @@ class BaseController:
                 for col_meta in metadata['columns']:
                     source_column = col_meta[mapkey].get('import_name', None)
                     transformation = col_meta[mapkey].get('transformation', 'direct')
+                    additional_fields = col_meta[mapkey].get('additional_fields', [])
                     column_type = col_meta.get('type', 'string')  # Получаем тип данных из метаданных
 
                     if transformation == 'skip':
@@ -242,7 +243,12 @@ class BaseController:
                             transformed_row[col_meta['name']] = convert_to_type(transformed_value, column_type)
                     else:
                         # Применение функции преобразования с последующим приведением типа
-                        transformed_value = apply_transformation(get_value_by_path(row, source_column), transformation, func_obj=function_object)
+                        kwargs = {}
+                        for field in additional_fields:
+                            val = get_value_by_path(row, field)
+                            key = field.split('.')[-1]
+                            kwargs[key] = val
+                        transformed_value = apply_transformation(get_value_by_path(row, source_column), transformation, func_obj=function_object, **kwargs)
                         transformed_row[col_meta['name']] = convert_to_type(transformed_value, column_type)
                 
                 transformed_data.append(transformed_row)
