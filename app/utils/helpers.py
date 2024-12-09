@@ -6,6 +6,7 @@ from settings import DATABASE
 from datetime import datetime, timedelta
 import calendar
 import re
+import time
 
 from app.services.base_service import BaseService
 from app.repositories.base_repository import BaseRepository
@@ -74,3 +75,9 @@ def get_value_by_path(data, path):
     except (KeyError, IndexError, TypeError):
         return None  # Если путь некорректный, возвращаем None
     return current
+
+def unix_timestamp(date_str):
+    """
+    Конвертирует дату в строке в Unix TimeStamp (в секундах).
+    """
+    return int(time.mktime(datetime.strptime(date_str, "%Y-%m-%d").timetuple()))

@@ -182,3 +182,4 @@ gunicorn.conf.py
 scripts/Import2Google/.RData
 scripts/Import2Google/.Rhistory
 .Rhistory
+logs/res.xlsx
