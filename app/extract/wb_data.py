@@ -28,6 +28,8 @@ class WildberriesData:
         response.raise_for_status()
         orders = response.json().get("orders", [])
         df_orders = pd.DataFrame(orders)
+        df_orders['price'] = df_orders['price']/100
+        df_orders['convertedPrice'] = df_orders['convertedPrice']/100
         return df_orders[df_orders["deliveryType"] == "dbs"]
 
 
