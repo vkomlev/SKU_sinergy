@@ -1,7 +1,6 @@
 import requests
 import pandas as pd
 
-from app.utils.helpers import unix_timestamp
 
 class WildberriesData:
 
@@ -13,6 +12,7 @@ class WildberriesData:
         """
         Получает список заказов из Wildberries API в формате DataFrame.
         """
+        from app.utils.helpers import unix_timestamp
         url = self.url + "/v3/orders"
         headers = {"Authorization": self.api_key, "accept": "application/json"}
         params = {

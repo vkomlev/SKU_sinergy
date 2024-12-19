@@ -18,6 +18,10 @@
                 "import_name": null,
                 "transformation": "skip"
             },
+            "mappings_json_wb": {
+                "import_name": null,
+                "transformation": "skip"
+            },
             "input_type": "number"
         },
         {
@@ -41,6 +45,10 @@
                 "import_name": "null",
                 "transformation": "get_ozon_id"
             },
+            "mappings_json_wb": {
+                "import_name": "null",
+                "transformation": "get_wb_id"
+            },
             "input_type": "lookup"
         },
         {
@@ -62,7 +70,11 @@
             },
             "mappings_json_ozon": {
                 "import_name": "null",
-                "transformation": "get_ozon_client_id"
+                "transformation": "get_client_id"
+            },
+            "mappings_json_wb": {
+                "import_name": "null",
+                "transformation": "get_client_id"
             },
             "input_type": "lookup"
         },
@@ -80,6 +92,11 @@
             },
             "mappings_json_ozon": {
                 "import_name": "posting_number",
+                "transformation": "direct",
+                "unique_key": true
+            },
+            "mappings_json_wb": {
+                "import_name": "orderID",
                 "transformation": "direct",
                 "unique_key": true
             },
@@ -103,7 +120,11 @@
             },
             "mappings_json_ozon": {
                 "import_name": "products[0].offer_id",
-                "transformation": "get_ozon_product_id"
+                "transformation": "get_product_id"
+            },
+            "mappings_json_wb": {
+                "import_name": "article",
+                "transformation": "get_product_id"
             },
             "input_type": "check"
         },
@@ -122,6 +143,10 @@
                 "import_name": "analytics_data.delivery_date_end",
                 "transformation": "direct"
             },
+            "mappings_json_wb": {
+                "import_name": "null",
+                "transformation": "skip"
+            },
             "input_type": "date"
         },
         {
@@ -139,6 +164,10 @@
                 "import_name": "delivering_date",
                 "transformation": "direct"
             },
+            "mappings_json_wb": {
+                "import_name": "null",
+                "transformation": "skip"
+            },
             "input_type": "date"
         },
         {
@@ -152,6 +181,10 @@
               "transformation" : "direct"
             },
             "mappings_json_ozon": {
+                "import_name": "null",
+                "transformation": "skip"
+            },
+            "mappings_json_wb": {
                 "import_name": "null",
                 "transformation": "skip"
             }
@@ -171,6 +204,10 @@
                 "import_name": "customer.address.address_tail",
                 "transformation": "direct"
             },
+            "mappings_json_wb": {
+                "import_name": "address",
+                "transformation": "get_wb_address"
+            },
             "input_type": "text"
         },
         {
@@ -188,6 +225,11 @@
                 "import_name": "customer.name",
                 "transformation": "get_ozon_client_phone"
             },
+            "mappings_json_wb": {
+                "import_name": "phone",
+                "additional_fields": ["firstName", "fullName", "additionalPhones", "additionalPhoneCodes", "phoneCode"],
+                "transformation": "get_wb_client_data"
+            },
             "input_type": "text"
         },
         {
@@ -204,6 +246,10 @@
             "mappings_json_ozon": {
                 "import_name": "prr_option",
                 "transformation": "get_ozon_climb"
+            },
+            "mappings_json_wb": {
+                "import_name": "null",
+                "transformation": "get_wb_climb"
             },
             "input_type": "text"
         },
@@ -228,6 +274,10 @@
                 "import_name": "status",
                 "transformation": "get_ozon_status"
             },
+            "mappings_json_wb": {
+                "import_name": "null",
+                "transformation": "skip"
+            },
             "input_type": "lookup"
         },
         {
@@ -245,6 +295,10 @@
                 "import_name": "customer.address.address_tail",
                 "additional_fields": ["customer.address.latitude", "customer.address.longitude"],
                 "transformation": "get_ozon_distance"
+            },
+            "mappings_json_wb": {
+                "import_name": "address",
+                "transformation": "get_wb_distance"
             },
             "input_type": "number"
         },
@@ -268,6 +322,10 @@
                 "import_name": "null",
                 "transformation": "get_ozon_delivery_name"
             },
+            "mappings_json_wb": {
+                "import_name": "null",
+                "transformation": "skip"
+            },
             "input_type": "lookup"
         },
         {
@@ -283,7 +341,11 @@
             },
             "mappings_json_ozon": {
                 "import_name": "null",
-                "transformation": "get_ozon_cost"
+                "transformation": "get_cost"
+            },
+            "mappings_json_wb": {
+                "import_name": "null",
+                "transformation": "get_cost"
             },
             "input_type": "number"
         },
@@ -299,6 +361,10 @@
                 "transformation": "direct"
             },
             "mappings_json_ozon": {
+                "import_name": "null",
+                "transformation": "skip"
+            },
+            "mappings_json_wb": {
                 "import_name": "null",
                 "transformation": "skip"
             },
@@ -319,6 +385,10 @@
                 "import_name": "null",
                 "transformation": "skip"
             },
+            "mappings_json_wb": {
+                "import_name": "null",
+                "transformation": "skip"
+            },
             "input_type": "text"
         },
         {
@@ -333,6 +403,10 @@
                 "transformation": "direct"
             },
             "mappings_json_ozon": {
+                "import_name": "null",
+                "transformation": "skip"
+            },
+            "mappings_json_wb": {
                 "import_name": "null",
                 "transformation": "skip"
             },

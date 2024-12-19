@@ -6,11 +6,7 @@ from app.utils.runners import run_r_script
 from app.repositories.base_repository import BaseRepository
 from app.controllers.base_controller import BaseController
 from app.utils.road_distance import RoadDistance
-import logging
-import logging_config
-
-
-logger = logging.getLogger(__name__)
+from logging_config import logger
 
 def upload_file():
     if 'file' not in request.files:
@@ -117,8 +113,21 @@ def ozon_dbs_api_load():
         model = BaseRepository.get_model_by_table_name('main.delivery')
         session = get_session()
         service = BaseService(BaseController(BaseRepository(model, session)))
+        result = jsonify(service.extract_ozon_dbs()), 200
         logger.info(f"Ozon DBS loaded successfully")
-        return jsonify(service.extract_ozon_dbs()), 200        
+        return result 
     except Exception as e:
         logger.error(f"Ошибка при загрузке Ozon DBS: {e}")
+        return jsonify({"error": str(e)}), 500
+
+def wb_dbs_api_load():
+    try:
+        model = BaseRepository.get_model_by_table_name('main.delivery')
+        session = get_session()
+        service = BaseService(BaseController(BaseRepository(model, session)))
+        result = jsonify(service.extract_wb_dbs()), 200
+        logger.info(f"WB DBS loaded successfully")
+        return result
+    except Exception as e:
+        logger.error(f"Ошибка при загрузке WB DBS: {e}")
         return jsonify({"error": str(e)}), 500

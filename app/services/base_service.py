@@ -1,12 +1,13 @@
 # app/services/base_service.py
-import logging
+
+import pandas as pd
 
 from settings import CLIENTS
-from app.utils.functions import OzonTransfomationFunctions
+from app.utils.functions import OzonTransfomationFunctions, WBTransformationFunctions
 from app.extract.ozon_data import get_postings
-import logging_config
+from app.extract.wb_data import WildberriesData
+from logging_config import logger
 
-logger = logging.getLogger(__name__)
 class BaseService:
     def __init__(self, controller):
         self.controller = controller
@@ -84,6 +85,29 @@ class BaseService:
                     self.controller.repo.save_import_data_to_table(db_data)
                 else:
                     logger.warning(f"No data for id_client = {client}")
+        except Exception as e:
+            logger.error(e)
+            return {"status": "fail", "message": f"Error saving data: {e}"}, 400
+        return {"status": "success", "message": "Data saved successfully"}, 200
+    
+    def extract_wb_dbs(self):
+        '''Получить и загрузить данные по доставкам Wildberries'''
+        try:
+            for client, value in CLIENTS.items():
+                api = value.get('api_wb')                
+                if api:
+                    wb = WildberriesData(api)
+                    data = wb.get_full_order_data()
+                    # Конвертируем данные в формат словаря
+                    data = data.to_dict(orient='records')
+                    if data:
+                        wb = WBTransformationFunctions(client)
+                        db_data = self.controller.apply_mapping(data, wb)
+                        self.controller.repo.save_import_data_to_table(db_data)
+                    else:
+                        logger.warning(f"No data for id_client = {client}")
+                else:
+                    logger.warning(f"No API WB for id_client = {client}")
         except Exception as e:
             logger.error(e)
             return {"status": "fail", "message": f"Error saving data: {e}"}, 400

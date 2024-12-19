@@ -1,15 +1,13 @@
 # app/utils/functions.py
 import datetime
 import re
-import logging
 import json
 
-import logging_config
+from logging_config import logger
 from app.utils.road_distance import RoadDistance
 from settings import CLIENTS
 
 
-logger = logging.getLogger(__name__)
 
 def apply_transformation(value, transformation, func_obj=None, **kwargs):
     """
@@ -108,11 +106,10 @@ def parse_date_string(value):
     # Если не удалось найти даты, возвращаем None
     return None
 
-class OzonTransfomationFunctions:
+class BaseTransfomationFunctions:
     def __init__(self, id_client = None):
         self.id_client = id_client
         self.distance = 0
-        self.climb = False
 
     def _get_service(self, table_name):
         from app.utils.helpers import get_session
@@ -123,27 +120,47 @@ class OzonTransfomationFunctions:
         session = get_session()
         self.service = BaseService(BaseController(BaseRepository(model, session)))
 
-    def get_ozon_id(self, value=None):
-        
+    def _get_id_marketplace(self, marketplace):
         self._get_service('main.marketpalces')
-        result = self.service.get_key_from_fields(field_name = 'mp_name', value = 'Ozon', key_name = 'id_marketplace')
+        result = self.service.get_key_from_fields(field_name = 'mp_name', value = marketplace, key_name = 'id_marketplace')
         logger.info(f'Fuction get_ozon_id. Result: {result}')
         return result
     
-    def get_ozon_client_id(self, value=None):
-        
-        logger.info(f'Fuction get_ozon_client_id. Result: {self.id_client}')
-        return self.id_client
-
-    def get_ozon_product_id(self,value=None):
+    def get_product_id(self, value=None):
         if value:
             self._get_service('main.products')
             result = self.service.get_key_from_fields(field_name = 'sku', value = value, key_name = 'id_product')
             logger.info(f'Fuction get_ozon_product_id. Result: {result}')
             return result
-        logger.warning(f'Fuction get_ozon_product_id. Нет значения SKU для поиска товара.')
+        logger.warning(f'Fuction get_product_id. Нет значения SKU для поиска товара.')
         return None
     
+    def get_client_id(self, value=None):
+        
+        logger.info(f'Fuction get_client_id. Result: {self.id_client}')
+        return self.id_client
+    
+    def get_cost(self, value=None):
+        cost = 1200 + self.distance*35
+        if self.climb:
+            cost+= 500
+        logger.info(f'Fuction get_cost. Result: {cost}')
+        return cost
+    
+    def parse_date_string(self, value):
+        return parse_date_string(value)
+
+
+class OzonTransfomationFunctions (BaseTransfomationFunctions):
+    def __init__(self, id_client = None):
+        super().__init__(id_client)
+        self.climb = False
+    
+
+    def get_ozon_id(self, value=None):
+        
+        return self._get_id_marketplace('Ozon')
+        
     def get_ozon_client_phone(self,value , **kwargs):
         result = value
         if kwargs.get('posting_number'):
@@ -194,14 +211,52 @@ class OzonTransfomationFunctions:
         logger.info(f'Fuction get_ozon_delivery_name. Result: {result}')
         return result
 
-    def get_ozon_cost(self, value=None):
-        cost = 1200 + self.distance*35
-        if self.climb:
-            cost+= 500
-        logger.info(f'Fuction get_ozon_cost. Result: {cost}')
-        return cost
+
+
+class WBTransformationFunctions (BaseTransfomationFunctions):
+  
+    def get_wb_id(self, value = None):
+        return self._get_id_marketplace('Wildberries')
     
-    def parse_date_string(self, value):
-        return parse_date_string(value)
+    def get_wb_address(self, value):
+        #value = value.replace("'", '"')
+        #data = json.loads(value)
+        if value:
+            logger.info(f'Fuction get_wb_address. Result: {value.get("fullAddress")}')
+            return value.get("fullAddress")
+        logger.warning(f'Fuction get_wb_address. Нет значения Address для получения адреса.')
+        return None
 
+    def get_wb_client_data(self, value, **kwargs):
+        result = value
+        for value in kwargs.values():
+            if value:
+                result += '\n' + str(value)
+        logger.info(f'Fuction get_wb_client_data. Result: {result}')
+        return result
 
+    def get_wb_climb(self, value = None):
+        self.climb = True
+        return 'Включен'
+    
+    def get_wb_distance(self, value):
+        #value = value.replace("'", '"')
+        #data = json.loads(value)
+        if value.get('latitude') and value.get('longitude'):
+            params = {'lat': value.get('latitude'), 'lng': value.get('longitude')}
+            params = json.dumps(params)
+            rd = RoadDistance()
+            result = float(rd.get_mkad_distance(params).get('distance',0))/1000
+            self.distance = result
+            logger.info(f'Fuction get_wb_distance. Result: {result}')
+            return result
+        elif value.get('fullAddress'):
+            rd = RoadDistance()
+            result = float(rd.get_mkad_distance(value.get('fullAddress')).get('distance',0))/1000
+            self.distance = result
+            logger.info(f'Fuction get_wb_distance. Result: {result}')
+            return result
+        logger.warning(f'Fuction get_wb_distance. Нет значения Address для расчета расстояния.')
+        return None
+    
+   

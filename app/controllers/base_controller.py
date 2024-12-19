@@ -6,14 +6,11 @@ from werkzeug.utils import secure_filename
 import os
 import uuid
 import pandas as pd
-import logging
 
 from app.utils.functions import apply_transformation
 from app.utils.metadata import MetadataManager
 from app.repositories.base_repository import BaseRepository
-import logging_config
-
-logger = logging.getLogger(__name__)
+from logging_config import logger
 
 _cache = {}
 class BaseController:
@@ -206,6 +203,8 @@ class BaseController:
             if function_object:
                 if function_object.__class__.__name__ == 'OzonTransfomationFunctions':
                     mapkey = 'mappings_json_ozon'
+                elif function_object.__class__.__name__ == 'WBTransformationFunctions':
+                    mapkey = 'mappings_json_wb'
             else:
                 mapkey = 'mappings'
             for row in data:
