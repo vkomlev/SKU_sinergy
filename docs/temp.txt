@@ -1,4 +1,0 @@
-У меня table data доступны уже по API а метаданные берем из мок данных. Нужно сделать возможным комбинированную загрузку. 
-API работает на backend сервере, там другой порт - 5000. А программа пытается получить данные по порту 3000
-Failed to load resource: the server responded with a status of 404 (Not Found)
-http://localhost:3000/api/tables/import_DBS_delivery/data?page=1&size=20&filters=%7B%7D
