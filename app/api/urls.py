@@ -1,3 +1,17 @@
+# app/api/urls.py
+
+"""
+Модуль маршрутов API.
+
+Этот модуль определяет API-эндпоинты для загрузки файлов, выполнения R-скриптов, расчёта расстояний 
+и работы с данными маркетплейсов Ozon и Wildberries.
+
+Функции:
+- `setup_root_api_routes(app)`: Регистрирует API-маршруты в приложении Flask.
+
+Переменные:
+- `api`: Blueprint для группировки API-маршрутов.
+"""
 from app.api.views import (
         upload_file, 
         upload_to_table, 
@@ -9,10 +23,20 @@ from app.api.views import (
         )
 from flask import Blueprint
 
-# Добавляем маршрут для загрузки файла
+# Создание Blueprint для API-маршрутов
 api = Blueprint('tables_api', __name__)
 
-def  setup_root_api_routes(app): 
+
+def  setup_root_api_routes(app):
+    """
+    Регистрирует API-маршруты в приложении Flask.
+
+    Args:
+        app (Flask): Экземпляр Flask-приложения.
+
+    Returns:
+        None
+    """ 
     app.add_url_rule('/api/upload', view_func=upload_file, methods=['POST']) #Загрузить произвольный файл
     app.add_url_rule('/api/upload/<table_name>', view_func=upload_to_table, methods=['POST']) #Загрузить файл в таблицу БД
     app.add_url_rule('/api/run-r-script', view_func=r_script, methods=['POST']) #Выполнить R скрипт
