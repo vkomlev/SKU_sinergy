@@ -1,15 +1,51 @@
-# coding: utf-8
+# app/model_main.py
+
+"""
+Модуль содержит модели базы данных для основной схемы `main`. 
+
+Включает описание таблиц:
+- `brands` (Бренды)
+- `delivery_company` (Службы доставки)
+- `delivery_status` (Статусы доставки)
+- `marketplaces` (Маркетплейсы)
+- `partners` (Партнёры)
+- `products` (Товары)
+- `product_description` (Описания товаров)
+- `product_media` (Медиафайлы товаров)
+- `prices` (Цены)
+- `marginality` (Маржинальность товаров)
+- `delivery` (Информация о доставках)
+- `marketplace_category_mapping` (Маппинг категорий товаров с маркетплейсами)
+- `incomes` (Доходы)
+- `obx` (Объемно-весовые характеристики товаров)
+- `orders` (Заказы)
+- `product_category` (Категории товаров)
+- `cost_history` (История себестоимости товаров)
+- `vw_delivery` (Представление по доставкам)
+
+Модели определены с использованием SQLAlchemy и зарегистрированы через `register_model()`.
+"""
+
 from sqlalchemy import ARRAY, Column, Date, DateTime, Float, ForeignKey, Index, Integer, SmallInteger, String, Text, text, Table
 from sqlalchemy.dialects.postgresql import JSONB, MONEY
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 from app.model_registry import register_model
 
+# Базовый класс моделей SQLAlchemy
 Base = declarative_base()
 metadata = Base.metadata
 
 
 class Brands(Base):
+    """
+    Модель таблицы `brands` (Бренды).
+
+    Атрибуты:
+        id_brand (int): Уникальный идентификатор бренда.
+        brand_name (str): Название бренда.
+    """
+
     __tablename__ = 'brands'
     __table_args__ = {'schema': 'main', 'comment': 'Производители (бренды)'}
 
@@ -18,6 +54,14 @@ class Brands(Base):
 
 
 class DeliveryCompany(Base):
+    """
+    Модель таблицы `delivery_company` (Службы доставки).
+
+    Атрибуты:
+        id_dc (int): Уникальный идентификатор службы доставки.
+        dc_name (str): Название компании.
+    """
+
     __tablename__ = 'delivery_company'
     __table_args__ = {'schema': 'main'}
 
@@ -26,6 +70,14 @@ class DeliveryCompany(Base):
 
 
 class DeliveryStatus(Base):
+    """
+    Модель таблицы `delivery_status` (Статусы доставки).
+
+    Атрибуты:
+        id_ds (int): Уникальный идентификатор статуса.
+        ds_name (str): Название статуса доставки.
+    """
+
     __tablename__ = 'delivery_status'
     __table_args__ = {'schema': 'main', 'comment': 'Статусы доставки'}
 
@@ -34,6 +86,16 @@ class DeliveryStatus(Base):
 
 
 class Incomes(Base):
+    """
+    Модель таблицы `incomes` (Начисления от маркетплейсов).
+
+    Атрибуты:
+        id_income (int): Уникальный идентификатор начисления.
+        id_order (int): Код заказа.
+        equiring (MONEY): Расходы на эквайринг.
+        delivery_cost (MONEY): Расходы на доставку.
+    """
+
     __tablename__ = 'incomes'
     __table_args__ = {'schema': 'main', 'comment': 'Начисления от маркетплейсов (расходы при работе с маркетплейсами)'}
 
@@ -44,6 +106,17 @@ class Incomes(Base):
 
 
 class Marketpalces(Base):
+    """
+    Модель таблицы `marketpalces` (Маркетплейсы).
+
+    Атрибуты:
+        id_marketplace (int): Уникальный идентификатор маркетплейса.
+        mp_name (str): Название маркетплейса.
+        create_time (datetime): Дата создания записи.
+        update_time (datetime): Дата последнего обновления записи.
+        pseudonyms (list[str]): Список альтернативных названий маркетплейса.
+    """
+
     __tablename__ = 'marketpalces'
     __table_args__ = {'schema': 'main', 'comment': 'Маркетплейсы'}
 
@@ -55,6 +128,20 @@ class Marketpalces(Base):
 
 
 class Obx(Base):
+    """
+    Модель таблицы `obx` (Объемно-весовые характеристики товаров).
+
+    Атрибуты:
+        id_obx (int): Уникальный идентификатор характеристики.
+        obx_type (int): Тип характеристики (0 - нетто, 1 - брутто).
+        weight (float): Вес товара в килограммах.
+        length (int): Длина товара в сантиметрах.
+        width (int): Ширина товара в сантиметрах.
+        height (int): Высота товара в сантиметрах.
+        id_product (int): Идентификатор товара.
+        sku (str): Артикул товара.
+    """
+
     __tablename__ = 'obx'
     __table_args__ = {'schema': 'main', 'comment': 'Объемно-весовые характеристики товаров'}
 
@@ -69,6 +156,16 @@ class Obx(Base):
 
 
 class Orders(Base):
+    """
+    Модель таблицы `orders` (Заказы).
+
+    Атрибуты:
+        id_order (int): Уникальный идентификатор заказа.
+        order_number (str): Уникальный номер заказа.
+        id_markeplace (int): Идентификатор маркетплейса, связанного с заказом.
+        departure_number (str): Номер отправления.
+    """
+
     __tablename__ = 'orders'
     __table_args__ = {'schema': 'main', 'comment': 'Заказы'}
 
@@ -79,6 +176,16 @@ class Orders(Base):
 
 
 class Partners(Base):
+    """
+    Модель таблицы `partners` (Партнёры).
+
+    Атрибуты:
+        id_partner (int): Уникальный идентификатор партнёра.
+        partner_name (str): Название партнёра.
+        pseudonyms (list[str]): Альтернативные названия партнёра.
+        description (str): Описание партнёра.
+    """
+
     __tablename__ = 'partners'
     __table_args__ = {'schema': 'main'}
 
@@ -89,6 +196,17 @@ class Partners(Base):
 
 
 class ProductCategory(Base):
+    """
+    Модель таблицы `product_category` (Категории товаров).
+
+    Атрибуты:
+        id_pc (int): Уникальный идентификатор категории.
+        pc_name (str): Название категории.
+        create_time (datetime): Дата создания категории.
+        status (int): Статус категории (1 - активна).
+        enabled_char (dict): JSON-объект с характеристиками, доступными для редактирования.
+    """
+
     __tablename__ = 'product_category'
     __table_args__ = {'schema': 'main', 'comment': 'Категории товаров'}
 
@@ -100,6 +218,16 @@ class ProductCategory(Base):
 
 
 class MarketplaceCategoryMapping(Base):
+    """
+    Модель таблицы `marketplace_category_mapping` (Маппинг категорий товаров для маркетплейсов).
+
+    Атрибуты:
+        id_mcm (int): Уникальный идентификатор маппинга.
+        id_pc (int): Внутренний код категории товара.
+        id_marketplace (int): Идентификатор маркетплейса.
+        category_name (str): Название категории на маркетплейсе.
+    """
+
     __tablename__ = 'marketplace_category_mapping'
     __table_args__ = {'schema': 'main', 'comment': 'Маппинг категорий товаров для конкретного макретплейса'}
 
@@ -113,6 +241,22 @@ class MarketplaceCategoryMapping(Base):
 
 
 class Products(Base):
+    """
+    Модель таблицы `products` (Товары).
+
+    Атрибуты:
+        id_product (int): Уникальный идентификатор товара.
+        product_name (str): Название товара.
+        sku (str): Уникальный артикул товара.
+        id_pc (int): Идентификатор категории товара.
+        characteristics (dict): JSON-объект с характеристиками товара.
+        description_default (str): Описание товара по умолчанию.
+        create_time (datetime): Дата добавления товара.
+        update_time (datetime): Дата последнего изменения товара.
+        who_update (int): Идентификатор пользователя, внёсшего изменения.
+        id_brand (int): Идентификатор бренда товара.
+    """
+
     __tablename__ = 'products'
     __table_args__ = {'schema': 'main', 'comment': 'Товары'}
 
@@ -132,6 +276,16 @@ class Products(Base):
 
 
 class CostHistory(Base):
+    """
+    Модель таблицы `cost_history` (История себестоимости).
+
+    Атрибуты:
+        id_ch (int): Уникальный идентификатор записи истории.
+        id_product (int): Идентификатор товара.
+        cost_value (MONEY): Значение себестоимости товара.
+        update_date (date): Дата изменения себестоимости.
+    """
+
     __tablename__ = 'cost_history'
     __table_args__ = {'schema': 'main', 'comment': 'История себестоимости'}
 
@@ -144,6 +298,30 @@ class CostHistory(Base):
 
 
 class Delivery(Base):
+    """
+    Модель таблицы `delivery` (Информация о доставках).
+
+    Атрибуты:
+        id_delivery (int): Уникальный идентификатор доставки.
+        id_marketplace (int): Идентификатор маркетплейса.
+        id_partner (int): Идентификатор партнёра.
+        assembly_task (str): Код задания на сборку.
+        id_product (int): Идентификатор товара.
+        delivery_date_planned (date): Планируемая дата доставки.
+        delivery_date_actual (date): Фактическая дата доставки.
+        delivery_time (str): Время доставки.
+        delivery_address (str): Адрес доставки.
+        client_name (str): Имя клиента.
+        climb (str): Подъём на этаж (если применимо).
+        id_ds (int): Идентификатор статуса доставки.
+        distance (float): Расстояние доставки.
+        id_dc (int): Идентификатор компании доставки.
+        cost (MONEY): Стоимость доставки.
+        payment_status (str): Статус оплаты.
+        compensation (str): Компенсация в случае проблем.
+        note (str): Дополнительные комментарии.
+    """
+
     __tablename__ = 'delivery'
     __table_args__ = {'schema': 'main', 'comment': 'Информация о доставках'}
 
@@ -174,6 +352,17 @@ class Delivery(Base):
 
 
 class Marginality(Base):
+    """
+    Модель таблицы `marginality` (Маржинальность товаров).
+
+    Атрибуты:
+        id_marginality (int): Уникальный идентификатор записи.
+        id_product (int): Идентификатор товара.
+        id_brand (int): Идентификатор бренда.
+        margin_percent (float): Процент маржинальности.
+        marginality (MONEY): Сумма маржи.
+    """
+
     __tablename__ = 'marginality'
     __table_args__ = {'schema': 'main', 'comment': 'Маржинальность цены на товар'}
 
@@ -188,6 +377,19 @@ class Marginality(Base):
 
 
 class Prices(Base):
+    """
+    Модель таблицы `prices` (Цены товаров).
+
+    Атрибуты:
+        id_price (int): Уникальный идентификатор цены.
+        id_marketplace (int): Идентификатор маркетплейса.
+        id_product (int): Идентификатор товара.
+        price_fbs (MONEY): Цена FBS.
+        price_fbo (MONEY): Цена FBO.
+        price_dbs (MONEY): Цена DBS.
+        price_mrc (MONEY): Цена MRC.
+    """
+
     __tablename__ = 'prices'
     __table_args__ = {'schema': 'main', 'comment': 'Цены'}
 
@@ -204,6 +406,16 @@ class Prices(Base):
 
 
 class ProductDescription(Base):
+    """
+    Модель таблицы `product_description` (Описания товаров для маркетплейсов).
+
+    Атрибуты:
+        id_pd (int): Уникальный идентификатор описания.
+        description (str): Текст описания товара.
+        id_product (int): Идентификатор товара.
+        id_marketplace (int): Идентификатор маркетплейса.
+    """
+
     __tablename__ = 'product_description'
     __table_args__ = (
         Index('product_description_id_product_idx', 'id_product', 'id_marketplace', unique=True),
@@ -220,6 +432,16 @@ class ProductDescription(Base):
 
 
 class ProductMedia(Base):
+    """
+    Модель таблицы `product_media` (Фото и видео товаров).
+
+    Атрибуты:
+        id_pm (int): Уникальный идентификатор медиафайла.
+        url (str): Ссылка на медиафайл.
+        id_product (int): Идентификатор товара.
+        num (int): Порядковый номер изображения.
+    """
+
     __tablename__ = 'product_media'
     __table_args__ = {'schema': 'main', 'comment': 'Фото и видео'}
 
@@ -230,6 +452,9 @@ class ProductMedia(Base):
 
     product = relationship('Products')
 
+"""
+Представление `vw_delivery` содержит агрегированные данные о доставках.
+"""
 t_vw_delivery = Table(
     'vw_delivery', metadata,
     Column('id_delivery', Integer),
@@ -253,7 +478,7 @@ t_vw_delivery = Table(
     schema='main'
 )
 
-
+# Регистрация моделей в системе
 register_model(Brands)
 register_model(DeliveryCompany)
 register_model(DeliveryStatus)
