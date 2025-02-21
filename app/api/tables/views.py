@@ -1,18 +1,41 @@
-#app/api/tables/views.py
+# app/api/tables/views.py
 
+"""
+Модуль представлений API для работы с таблицами.
+
+Этот модуль содержит обработчики API-запросов для работы с таблицами базы данных: получение данных, метаданных, 
+поиск, создание, обновление и удаление записей.
+
+Функции:
+- `get_data_view(table_name: str) -> Response`: Получает данные из таблицы с фильтрацией, сортировкой и пагинацией.
+- `get_metadata_view(table_name: str) -> Response`: Возвращает метаданные таблицы.
+- `search(table_name: str) -> Response`: Выполняет поиск по таблице.
+- `create_record(table_name: str) -> Response`: Создаёт новую запись в таблице.
+- `update_record(table_name: str, record_id: int) -> Response`: Обновляет существующую запись.
+- `delete_record(table_name: str, record_id: int) -> Response`: Удаляет запись.
+- `get_record(table_name: str, record_id: int) -> Response`: Получает одну запись по ID.
+"""
 import json
-from flask import request, jsonify, abort
+from flask import request, jsonify, abort, Response
 
 from app.utils.helpers import get_session
 from app.utils.metadata import MetadataManager
 
-from app.model_import import DBSDelivery
 from app.api.tables.serializers import UniversalSerializer
 from app.services.base_service import BaseService
 from app.repositories.base_repository import BaseRepository
 from app.controllers.base_controller import BaseController
 
-def get_data_view(table_name):
+def get_data_view(table_name: str) -> Response:
+    """
+    Получает данные из таблицы с возможностью фильтрации, сортировки и пагинации.
+
+    Args:
+        table_name (str): Название таблицы.
+
+    Returns:
+        Response: JSON-ответ с данными таблицы.
+    """
     session = get_session()
     model = BaseRepository.get_model_by_table_name(table_name.replace('_', '.', 1))
     show_view = request.args.get('showview', 'false').lower() == 'true'
@@ -63,7 +86,16 @@ def get_data_view(table_name):
 
     return jsonify(json_data)
 
-def get_metadata_view(table_name):
+def get_metadata_view(table_name: str) -> Response:
+    """
+    Получает метаданные таблицы.
+
+    Args:
+        table_name (str): Название таблицы.
+
+    Returns:
+        Response: JSON-ответ с метаданными таблицы.
+    """
     session = get_session()
     
     model = BaseRepository.get_model_by_table_name(table_name.replace('_', '.', 1))
@@ -83,7 +115,16 @@ def get_metadata_view(table_name):
     metadata = service.get_table_metadata()
     return jsonify(metadata)
 
-def search(table_name):
+def search(table_name: str) -> Response:
+    """
+    Выполняет поиск в таблице.
+
+    Args:
+        table_name (str): Название таблицы.
+
+    Returns:
+        Response: JSON-ответ с результатами поиска.
+    """
     session = get_session()    
     model = BaseRepository.get_model_by_table_name(table_name.replace('_', '.', 1))
     show_view = request.args.get('showview', 'false').lower() == 'true'
@@ -108,7 +149,16 @@ def search(table_name):
                      "data": serialized_results}
     return jsonify(query_results)
 
-def create_record(table_name):
+def create_record(table_name: str) -> Response:
+    """
+    Создаёт новую запись в таблице.
+
+    Args:
+        table_name (str): Название таблицы.
+
+    Returns:
+        Response: JSON-ответ с созданной записью.
+    """
     session = get_session()
     model = BaseRepository.get_model_by_table_name(table_name.replace('_', '.', 1))
     service = BaseService(BaseController(BaseRepository(model, session)))
@@ -122,7 +172,17 @@ def create_record(table_name):
         abort(404, description="Record not created")
 
 
-def update_record(table_name, record_id):
+def update_record(table_name: str, record_id: int) -> Response:
+    """
+    Обновляет существующую запись в таблице.
+
+    Args:
+        table_name (str): Название таблицы.
+        record_id (int): ID записи.
+
+    Returns:
+        Response: JSON-ответ с обновленной записью.
+    """
     session = get_session()
     model = BaseRepository.get_model_by_table_name(table_name.replace('_', '.', 1))
     service = BaseService(BaseController(BaseRepository(model, session)))
@@ -134,7 +194,17 @@ def update_record(table_name, record_id):
         abort(404, description="Record not found")
 
 
-def delete_record(table_name, record_id):
+def delete_record(table_name: str, record_id: int) -> Response:
+    """
+    Удаляет запись из таблицы.
+
+    Args:
+        table_name (str): Название таблицы.
+        record_id (int): ID записи.
+
+    Returns:
+        Response: JSON-ответ об успешном удалении.
+    """
     session = get_session()
     model = BaseRepository.get_model_by_table_name(table_name.replace('_', '.', 1))
     service = BaseService(BaseController(BaseRepository(model, session)))
@@ -147,7 +217,17 @@ def delete_record(table_name, record_id):
     else:
         abort(404, description="Record not found")
 
-def get_record(table_name, record_id):
+def get_record(table_name: str, record_id: int) -> Response:
+    """
+    Получает одну запись по её ID.
+
+    Args:
+        table_name (str): Название таблицы.
+        record_id (int): ID записи.
+
+    Returns:
+        Response: JSON-ответ с найденной записью.
+    """
     session = get_session()
     model = BaseRepository.get_model_by_table_name(table_name.replace('_', '.', 1))
     service = BaseService(BaseController(BaseRepository(model, session)))
